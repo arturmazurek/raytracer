@@ -11,7 +11,7 @@
 		6D4C67E915DE5E05002DE1AE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6D4C67E715DE5E05002DE1AE /* InfoPlist.strings */; };
 		6D4C67EB15DE5E05002DE1AE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D4C67EA15DE5E05002DE1AE /* main.m */; };
 		6D4C67EF15DE5E05002DE1AE /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 6D4C67ED15DE5E05002DE1AE /* Credits.rtf */; };
-		6D4C67F215DE5E05002DE1AE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D4C67F115DE5E05002DE1AE /* AppDelegate.m */; };
+		6D4C67F215DE5E05002DE1AE /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6D4C67F115DE5E05002DE1AE /* AppDelegate.mm */; };
 		6D4C67F515DE5E05002DE1AE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D4C67F315DE5E05002DE1AE /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 
@@ -27,7 +27,7 @@
 		6D4C67EC15DE5E05002DE1AE /* ImageTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ImageTest-Prefix.pch"; sourceTree = "<group>"; };
 		6D4C67EE15DE5E05002DE1AE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		6D4C67F015DE5E05002DE1AE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		6D4C67F115DE5E05002DE1AE /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		6D4C67F115DE5E05002DE1AE /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		6D4C67F415DE5E05002DE1AE /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -83,7 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				6D4C67F015DE5E05002DE1AE /* AppDelegate.h */,
-				6D4C67F115DE5E05002DE1AE /* AppDelegate.m */,
+				6D4C67F115DE5E05002DE1AE /* AppDelegate.mm */,
 				6D4C67F315DE5E05002DE1AE /* MainMenu.xib */,
 				6D4C67E515DE5E05002DE1AE /* Supporting Files */,
 			);
@@ -167,7 +167,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D4C67EB15DE5E05002DE1AE /* main.m in Sources */,
-				6D4C67F215DE5E05002DE1AE /* AppDelegate.m in Sources */,
+				6D4C67F215DE5E05002DE1AE /* AppDelegate.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
