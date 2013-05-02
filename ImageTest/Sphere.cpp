@@ -22,23 +22,23 @@ Sphere::~Sphere() {
 }
 
 bool Sphere::intersects(const Ray& r, Vector& intersection) const {
-    const float A = r.origin.x - center.x;
-    const float B = r.origin.y - center.y;
-    const float C = r.origin.z - center.z;
+    const FloatType A = r.origin.x - center.x;
+    const FloatType B = r.origin.y - center.y;
+    const FloatType C = r.origin.z - center.z;
     
-    const float a = r.direction.lengthSqr();
-    const float b = 2*A*r.direction.x + 2*B*r.direction.y + 2*C*r.direction.z;
-    const float c = (A*A + B*B + C*C - radius*radius);
+    const FloatType a = r.direction.lengthSqr() - radius*radius;
+    const FloatType b = 2*A*r.direction.x + 2*B*r.direction.y + 2*C*r.direction.z;
+    const FloatType c = (A*A + B*B + C*C - radius*radius);
     
     using namespace std;
-    const float delta = pow(b, 2) - 4*a*c;
+    const FloatType delta = pow(b, 2) - 4*a*c;
     
     if(delta < 0) {
         return false;
     }
     
-    const float t1 = (-b + sqrt(delta)) / (2*a);
-    const float t2 = (-b - sqrt(delta)) / (2*a);
+    const FloatType t1 = (-b + sqrt(delta)) / (2*a);
+    const FloatType t2 = (-b - sqrt(delta)) / (2*a);
     
     if(t1 < 0 && t2 < 0) {
         return false;

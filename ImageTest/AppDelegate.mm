@@ -8,6 +8,11 @@
 
 #import "AppDelegate.h"
 
+#include "Ray.h"
+#include "Scene.h"
+#include "Sphere.h"
+#include "Vector.h"
+
 @implementation AppDelegate
 @synthesize imageView = _imageView;
 
@@ -44,9 +49,22 @@ static const int N = 256;
 }
 
 - (void)createImage:(PixelInfo*)pi size:(int)n {
+    Scene s;
+    s.addObject(new Sphere(Vector::zero(), 10));
+    
+    Vector intersection;
+    
     for(int j = 0; j < N; ++j) {
         for(int i = 0; i < N; ++i) {
-            pi[j*N + i] = PixelInfo(100, 200, 100, 255);
+            Ray r;
+            r.origin = Vector(i - N/2, j - N/2, 0);
+            r.direction = Vector::unitZ();
+            
+            if(s.findIntersection(r, intersection)) {
+                pi[j*N + i] = PixelInfo(255, 255, 255, 255);
+            } else {
+                pi[j*N + i] = PixelInfo(100, 200, 100, 255);
+            }
         }
     }
 }

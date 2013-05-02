@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <limits>
 
+#include <cstdlib>
+
 #include "BaseObject.h"
 #include "Ray.h"
 #include "Vector.h"
@@ -26,7 +28,7 @@ Scene::~Scene() {
 }
 
 void Scene::addObject(BaseObject* obj) {
-    if(std::find(m_objects.begin(), m_objects.end(), obj) != m_objects.end()) {
+    if(std::find(m_objects.begin(), m_objects.end(), obj) == m_objects.end()) {
         m_objects.push_back(obj);
     }
 }
