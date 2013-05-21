@@ -26,20 +26,20 @@ struct PixelInfo {
     PixelInfo(UInt8 r, UInt8 g, UInt8 b, UInt8 a) : r(r), g(g), b(b), a(a) {}
 };
 
-static const int N = 256;
+//static const int N = 256;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     int width = self.imageView.frame.size.width;
     int height = self.imageView.frame.size.height;
     
-    PixelInfo bytes[N*N];
-    [self createImage:bytes width:N height:N];
+    PixelInfo* bytes = new PixelInfo[width*height];
+    [self createImage:bytes width:width height:height];
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)bytes, sizeof(bytes));
+    CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)bytes, sizeof(PixelInfo)*width*height);
     CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(imageData);
-    CGImageRef cgImage = CGImageCreate(N, N, 8, PixelInfo::bitsSize(), N * sizeof(PixelInfo), colorSpace, 0, dataProvider, NULL, TRUE, kCGRenderingIntentDefault);
+    CGImageRef cgImage = CGImageCreate(width, height, 8, PixelInfo::bitsSize(), width * sizeof(PixelInfo), colorSpace, 0, dataProvider, NULL, TRUE, kCGRenderingIntentDefault);
     
     NSImage* img = [[NSImage alloc] initWithCGImage:cgImage size:NSZeroSize];
     
@@ -49,6 +49,8 @@ static const int N = 256;
     CFRelease(imageData);
         
     [self.imageView setImage:img];
+    
+    delete[] bytes;
 }
 
 - (void)createImage:(PixelInfo*)pi width:(int)w height:(int)h {
