@@ -30,8 +30,11 @@ static const int N = 256;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    int width = self.imageView.frame.size.width;
+    int height = self.imageView.frame.size.height;
+    
     PixelInfo bytes[N*N];
-    [self createImage:bytes size:N];
+    [self createImage:bytes width:N height:N];
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)bytes, sizeof(bytes));
@@ -48,22 +51,22 @@ static const int N = 256;
     [self.imageView setImage:img];
 }
 
-- (void)createImage:(PixelInfo*)pi size:(int)n {
+- (void)createImage:(PixelInfo*)pi width:(int)w height:(int)h {
     Scene s;
-    s.addObject(new Sphere(Vector::zero(), 10));
+    s.addObject(new Sphere(Vector::zero(), 40));
     
     Vector intersection;
     
-    for(int j = 0; j < N; ++j) {
-        for(int i = 0; i < N; ++i) {
+    for(int j = 0; j < h; ++j) {
+        for(int i = 0; i < w; ++i) {
             Ray r;
-            r.origin = Vector(i - N/2, j - N/2, 0);
+            r.origin = Vector(i - w/2, j - h/2, 0);
             r.direction = Vector::unitZ();
             
             if(s.findIntersection(r, intersection)) {
-                pi[j*N + i] = PixelInfo(255, 255, 255, 255);
+                pi[j*w + i] = PixelInfo(255, 255, 255, 255);
             } else {
-                pi[j*N + i] = PixelInfo(100, 200, 100, 255);
+                pi[j*w + i] = PixelInfo(100, 200, 100, 255);
             }
         }
     }
