@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 
+#include "Bitmap.h"
 #include "Ray.h"
 #include "Scene.h"
 #include "Sphere.h"
@@ -16,30 +17,18 @@
 @implementation AppDelegate
 @synthesize imageView = _imageView;
 
-struct PixelInfo {
-    static int bitsSize() {
-        return sizeof(PixelInfo) * 8;
-    }
-    
-    UInt8 r, g, b, a;
-    PixelInfo() : r(0), g(0), b(0), a(0) {}
-    PixelInfo(UInt8 r, UInt8 g, UInt8 b, UInt8 a) : r(r), g(g), b(b), a(a) {}
-};
-
-//static const int N = 256;
-
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     int width = self.imageView.frame.size.width;
     int height = self.imageView.frame.size.height;
     
-    PixelInfo* bytes = new PixelInfo[width*height];
-    [self createImage:bytes width:width height:height];
+    Bitmap b{width, height};
+    [self createImage:b];
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)bytes, sizeof(PixelInfo)*width*height);
+    CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)b.data(), sizeof(Bitmap::PixelInfo)*width*height);
     CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(imageData);
-    CGImageRef cgImage = CGImageCreate(width, height, 8, PixelInfo::bitsSize(), width * sizeof(PixelInfo), colorSpace, 0, dataProvider, NULL, TRUE, kCGRenderingIntentDefault);
+    CGImageRef cgImage = CGImageCreate(width, height, 8, Bitmap::PixelInfo::bitsSize(), width * sizeof(Bitmap::PixelInfo), colorSpace, 0, dataProvider, NULL, TRUE, kCGRenderingIntentDefault);
     
     NSImage* img = [[NSImage alloc] initWithCGImage:cgImage size:NSZeroSize];
     
@@ -49,16 +38,19 @@ struct PixelInfo {
     CFRelease(imageData);
         
     [self.imageView setImage:img];
-    
-    delete[] bytes;
 }
 
-- (void)createImage:(PixelInfo*)pi width:(int)w height:(int)h {
+- (void)createImage:(Bitmap&)b {
     Scene s;
     s.addObject(new Sphere(Vector::zero(), 40));
     
     Vector intersection;
     
+//    PixelInfo prevY;
+//    PixelInfo prevX;
+    
+    int w = b.width();
+    int h = b.height();
     for(int j = 0; j < h; ++j) {
         for(int i = 0; i < w; ++i) {
             Ray r;
@@ -66,9 +58,9 @@ struct PixelInfo {
             r.direction = Vector::unitZ();
             
             if(s.findIntersection(r, intersection)) {
-                pi[j*w + i] = PixelInfo(255, 255, 255, 255);
+                b.pixel(i, j) = Bitmap::PixelInfo(255, 255, 255, 255);
             } else {
-                pi[j*w + i] = PixelInfo(100, 200, 100, 255);
+                b.pixel(i, j) = Bitmap::PixelInfo(100, 200, 100, 255);
             }
         }
     }

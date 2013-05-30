@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D204B9E174BD4ED0016A570 /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D204B9C174BD4EC0016A570 /* Renderer.cpp */; };
 		6D4C67DF15DE5E05002DE1AE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D4C67DE15DE5E05002DE1AE /* Cocoa.framework */; };
 		6D4C67E915DE5E05002DE1AE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6D4C67E715DE5E05002DE1AE /* InfoPlist.strings */; };
 		6D4C67EB15DE5E05002DE1AE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D4C67EA15DE5E05002DE1AE /* main.m */; };
@@ -17,9 +18,12 @@
 		6D8474A7172EC6D100BAF86F /* BaseObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D8474A5172EC6D100BAF86F /* BaseObject.cpp */; };
 		6D8474AB172ECA6100BAF86F /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D8474A9172ECA6100BAF86F /* Ray.cpp */; };
 		6D8474AE172ECEC600BAF86F /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D8474AC172ECEC500BAF86F /* Sphere.cpp */; };
+		6DE7F2E31757AB8E006FED74 /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7F2E11757AB8D006FED74 /* Bitmap.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6D204B9C174BD4EC0016A570 /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
+		6D204B9D174BD4ED0016A570 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		6D4C67DA15DE5E05002DE1AE /* ImageTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D4C67DE15DE5E05002DE1AE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		6D4C67E115DE5E05002DE1AE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -43,6 +47,8 @@
 		6D8474AC172ECEC500BAF86F /* Sphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sphere.cpp; sourceTree = "<group>"; };
 		6D8474AD172ECEC500BAF86F /* Sphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere.h; sourceTree = "<group>"; };
 		6D8474AF172ECEF400BAF86F /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		6DE7F2E11757AB8D006FED74 /* Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bitmap.cpp; sourceTree = "<group>"; };
+		6DE7F2E21757AB8E006FED74 /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bitmap.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +116,10 @@
 				6D8474AC172ECEC500BAF86F /* Sphere.cpp */,
 				6D8474AD172ECEC500BAF86F /* Sphere.h */,
 				6D8474AF172ECEF400BAF86F /* Types.h */,
+				6D204B9C174BD4EC0016A570 /* Renderer.cpp */,
+				6D204B9D174BD4ED0016A570 /* Renderer.h */,
+				6DE7F2E11757AB8D006FED74 /* Bitmap.cpp */,
+				6DE7F2E21757AB8E006FED74 /* Bitmap.h */,
 			);
 			path = ImageTest;
 			sourceTree = "<group>";
@@ -196,6 +206,8 @@
 				6D8474A7172EC6D100BAF86F /* BaseObject.cpp in Sources */,
 				6D8474AB172ECA6100BAF86F /* Ray.cpp in Sources */,
 				6D8474AE172ECEC600BAF86F /* Sphere.cpp in Sources */,
+				6D204B9E174BD4ED0016A570 /* Renderer.cpp in Sources */,
+				6DE7F2E31757AB8E006FED74 /* Bitmap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
