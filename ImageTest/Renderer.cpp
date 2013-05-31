@@ -9,14 +9,16 @@
 #include "Renderer.h"
 
 #include <cassert>
+#include <cmath>
 #include <memory>
 
 #include "Bitmap.h"
+#include "Math.h"
 #include "Ray.h"
 #include "Scene.h"
 #include "Vector.h"
 
-Renderer::Renderer() : m_width{0}, m_height{0} {
+Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{(double)(0.5 * Math::PI)} {
     
 }
 
@@ -40,7 +42,16 @@ int Renderer::height() const {
     return m_height;
 }
 
-std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) const {
+void Renderer::setFovY(double fovY) {
+    assert(fovY >= 0);
+    assert(fovY < Math::PI);
+    
+    m_fovY = fovY;
+}
+
+std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
+    prepareRender();
+    
     Vector intersection;
     
     auto b = std::unique_ptr<Bitmap>(new Bitmap(m_width, m_height));
@@ -49,9 +60,7 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) const {
     int h = b->height();
     for(int j = 0; j < h; ++j) {
         for(int i = 0; i < w; ++i) {
-            Ray r;
-            r.origin = Vector(i - w/2, j - h/2, 0);
-            r.direction = Vector::unitZ();
+            Ray r = m_camera.viewPointToRay(i - w/2, j - h/2);
             
             if(s.findIntersection(r, intersection)) {
                 b->pixel(i, j) = Bitmap::PixelInfo(255, 255, 255, 255);
@@ -62,4 +71,9 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) const {
     }
     
     return b;
+}
+
+void Renderer::prepareRender() {
+    double focalLength = m_height / (2 * std::tan(0.5 * m_fovY));
+    m_camera.setFocalLength(focalLength);
 }

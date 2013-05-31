@@ -11,6 +11,8 @@
 
 #include <memory>
 
+#include "Camera.h"
+
 class Bitmap;
 class Scene;
 
@@ -19,15 +21,23 @@ public:
     Renderer();
     ~Renderer();
     
-    std::unique_ptr<Bitmap> renderScene(const Scene& s) const;
+    std::unique_ptr<Bitmap> renderScene(const Scene& s);
 
     void setDimensions(int width, int height);
     int width() const;
     int height() const;
     
+    void setFovY(double fovYRadians);
+    double fovY() const;
+    
 private:
     int m_width;
     int m_height;
+    double m_fovY;
+    Camera m_camera;
+    
+private:
+    void prepareRender();
     
 private:
     Renderer(const Renderer&);

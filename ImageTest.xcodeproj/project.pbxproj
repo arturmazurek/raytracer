@@ -19,6 +19,7 @@
 		6D8474AB172ECA6100BAF86F /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D8474A9172ECA6100BAF86F /* Ray.cpp */; };
 		6D8474AE172ECEC600BAF86F /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D8474AC172ECEC500BAF86F /* Sphere.cpp */; };
 		6DE7F2E31757AB8E006FED74 /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7F2E11757AB8D006FED74 /* Bitmap.cpp */; };
+		6DE7F2E61758CE2A006FED74 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7F2E41758CE29006FED74 /* Camera.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,9 @@
 		6D8474AF172ECEF400BAF86F /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
 		6DE7F2E11757AB8D006FED74 /* Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bitmap.cpp; sourceTree = "<group>"; };
 		6DE7F2E21757AB8E006FED74 /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bitmap.h; sourceTree = "<group>"; };
+		6DE7F2E41758CE29006FED74 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
+		6DE7F2E51758CE29006FED74 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
+		6DE7F2E71758D17F006FED74 /* Math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Math.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +106,7 @@
 		6D4C67E415DE5E05002DE1AE /* ImageTest */ = {
 			isa = PBXGroup;
 			children = (
+				6DE7F2E71758D17F006FED74 /* Math.h */,
 				6D8474A9172ECA6100BAF86F /* Ray.cpp */,
 				6D8474AA172ECA6100BAF86F /* Ray.h */,
 				6D4C67F015DE5E05002DE1AE /* AppDelegate.h */,
@@ -120,6 +125,8 @@
 				6D204B9D174BD4ED0016A570 /* Renderer.h */,
 				6DE7F2E11757AB8D006FED74 /* Bitmap.cpp */,
 				6DE7F2E21757AB8E006FED74 /* Bitmap.h */,
+				6DE7F2E41758CE29006FED74 /* Camera.cpp */,
+				6DE7F2E51758CE29006FED74 /* Camera.h */,
 			);
 			path = ImageTest;
 			sourceTree = "<group>";
@@ -208,6 +215,7 @@
 				6D8474AE172ECEC600BAF86F /* Sphere.cpp in Sources */,
 				6D204B9E174BD4ED0016A570 /* Renderer.cpp in Sources */,
 				6DE7F2E31757AB8E006FED74 /* Bitmap.cpp in Sources */,
+				6DE7F2E61758CE2A006FED74 /* Camera.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
