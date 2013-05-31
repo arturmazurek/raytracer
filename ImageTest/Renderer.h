@@ -17,9 +17,9 @@ class Scene;
 class Renderer {
 public:
     Renderer();
-    ~Renderer() {}
+    ~Renderer();
     
-    std::unique_ptr<Bitmap> renderScene(Scene* s) const;
+    std::unique_ptr<Bitmap> renderScene(const Scene& s) const;
 
     void setDimensions(int width, int height);
     int width() const;

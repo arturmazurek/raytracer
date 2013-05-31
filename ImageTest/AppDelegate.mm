@@ -8,11 +8,14 @@
 
 #import "AppDelegate.h"
 
+#include <memory>
+
 #include "Bitmap.h"
-#include "Ray.h"
+//#include "Ray.h"
+#include "Renderer.h"
 #include "Scene.h"
 #include "Sphere.h"
-#include "Vector.h"
+//#include "Vector.h"
 
 @implementation AppDelegate
 @synthesize imageView = _imageView;
@@ -22,11 +25,10 @@
     int width = self.imageView.frame.size.width;
     int height = self.imageView.frame.size.height;
     
-    Bitmap b{width, height};
-    [self createImage:b];
+    auto bitmap = [self createImage];
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)b.data(), sizeof(Bitmap::PixelInfo)*width*height);
+    CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)bitmap->data(), sizeof(Bitmap::PixelInfo)*width*height);
     CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(imageData);
     CGImageRef cgImage = CGImageCreate(width, height, 8, Bitmap::PixelInfo::bitsSize(), width * sizeof(Bitmap::PixelInfo), colorSpace, 0, dataProvider, NULL, TRUE, kCGRenderingIntentDefault);
     
@@ -40,30 +42,15 @@
     [self.imageView setImage:img];
 }
 
-- (void)createImage:(Bitmap&)b {
+- (std::unique_ptr<Bitmap>)createImage {
     Scene s;
     s.addObject(new Sphere(Vector::zero(), 40));
+    s.addObject(new Sphere(Vector(30, 40, 30), 20));
     
-    Vector intersection;
+    Renderer r;
+    r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
     
-//    PixelInfo prevY;
-//    PixelInfo prevX;
-    
-    int w = b.width();
-    int h = b.height();
-    for(int j = 0; j < h; ++j) {
-        for(int i = 0; i < w; ++i) {
-            Ray r;
-            r.origin = Vector(i - w/2, j - h/2, 0);
-            r.direction = Vector::unitZ();
-            
-            if(s.findIntersection(r, intersection)) {
-                b.pixel(i, j) = Bitmap::PixelInfo(255, 255, 255, 255);
-            } else {
-                b.pixel(i, j) = Bitmap::PixelInfo(100, 200, 100, 255);
-            }
-        }
-    }
+    return r.renderScene(s);
 }
 
 @end
