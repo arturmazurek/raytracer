@@ -10,7 +10,7 @@
 #define __ImageTest__Color__
 
 struct Color {
-    typedef unsigned int ValueType;
+    typedef unsigned short int ValueType;
     ValueType r, g, b, a;
     
     Color();

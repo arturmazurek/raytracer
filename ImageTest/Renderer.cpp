@@ -18,7 +18,7 @@
 #include "Scene.h"
 #include "Vector.h"
 
-Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{(double)(0.5 * Math::PI)} {
+Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{(double)(0.5 * Math::PI)}, m_superSampling{1} {
     
 }
 
@@ -49,18 +49,28 @@ void Renderer::setFovY(double fovY) {
     m_fovY = fovY;
 }
 
+void Renderer::setSuperSampling(int amount) {
+    assert(amount >= 1);
+    m_superSampling = amount;
+}
+
+int Renderer::getSuperSampling() const {
+    return m_superSampling;
+}
+
 std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
     prepareRender();
     
     Vector intersection;
     
-    auto b = std::unique_ptr<Bitmap>(new Bitmap(m_width, m_height));
+    auto tempBuffer = std::unique_ptr<Color[]>(new Color[m_superSampling * m_width * m_superSampling * m_height]);
     
-    int w = b->width();
-    int h = b->height();
+    int w = m_superSampling * m_width;
+    int h = m_superSampling * m_height;
     for(int j = 0; j < h; ++j) {
         for(int i = 0; i < w; ++i) {
-            Ray r = m_camera.viewPointToRay(i - w/2, j - h/2);
+//            Ray r = m_camera.viewPointToRay((double)i/m_superSampling - w/2, (double)j/m_superSampling - h/2);
+            Ray r = m_camera.viewPointToRay((double)i/m_superSampling, (double)j/m_superSampling);
             
             Color c;
             
@@ -70,7 +80,23 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
                 c = Color{100, 200, 100, 255};
             }
             
-            b->pixel(i, j) = Bitmap::PixelInfo{c};
+            tempBuffer[j*w + i] = c;
+        }
+    }
+    
+    auto b = std::unique_ptr<Bitmap>(new Bitmap(m_width, m_height));
+    for(int j = 0; j < m_height; ++j) {
+        for(int i = 0; i < m_width; ++i) {
+            Color c;
+            for(int xs = 0; xs < m_superSampling; ++xs) {
+                for(int ys = 0; ys < m_superSampling; ++ys) {
+                    size_t index = (j+ys)*w + i+xs;
+                    c += tempBuffer[index];
+                }
+            }
+            
+            c /= m_superSampling * m_superSampling;
+            b->pixel(i, j) = c;
         }
     }
     

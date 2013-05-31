@@ -44,12 +44,13 @@
 
 - (std::unique_ptr<Bitmap>)createImage {
     Scene s;
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{Vector{-60, 0, 0}, 40}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{Vector{0, 0, 0}, 40}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{Vector{30, 30, 0}, 20}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{Vector{0, 80, 0}, 20}});
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
+    r.setSuperSampling(2);
     
     return r.renderScene(s);
 }
