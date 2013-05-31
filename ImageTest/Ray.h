@@ -11,7 +11,7 @@
 
 #include "Vector.h"
 
-struct Ray {
+struct Ray final {
     Vector origin;
     Vector direction;
 };

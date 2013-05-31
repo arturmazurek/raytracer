@@ -14,12 +14,12 @@
 
 #include "Types.h"
 
-struct Vector {
+struct Vector final {
     FloatType x, y, z;
     
     Vector() : x(0), y(0), z(0) {}
-    Vector(FloatType x, FloatType y, FloatType z) : x(x), y(y), z(z) {}
-    Vector(const Vector& other) : x(other.x), y(other.y), z(other.z) {}
+    Vector(FloatType x, FloatType y, FloatType z) : x{x}, y{y}, z{z} {}
+    Vector(const Vector& other) : x{other.x}, y{other.y}, z{other.z} {}
     Vector& operator=(const Vector& other) {
         x = other.x; y = other.y; z = other.z;
         return *this;
@@ -63,17 +63,17 @@ struct Vector {
     }
     
     static const Vector& unitX() {
-        static Vector result(1.0f, 0.0f, 0.0f);
+        static Vector result{1.0f, 0.0f, 0.0f};
         return result;
     }
     
     static const Vector& unitY() {
-        static Vector result(0.0f, 1.0f, 0.0f);
+        static Vector result{0.0f, 1.0f, 0.0f};
         return result;
     }
     
     static const Vector& unitZ() {
-        static Vector result(0.0f, 0.0f, 1.0f);
+        static Vector result{0.0f, 0.0f, 1.0f};
         return result;
     }
     };
@@ -88,17 +88,17 @@ struct Vector {
     }
     
     static inline Vector operator+(const Vector& a, const Vector& b) {
-        Vector result(a);
+        Vector result{a};
         return result += b;
     }
     
     static inline Vector operator-(const Vector& a, const Vector& b) {
-        Vector result(a);
+        Vector result{a};
         return result -= b;
     }
     
     static inline Vector operator*(const Vector& a, FloatType k) {
-        Vector result(a);
+        Vector result{a};
         return result *= k;
     }
     
@@ -111,7 +111,7 @@ struct Vector {
     }
     
     static inline Vector normalized(const Vector& a) {
-        Vector result(a);
+        Vector result{a};
         return result.normalize();
     }
     

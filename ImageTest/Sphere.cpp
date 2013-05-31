@@ -13,7 +13,7 @@
 
 #include "Ray.h"
 
-Sphere::Sphere(const Vector& center, FloatType radius) : center(center), radius(radius) {
+Sphere::Sphere(const Vector& center, FloatType radius) : center{center}, radius{radius} {
     assert(radius != 0);
 }
 
