@@ -62,11 +62,15 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
         for(int i = 0; i < w; ++i) {
             Ray r = m_camera.viewPointToRay(i - w/2, j - h/2);
             
+            Color c;
+            
             if(s.findIntersection(r, intersection)) {
-                b->pixel(i, j) = Bitmap::PixelInfo(255, 255, 255, 255);
+                c = Color{255, 255, 255, 255};
             } else {
-                b->pixel(i, j) = Bitmap::PixelInfo(100, 200, 100, 255);
+                c = Color{100, 200, 100, 255};
             }
+            
+            b->pixel(i, j) = Bitmap::PixelInfo{c};
         }
     }
     

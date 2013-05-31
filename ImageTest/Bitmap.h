@@ -9,7 +9,11 @@
 #ifndef __ImageTest__Bitmap__
 #define __ImageTest__Bitmap__
 
+#include <algorithm>
 #include <memory>
+#include <limits>
+
+#include "Color.h"
 
 class Bitmap {
 public:
@@ -23,6 +27,12 @@ public:
         byte r, g, b, a;
         PixelInfo() : r{0}, g{0}, b{0}, a{0} {}
         PixelInfo(byte r, byte g, byte b, byte a) : r{r}, g{g}, b{b}, a{a} {}
+        PixelInfo(const Color& c) {
+            r = std::min(static_cast<Color::ValueType>(std::numeric_limits<byte>::max()), c.r);
+            g = std::min(static_cast<Color::ValueType>(std::numeric_limits<byte>::max()), c.g);
+            b = std::min(static_cast<Color::ValueType>(std::numeric_limits<byte>::max()), c.b);
+            a = std::min(static_cast<Color::ValueType>(std::numeric_limits<byte>::max()), c.a);
+        }
     };
     
     Bitmap(int width, int height);
