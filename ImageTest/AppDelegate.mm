@@ -44,8 +44,8 @@
 
 - (std::unique_ptr<Bitmap>)createImage {
     Scene s;
-    s.addObject(new Sphere(Vector::zero(), 40));
-    s.addObject(new Sphere(Vector(30, 40, 30), 20));
+    s.addObject(std::unique_ptr<BaseObject>(new Sphere(Vector::zero(), 40)));
+    s.addObject(std::unique_ptr<BaseObject>(new Sphere(Vector(30, 40, 30), 20)));
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);

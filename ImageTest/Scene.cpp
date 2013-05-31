@@ -22,21 +22,17 @@ Scene::Scene() {
 }
 
 Scene::~Scene() {
-    for(auto obj : m_objects) {
-        delete obj;
-    }
+
 }
 
-void Scene::addObject(BaseObject* obj) {
-    if(std::find(m_objects.begin(), m_objects.end(), obj) == m_objects.end()) {
-        m_objects.push_back(obj);
-    }
+void Scene::addObject(std::unique_ptr<BaseObject> obj) {
+    m_objects.push_back(std::move(obj));
 }
 
 BaseObject* Scene::findIntersection(const Ray& ray, Vector& intersection) const {
     const BaseObject* found = nullptr;
     
-    for(const BaseObject* obj : m_objects) {
+    for(const auto& obj : m_objects) {
         Vector temp;
         if(!obj->intersects(ray, temp)) {
             continue;
@@ -47,7 +43,7 @@ BaseObject* Scene::findIntersection(const Ray& ray, Vector& intersection) const 
         }
         
         intersection = temp;
-        found = obj;
+        found = obj.get();
     }
     
     return const_cast<BaseObject*>(found);

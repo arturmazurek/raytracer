@@ -9,6 +9,7 @@
 #ifndef __ImageTest__Scene__
 #define __ImageTest__Scene__
 
+#include <memory>
 #include <vector>
 
 class BaseObject;
@@ -20,7 +21,7 @@ public:
     Scene();
     ~Scene();
     
-    void addObject(BaseObject* obj);
+    void addObject(std::unique_ptr<BaseObject> obj);
     
     BaseObject* findIntersection(const Ray& ray, Vector& intersection) const;
     
@@ -29,7 +30,7 @@ private:
     Scene& operator=(const Scene&);
     
 private:
-    std::vector<BaseObject*> m_objects;
+    std::vector<std::unique_ptr<BaseObject>> m_objects;
 };
 
 #endif /* defined(__ImageTest__Scene__) */
