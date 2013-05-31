@@ -50,7 +50,7 @@
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(2);
+    r.setSuperSampling(4);
     
     return r.renderScene(s);
 }

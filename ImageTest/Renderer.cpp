@@ -90,7 +90,7 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
             Color c;
             for(int xs = 0; xs < m_superSampling; ++xs) {
                 for(int ys = 0; ys < m_superSampling; ++ys) {
-                    size_t index = (j+ys)*w + i+xs;
+                    size_t index = (j*m_superSampling + ys)*w + i*m_superSampling+xs;
                     c += tempBuffer[index];
                 }
             }
