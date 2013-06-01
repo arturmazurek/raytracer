@@ -69,15 +69,14 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
     int h = m_superSampling * m_height;
     for(int j = 0; j < h; ++j) {
         for(int i = 0; i < w; ++i) {
-//            Ray r = m_camera.viewPointToRay((double)i/m_superSampling - w/2, (double)j/m_superSampling - h/2);
-            Ray r = m_camera.viewPointToRay((double)i/m_superSampling, (double)j/m_superSampling);
+            Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
             
             Color c;
             
             if(s.findIntersection(r, intersection)) {
-                c = Color{255, 255, 255, 255};
+                c = Color::createFromIntegers(255, 255, 255, 255);
             } else {
-                c = Color{100, 200, 100, 255};
+                c = Color::createFromIntegers(100, 100, 100, 255);
             }
             
             tempBuffer[j*w + i] = c;

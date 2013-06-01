@@ -21,6 +21,7 @@
 		6DE7F2E31757AB8E006FED74 /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7F2E11757AB8D006FED74 /* Bitmap.cpp */; };
 		6DE7F2E61758CE2A006FED74 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7F2E41758CE29006FED74 /* Camera.cpp */; };
 		6DE7F2EA1758ECC2006FED74 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7F2E81758ECC0006FED74 /* Color.cpp */; };
+		75E15528175A7D8100D7DA0A /* BaseLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75E15526175A7D8100D7DA0A /* BaseLight.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +57,8 @@
 		6DE7F2E71758D17F006FED74 /* Math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Math.h; sourceTree = "<group>"; };
 		6DE7F2E81758ECC0006FED74 /* Color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
 		6DE7F2E91758ECC1006FED74 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
+		75E15526175A7D8100D7DA0A /* BaseLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseLight.cpp; sourceTree = "<group>"; };
+		75E15527175A7D8100D7DA0A /* BaseLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseLight.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +135,8 @@
 				6DE7F2E51758CE29006FED74 /* Camera.h */,
 				6DE7F2E81758ECC0006FED74 /* Color.cpp */,
 				6DE7F2E91758ECC1006FED74 /* Color.h */,
+				75E15526175A7D8100D7DA0A /* BaseLight.cpp */,
+				75E15527175A7D8100D7DA0A /* BaseLight.h */,
 			);
 			path = ImageTest;
 			sourceTree = "<group>";
@@ -222,6 +227,7 @@
 				6DE7F2E31757AB8E006FED74 /* Bitmap.cpp in Sources */,
 				6DE7F2E61758CE2A006FED74 /* Camera.cpp in Sources */,
 				6DE7F2EA1758ECC2006FED74 /* Color.cpp in Sources */,
+				75E15528175A7D8100D7DA0A /* BaseLight.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

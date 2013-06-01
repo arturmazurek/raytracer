@@ -11,11 +11,9 @@
 #include <memory>
 
 #include "Bitmap.h"
-//#include "Ray.h"
 #include "Renderer.h"
 #include "Scene.h"
 #include "Sphere.h"
-//#include "Vector.h"
 
 @implementation AppDelegate
 @synthesize imageView = _imageView;

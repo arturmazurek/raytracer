@@ -38,11 +38,19 @@ Color& Color::operator+=(const Color& other) {
     return *this;
 }
 
-Color& Color::operator/=(int k) {
-    r = (ValueType)((double)r / k + 0.5);
-    g = (ValueType)((double)g / k + 0.5);
-    b = (ValueType)((double)b / k + 0.5);
-    a = (ValueType)((double)a / k + 0.5);
+Color& Color::operator/=(ValueType k) { 
+    r /= k;
+    g /= k;
+    b /= k;
+    a /= k;
     
     return *this;
+}
+
+Color Color::createFromIntegers(int r, int g, int b, int a) {
+    return {
+        static_cast<ValueType>(r) / 255,
+        static_cast<ValueType>(g) / 255,
+        static_cast<ValueType>(b) / 255,
+        static_cast<ValueType>(a) / 255 };
 }

@@ -10,7 +10,7 @@
 #define __ImageTest__Color__
 
 struct Color {
-    typedef unsigned short int ValueType;
+    typedef float ValueType;
     ValueType r, g, b, a;
     
     Color();
@@ -20,7 +20,9 @@ struct Color {
     
     Color& operator+=(const Color& other);
 
-    Color& operator/=(int k);
+    Color& operator/=(ValueType k);
+    
+    static Color createFromIntegers(int r, int g, int b, int a);
 };
 
 #endif /* defined(__ImageTest__Color__) */

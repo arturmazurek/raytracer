@@ -28,10 +28,10 @@ public:
         PixelInfo() : r{0}, g{0}, b{0}, a{0} {}
         PixelInfo(byte r, byte g, byte b, byte a) : r{r}, g{g}, b{b}, a{a} {}
         PixelInfo(const Color& c) {
-            r = std::min(static_cast<Color::ValueType>(std::numeric_limits<byte>::max()), c.r);
-            g = std::min(static_cast<Color::ValueType>(std::numeric_limits<byte>::max()), c.g);
-            b = std::min(static_cast<Color::ValueType>(std::numeric_limits<byte>::max()), c.b);
-            a = std::min(static_cast<Color::ValueType>(std::numeric_limits<byte>::max()), c.a);
+            r = std::min(1.0f, c.r) * 255;
+            g = std::min(1.0f, c.g) * 255;
+            b = std::min(1.0f, c.b) * 255;
+            a = std::min(1.0f, c.a) * 255;
         }
     };
     
