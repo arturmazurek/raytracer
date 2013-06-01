@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 
+class BaseLight;
 class BaseObject;
 struct Ray;
 struct Vector;
@@ -22,8 +23,13 @@ public:
     ~Scene();
     
     void addObject(std::unique_ptr<BaseObject> obj);
+    void addLight(std::unique_ptr<BaseLight> light);
     
     BaseObject* findIntersection(const Ray& ray, Vector& intersection) const;
+    
+    typedef std::vector<std::unique_ptr<BaseLight>>::const_iterator LightsIterator;
+    LightsIterator lightsBegin() const;
+    LightsIterator lightsEnd() const;
     
 private:
     Scene(const Scene&);
@@ -31,6 +37,7 @@ private:
     
 private:
     std::vector<std::unique_ptr<BaseObject>> m_objects;
+    std::vector<std::unique_ptr<BaseLight>> m_lights;
 };
 
 #endif /* defined(__ImageTest__Scene__) */

@@ -13,6 +13,7 @@
 
 #include <cstdlib>
 
+#include "BaseLight.h"
 #include "BaseObject.h"
 #include "Ray.h"
 #include "Vector.h"
@@ -27,6 +28,10 @@ Scene::~Scene() {
 
 void Scene::addObject(std::unique_ptr<BaseObject> obj) {
     m_objects.push_back(std::move(obj));
+}
+
+void Scene::addLight(std::unique_ptr<BaseLight> light) {
+    m_lights.push_back(std::move(light));
 }
 
 BaseObject* Scene::findIntersection(const Ray& ray, Vector& intersection) const {
@@ -47,4 +52,12 @@ BaseObject* Scene::findIntersection(const Ray& ray, Vector& intersection) const 
     }
     
     return const_cast<BaseObject*>(found);
+}
+
+Scene::LightsIterator Scene::lightsBegin() const {
+    return m_lights.begin();
+}
+
+Scene::LightsIterator Scene::lightsEnd() const {
+    return m_lights.end();
 }

@@ -9,14 +9,16 @@
 #ifndef __ImageTest__BaseObject__
 #define __ImageTest__BaseObject__
 
+#include "Vector.h"
+
 struct Ray;
-struct Vector;
 
 class BaseObject {
 public:
     virtual ~BaseObject() {}
     
     virtual bool intersects(const Ray& r, Vector& intersection) const = 0;
+    virtual Vector normalAtPoint(const Vector& point) const = 0;
 };
 
 #endif /* defined(__ImageTest__BaseObject__) */

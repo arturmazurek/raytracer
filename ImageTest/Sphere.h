@@ -20,6 +20,7 @@ public:
     virtual ~Sphere();
     
     virtual bool intersects(const Ray& r, Vector& intersection) const override;
+    virtual Vector normalAtPoint(const Vector& point) const override;
     
 private:
     Vector center;

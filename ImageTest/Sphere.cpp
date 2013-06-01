@@ -54,3 +54,7 @@ bool Sphere::intersects(const Ray& r, Vector& intersection) const {
     
     return t2 < t1 ? t2 : t1;
 }
+
+Vector Sphere::normalAtPoint(const Vector& point) const {
+    return (point - center).normalize();
+}
