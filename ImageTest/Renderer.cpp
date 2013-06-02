@@ -145,7 +145,15 @@ void Renderer::prepareRender() {
 Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& normal) {
     double intensity = 0;
     for(auto it = s.lightsBegin(); it != s.lightsEnd(); ++it) {
-        intensity += (*it)->intensityAtPosition(pos, normal);
+        Vector biasedPos = pos + m_rayBias*normal;
+        Vector toLight = (*it)->position() - biasedPos;
+        toLight.normalize();
+        Ray toLightRay{biasedPos, toLight};
+        
+        Vector intersection;
+        if(!s.findIntersection(toLightRay, intersection)) {
+            intensity += (*it)->intensityAtPosition(pos, normal);
+        }
     }
     
     intensity = std::min(intensity, 1.0);
