@@ -21,7 +21,11 @@
 #include "Scene.h"
 #include "Vector.h"
 
-Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{(double)(0.5 * Math::PI)}, m_superSampling{1}, m_flipY{false} {
+static const double DEFAULT_FOV = 0.5 * Math::PI;
+static const int DEFAULT_SUPERSAMPLING = 1;
+static const double DEFAULT_RAY_BIAS = 0.001;
+
+Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{DEFAULT_FOV}, m_superSampling{DEFAULT_SUPERSAMPLING}, m_flipY{false}, m_rayBias{DEFAULT_RAY_BIAS} {
     
 }
 
@@ -69,6 +73,15 @@ bool Renderer::getFlipY() const {
     return m_flipY;
 }
 
+void Renderer::setRayBias(double bias) {
+    assert(bias >= 0);
+    m_rayBias = bias;
+}
+
+double Renderer::rayBias() const {
+    return m_rayBias;
+}
+
 std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
     prepareRender();
     
@@ -81,15 +94,7 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
     for(int j = 0; j < h; ++j) {
         for(int i = 0; i < w; ++i) {
             Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
-            
-            Color c;
-            
-            if(BaseObject* obj = s.findIntersection(r, intersection)) {
-                c = Color::createFromIntegers(0, 0, 0, 0);
-                c += getDiffuse(s, intersection, obj->normalAtPoint(intersection));
-            } else {
-                c = Color::createFromIntegers(100, 100, 100, 255);
-            }
+            Color c = processRay(s, r);
             
             tempBuffer[j*w + i] = c;
         }
@@ -116,6 +121,20 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
     }
     
     return b;
+}
+
+Color Renderer::processRay(const Scene& s, const Ray& r) {
+    Vector intersection;
+    Color c;
+    
+    if(BaseObject* obj = s.findIntersection(r, intersection)) {
+        c = Color::createFromIntegers(0, 0, 0, 0);
+        c += getDiffuse(s, intersection, obj->normalAtPoint(intersection));
+    } else {
+        c = Color::createFromIntegers(100, 100, 100, 255);
+    }
+    
+    return c;
 }
 
 void Renderer::prepareRender() {

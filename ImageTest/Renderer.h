@@ -15,6 +15,7 @@
 #include "Color.h"
 
 class Bitmap;
+class Ray;
 class Scene;
 
 class Renderer {
@@ -37,6 +38,9 @@ public:
     void setFlipY(bool value);
     bool getFlipY() const;
     
+    void setRayBias(double bias);
+    double rayBias() const;
+    
 private:
     int m_width;
     int m_height;
@@ -44,10 +48,12 @@ private:
     Camera m_camera;
     int m_superSampling;
     bool m_flipY;
+    double m_rayBias;
     
 private:
     void prepareRender();
     Color getDiffuse(const Scene& s, const Vector& pos, const Vector& normal);
+    Color processRay(const Scene& s, const Ray& r);
     
 private:
     Renderer(const Renderer&);
