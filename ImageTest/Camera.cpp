@@ -21,18 +21,18 @@ Camera::~Camera() {
     
 }
 
-void Camera::setFocalLength(double focalLength) {
+void Camera::setFocalLength(FloatType focalLength) {
     assert(focalLength >= 0);
     
     m_focalLength = focalLength;
 }
 
-double Camera::focalLength() const {
+FloatType Camera::focalLength() const {
     return m_focalLength;
 }
 
 // x,y calculated from center
-Ray Camera::viewPointToRay(double x, double y) const {
+Ray Camera::viewPointToRay(FloatType x, FloatType y) const {
     double ry = y / m_focalLength;
     double rx = x / m_focalLength;
     

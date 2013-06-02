@@ -10,20 +10,21 @@
 #define __ImageTest__Camera__
 
 #include "Ray.h"
+#include "Types.h"
 
 class Camera {
 public:
     Camera();
     virtual ~Camera();
     
-    void setFocalLength(double focalLength);
-    double focalLength() const;
+    void setFocalLength(FloatType focalLength);
+    FloatType focalLength() const;
     
     // x,y calculated from center
-    Ray viewPointToRay(double x, double y) const;
+    Ray viewPointToRay(FloatType x, FloatType y) const;
     
 private:
-    double m_focalLength;
+    FloatType m_focalLength;
     
 private:
     Camera(const Camera&);

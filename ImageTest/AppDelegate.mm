@@ -69,8 +69,8 @@
 - (std::unique_ptr<Bitmap>)createImage {
     Scene s;
 
-//    [self setupPlanets:s];
-    [self setupSpheres:s];
+    [self setupPlanets:s];
+//    [self setupSpheres:s];
     
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
     light->setPosition({50, 200, -20});
@@ -78,7 +78,7 @@
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(2);
+    r.setSuperSampling(1);
     r.setFlipY(true);
     
     return r.renderScene(s);

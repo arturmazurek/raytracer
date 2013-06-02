@@ -138,7 +138,8 @@ Color Renderer::processRay(const Scene& s, const Ray& r) {
 }
 
 void Renderer::prepareRender() {
-    double focalLength = m_height / (2 * std::tan(0.5 * m_fovY));
+//    double focalLength = m_height / (2 * std::tan(0.5 * m_fovY));
+    double focalLength = 1800;
     m_camera.setFocalLength(focalLength);
 }
 

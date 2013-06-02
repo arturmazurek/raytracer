@@ -41,7 +41,7 @@ struct Vector final {
     }
     
     Vector& operator/=(FloatType k) {
-        return (*this) *= (1.f / k);
+        return (*this) *= (1.0 / k);
     }
     
     FloatType lengthSqr() const {
@@ -63,17 +63,17 @@ struct Vector final {
     }
     
     static const Vector& unitX() {
-        static Vector result{1.0f, 0.0f, 0.0f};
+        static Vector result{1, 0, 0};
         return result;
     }
     
     static const Vector& unitY() {
-        static Vector result{0.0f, 1.0f, 0.0f};
+        static Vector result{0, 1, 0};
         return result;
     }
     
     static const Vector& unitZ() {
-        static Vector result{0.0f, 0.0f, 1.0f};
+        static Vector result{0, 0, 1};
         return result;
     }
     };
@@ -107,7 +107,7 @@ struct Vector final {
     }
     
     static inline Vector operator/(const Vector& a, FloatType k) {
-        return a * (1.f / k);
+        return a * (1.0 / k);
     }
     
     static inline Vector normalized(const Vector& a) {
@@ -129,7 +129,7 @@ struct Vector final {
     
     static inline bool equal(const Vector& a, const Vector& b, FloatType epsilon = std::numeric_limits<FloatType>::epsilon()) {
         using namespace std;
-        return fabsf(a.x-b.x) <= epsilon && fabsf(a.y-b.y) <= epsilon && fabsf(a.z-b.z) <= epsilon;
+        return abs(a.x-b.x) <= epsilon && abs(a.y-b.y) <= epsilon && abs(a.z-b.z) <= epsilon;
     }
     
 #endif
