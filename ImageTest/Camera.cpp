@@ -33,11 +33,11 @@ FloatType Camera::focalLength() const {
 
 // x,y calculated from center
 Ray Camera::viewPointToRay(FloatType x, FloatType y) const {
-    double ry = y / m_focalLength;
-    double rx = x / m_focalLength;
+    FloatType ry = y / m_focalLength;
+    FloatType rx = x / m_focalLength;
     
     Vector dir = {rx, ry, 1};
     dir.normalize();
     
-    return {{x, y, 0}, dir};
+    return {{0, 0, -focalLength()}, dir};
 }

@@ -43,7 +43,7 @@ bool Sphere::intersects(const Ray& r, Vector& intersection) const {
     const FloatType C = r.origin.z - m_center.z;
     
     const FloatType a = r.direction.lengthSqr();
-    const FloatType b = 2*A*r.direction.x + 2*B*r.direction.y + 2*C*r.direction.z;
+    const FloatType b = 2*(A*r.direction.x + B*r.direction.y + C*r.direction.z);
     const FloatType c = A*A + B*B + C*C - m_radius*m_radius;
     
     using namespace std;
@@ -60,7 +60,7 @@ bool Sphere::intersects(const Ray& r, Vector& intersection) const {
         return false;
     }
     
-    float t = t2 < t1 ? t2 : t1;
+    FloatType t = t2 < t1 ? t2 : t1;
     intersection = r.origin + t*r.direction;
     return t;
 }
