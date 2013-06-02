@@ -60,6 +60,7 @@
 		6DE7F2E91758ECC1006FED74 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
 		75122F64175B58FF00A06819 /* Plane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plane.cpp; sourceTree = "<group>"; };
 		75122F65175B58FF00A06819 /* Plane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plane.h; sourceTree = "<group>"; };
+		75122F67175B7AC500A06819 /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
 		75E15526175A7D8100D7DA0A /* BaseLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseLight.cpp; sourceTree = "<group>"; };
 		75E15527175A7D8100D7DA0A /* BaseLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseLight.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -142,6 +143,7 @@
 				75E15527175A7D8100D7DA0A /* BaseLight.h */,
 				75122F64175B58FF00A06819 /* Plane.cpp */,
 				75122F65175B58FF00A06819 /* Plane.h */,
+				75122F67175B7AC500A06819 /* Log.h */,
 			);
 			path = ImageTest;
 			sourceTree = "<group>";

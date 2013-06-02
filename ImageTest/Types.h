@@ -10,5 +10,6 @@
 #define ImageTest_Types_h
 
 typedef long double FloatType;
+static_assert(sizeof(FloatType) > sizeof(double), "Oops not a real long double");
 
 #endif

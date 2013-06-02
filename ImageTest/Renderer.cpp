@@ -12,10 +12,12 @@
 #include <cassert>
 #include <cmath>
 #include <memory>
+#include <string>
 
 #include "BaseLight.h"
 #include "BaseObject.h"
 #include "Bitmap.h"
+#include "Log.h"
 #include "Math.h"
 #include "Ray.h"
 #include "Scene.h"
@@ -152,8 +154,11 @@ Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& norm
         Ray toLightRay{biasedPos, toLight};
         
         Vector intersection;
-        if(!s.findIntersection(toLightRay, intersection)) {
+        BaseObject* intersecting = s.findIntersection(toLightRay, intersection);
+        if(!intersecting) {
             intensity += (*it)->intensityAtPosition(pos, normal);
+        } else {
+            LOG("Something in shadow - '%s'\n", intersecting->name().c_str());
         }
     }
     

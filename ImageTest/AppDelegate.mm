@@ -55,6 +55,7 @@
     const FloatType earthRadius = 6378100;
     earth->setRadius(earthRadius);
     earth->setCenter({0, -(earthRadius + FloatType(200)), 0});
+    earth->setName("earth");
     s.addObject(std::move(earth));
     
     auto moon = std::unique_ptr<Sphere>{new Sphere{}};
@@ -63,6 +64,7 @@
     const FloatType moonDistance = 36257000;
     const FloatType angle = Math::PI * FloatType(0.01);
     moon->setCenter({0, moonDistance * sin(angle), moonDistance * cos(angle)});
+    moon->setName("moon");
     s.addObject(std::move(moon));
 }
 
@@ -79,7 +81,7 @@
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(2);
+    r.setSuperSampling(1);
     r.setFlipY(true);
     
     return r.renderScene(s);
