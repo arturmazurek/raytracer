@@ -37,7 +37,7 @@ FloatType Sphere::radius() const {
     return m_radius;
 }
 
-bool Sphere::intersects(const Ray& r, Vector& intersection) const {
+bool Sphere::intersects(const Ray& r, Vector& intersection, Vector& normal) const {
     const FloatType A = r.origin.x - m_center.x;
     const FloatType B = r.origin.y - m_center.y;
     const FloatType C = r.origin.z - m_center.z;
@@ -62,9 +62,9 @@ bool Sphere::intersects(const Ray& r, Vector& intersection) const {
     
     FloatType t = t2 < t1 ? t2 : t1;
     intersection = r.origin + t*r.direction;
+    
+    normal = intersection - m_center;
+    normal.normalize();
+    
     return t;
-}
-
-Vector Sphere::normalAtPoint(const Vector& point) const {
-    return (point - m_center).normalize();
 }

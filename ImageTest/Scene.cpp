@@ -34,12 +34,12 @@ void Scene::addLight(std::unique_ptr<BaseLight> light) {
     m_lights.push_back(std::move(light));
 }
 
-BaseObject* Scene::findIntersection(const Ray& ray, Vector& intersection) const {
+BaseObject* Scene::findIntersection(const Ray& ray, Vector& intersection, Vector& normal) const {
     const BaseObject* found = nullptr;
     
     for(const auto& obj : m_objects) {
         Vector temp;
-        if(!obj->intersects(ray, temp)) {
+        if(!obj->intersects(ray, temp, normal)) {
             continue;
         }
         

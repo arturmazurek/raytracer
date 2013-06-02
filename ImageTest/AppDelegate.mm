@@ -44,9 +44,11 @@
 }
 
 - (void)setupSpheres:(Scene&)s {
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 50}, 40}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{50, 50, 50}, 20}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 80, 50}, 20}});
+    auto sphere1 = std::unique_ptr<BaseObject>{new Sphere{{0, -10, 100}, 60}};
+    sphere1->setName("sphere_1");
+    s.addObject(std::move(sphere1));
+//    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{75, 50, 100}, 20}});
+//    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 80, 100}, 20}});
     s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -120, 0}, {0, 1, 0}}});
 }
 
@@ -62,8 +64,9 @@
     const FloatType moonRadius = 1735970;
     moon->setRadius(moonRadius);
     const FloatType moonDistance = 36257000;
-    const FloatType angle = Math::PI * FloatType(0.01);
-    moon->setCenter({0, moonDistance * sin(angle), moonDistance * cos(angle)});
+//    const FloatType angle = Math::PI * FloatType(0.01);
+//    moon->setCenter({0, moonDistance * sin(angle), moonDistance * cos(angle)});
+    moon->setCenter({0, 0, moonDistance});
     moon->setName("moon");
     s.addObject(std::move(moon));
 }
@@ -71,11 +74,11 @@
 - (std::unique_ptr<Bitmap>)createImage {
     Scene s;
 
-    [self setupPlanets:s];
-//    [self setupSpheres:s];
+//    [self setupPlanets:s];
+    [self setupSpheres:s];
     
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
-    light->setPosition({0, 1000, 0});
+    light->setPosition({0, 200, 0});
     
     s.addLight(std::move(light));
     

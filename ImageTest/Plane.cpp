@@ -15,7 +15,7 @@ Plane::Plane(const Vector& origin, const Vector& normal) : m_origin{origin}, m_n
     m_normal.normalize();
 }
 
-bool Plane::intersects(const Ray& r, Vector& intersection) const {
+bool Plane::intersects(const Ray& r, Vector& intersection, Vector& normal) const {
     FloatType nominator = dot(m_normal, {m_origin - r.origin});
     FloatType denominator = dot(m_normal, r.direction);
     
@@ -29,10 +29,7 @@ bool Plane::intersects(const Ray& r, Vector& intersection) const {
         return false;
     } else {
         intersection = r.origin + t*r.direction;
+        normal = m_normal;
         return true;
     }
-}
-
-Vector Plane::normalAtPoint(const Vector& point) const {
-    return m_normal;
 }

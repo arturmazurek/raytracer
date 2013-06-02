@@ -127,11 +127,11 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
 
 Color Renderer::processRay(const Scene& s, const Ray& r) {
     Vector intersection;
+    Vector normal;
     Color c;
     
-    if(BaseObject* obj = s.findIntersection(r, intersection)) {
-        c = Color::createFromIntegers(0, 0, 0, 0);
-        c += getDiffuse(s, intersection, obj->normalAtPoint(intersection));
+    if(s.findIntersection(r, intersection, normal)) {
+        c += getDiffuse(s, intersection, normal);
     } else {
         c = Color::createFromIntegers(100, 100, 100, 255);
     }
@@ -140,8 +140,8 @@ Color Renderer::processRay(const Scene& s, const Ray& r) {
 }
 
 void Renderer::prepareRender() {
-//    double focalLength = m_height / (2 * std::tan(0.5 * m_fovY));
-    double focalLength = 1800;
+    double focalLength = m_height / (2 * std::tan(0.5 * m_fovY));
+//    double focalLength = 1800;
     m_camera.setFocalLength(focalLength);
 }
 
@@ -154,11 +154,13 @@ Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& norm
         Ray toLightRay{biasedPos, toLight};
         
         Vector intersection;
-        BaseObject* intersecting = s.findIntersection(toLightRay, intersection);
+        Vector tempNormal;
+        BaseObject* intersecting = s.findIntersection(toLightRay, intersection, tempNormal);
         if(!intersecting) {
             intensity += (*it)->intensityAtPosition(pos, normal);
         } else {
-            LOG("Something in shadow - '%s'\n", intersecting->name().c_str());
+//            LOG("In shadow");
+//            return {1,0,0,1};
         }
     }
     

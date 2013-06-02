@@ -25,7 +25,7 @@ public:
     void addObject(std::unique_ptr<BaseObject> obj);
     void addLight(std::unique_ptr<BaseLight> light);
     
-    BaseObject* findIntersection(const Ray& ray, Vector& intersection) const;
+    BaseObject* findIntersection(const Ray& ray, Vector& intersection, Vector& normal) const;
     
     typedef std::vector<std::unique_ptr<BaseLight>>::const_iterator LightsIterator;
     LightsIterator lightsBegin() const;
