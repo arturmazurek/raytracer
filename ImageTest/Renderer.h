@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "Camera.h"
+#include "Color.h"
 
 class Bitmap;
 class Scene;
@@ -42,6 +43,7 @@ private:
     
 private:
     void prepareRender();
+    Color getDiffuse(const Scene& s, const Vector& pos, const Vector& normal);
     
 private:
     Renderer(const Renderer&);

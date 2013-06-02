@@ -26,6 +26,8 @@ public:
     void setIntensity(double intensity);
     double intensity() const;
     
+    double intensityAtPosition(const Vector& pos, const Vector& normal);
+    
 private:
     Vector m_position;
     Color m_color;

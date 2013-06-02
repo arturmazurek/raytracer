@@ -10,6 +10,7 @@
 
 #include <memory>
 
+#include "BaseLight.h"
 #include "Bitmap.h"
 #include "Renderer.h"
 #include "Scene.h"
@@ -42,9 +43,13 @@
 
 - (std::unique_ptr<Bitmap>)createImage {
     Scene s;
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{Vector{0, 0, 0}, 40}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{Vector{30, 30, 0}, 20}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{Vector{0, 80, 0}, 20}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 50}, 40}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{50, 50, 50}, 20}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 80, 50}, 20}});
+    
+    auto light = std::unique_ptr<BaseLight>(new BaseLight{});
+    light->setPosition({100, 100, 100});
+    s.addLight(std::move(light));
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);

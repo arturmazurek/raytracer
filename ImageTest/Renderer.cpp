@@ -8,10 +8,13 @@
 
 #include "Renderer.h"
 
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <memory>
 
+#include "BaseLight.h"
+#include "BaseObject.h"
 #include "Bitmap.h"
 #include "Math.h"
 #include "Ray.h"
@@ -73,8 +76,9 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
             
             Color c;
             
-            if(s.findIntersection(r, intersection)) {
-                c = Color::createFromIntegers(255, 255, 255, 255);
+            if(BaseObject* obj = s.findIntersection(r, intersection)) {
+                c = Color::createFromIntegers(0, 0, 0, 0);
+                c += getDiffuse(s, intersection, obj->normalAtPoint(intersection));
             } else {
                 c = Color::createFromIntegers(100, 100, 100, 255);
             }
@@ -105,4 +109,14 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
 void Renderer::prepareRender() {
     double focalLength = m_height / (2 * std::tan(0.5 * m_fovY));
     m_camera.setFocalLength(focalLength);
+}
+
+Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& normal) {
+    double intensity = 0;
+    for(auto it = s.lightsBegin(); it != s.lightsEnd(); ++it) {
+        intensity += (*it)->intensityAtPosition(pos, normal);
+    }
+    
+    intensity = std::min(intensity, 1.0);
+    return {intensity, intensity, intensity, 1};
 }

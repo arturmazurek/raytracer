@@ -52,7 +52,9 @@ bool Sphere::intersects(const Ray& r, Vector& intersection) const {
         return t1;
     }
     
-    return t2 < t1 ? t2 : t1;
+    float t = t2 < t1 ? t2 : t1;
+    intersection = r.origin + t*r.direction;
+    return t;
 }
 
 Vector Sphere::normalAtPoint(const Vector& point) const {
