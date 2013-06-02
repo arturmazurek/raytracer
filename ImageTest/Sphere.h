@@ -19,12 +19,18 @@ public:
     explicit Sphere(const Vector& center = {}, FloatType radius = 0);
     virtual ~Sphere();
     
+    void setCenter(const Vector& center);
+    const Vector& center() const;
+    
+    void setRadius(FloatType radius);
+    FloatType radius() const;
+    
     virtual bool intersects(const Ray& r, Vector& intersection) const override;
     virtual Vector normalAtPoint(const Vector& point) const override;
     
 private:
-    Vector center;
-    FloatType radius;
+    Vector m_center;
+    FloatType m_radius;
 };
 
 #endif /* defined(__ImageTest__Sphere__) */

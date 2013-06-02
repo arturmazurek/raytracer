@@ -13,22 +13,38 @@
 
 #include "Ray.h"
 
-Sphere::Sphere(const Vector& center, FloatType radius) : center{center}, radius{radius} {
-    assert(radius != 0);
+Sphere::Sphere(const Vector& center, FloatType radius) : m_center{center}, m_radius{radius} {
+
 }
 
 Sphere::~Sphere() {
     
 }
 
+void Sphere::setCenter(const Vector& center) {
+    m_center = center;
+}
+
+const Vector& Sphere::center() const {
+    return m_center;
+}
+
+void Sphere::setRadius(FloatType radius) {
+    m_radius = radius;
+}
+
+FloatType Sphere::radius() const {
+    return m_radius;
+}
+
 bool Sphere::intersects(const Ray& r, Vector& intersection) const {
-    const FloatType A = r.origin.x - center.x;
-    const FloatType B = r.origin.y - center.y;
-    const FloatType C = r.origin.z - center.z;
+    const FloatType A = r.origin.x - m_center.x;
+    const FloatType B = r.origin.y - m_center.y;
+    const FloatType C = r.origin.z - m_center.z;
     
     const FloatType a = r.direction.lengthSqr();
     const FloatType b = 2*A*r.direction.x + 2*B*r.direction.y + 2*C*r.direction.z;
-    const FloatType c = A*A + B*B + C*C - radius*radius;
+    const FloatType c = A*A + B*B + C*C - m_radius*m_radius;
     
     using namespace std;
     const FloatType delta = b*b - 4*a*c;
@@ -44,19 +60,11 @@ bool Sphere::intersects(const Ray& r, Vector& intersection) const {
         return false;
     }
     
-    if(t1 < 0) {
-        return t2;
-    }
-    
-    if(t2 < 0) {
-        return t1;
-    }
-    
     float t = t2 < t1 ? t2 : t1;
     intersection = r.origin + t*r.direction;
     return t;
 }
 
 Vector Sphere::normalAtPoint(const Vector& point) const {
-    return (point - center).normalize();
+    return (point - m_center).normalize();
 }
