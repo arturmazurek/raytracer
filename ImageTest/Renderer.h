@@ -34,12 +34,16 @@ public:
     void setSuperSampling(int amount);
     int getSuperSampling() const;
     
+    void setFlipY(bool value);
+    bool getFlipY() const;
+    
 private:
     int m_width;
     int m_height;
     double m_fovY;
     Camera m_camera;
     int m_superSampling;
+    bool m_flipY;
     
 private:
     void prepareRender();

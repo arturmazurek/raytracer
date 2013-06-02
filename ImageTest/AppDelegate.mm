@@ -48,12 +48,13 @@
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 80, 50}, 20}});
     
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
-    light->setPosition({100, 100, 100});
+    light->setPosition({50, 50, 0});
     s.addLight(std::move(light));
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(4);
+    r.setSuperSampling(2);
+    r.setFlipY(true);
     
     return r.renderScene(s);
 }

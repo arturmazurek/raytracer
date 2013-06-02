@@ -21,7 +21,7 @@
 #include "Scene.h"
 #include "Vector.h"
 
-Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{(double)(0.5 * Math::PI)}, m_superSampling{1} {
+Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{(double)(0.5 * Math::PI)}, m_superSampling{1}, m_flipY{false} {
     
 }
 
@@ -59,6 +59,14 @@ void Renderer::setSuperSampling(int amount) {
 
 int Renderer::getSuperSampling() const {
     return m_superSampling;
+}
+
+void Renderer::setFlipY(bool value) {
+    m_flipY = value;
+}
+
+bool Renderer::getFlipY() const {
+    return m_flipY;
 }
 
 std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
@@ -99,7 +107,11 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
             }
             
             c /= m_superSampling * m_superSampling;
-            b->pixel(i, j) = c;
+            if(m_flipY) {
+                b->pixel(i, m_height - j - 1) = c;
+            } else {
+                b->pixel(i, j) = c;
+            }
         }
     }
     

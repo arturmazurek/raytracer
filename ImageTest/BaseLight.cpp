@@ -44,7 +44,7 @@ double BaseLight::intensity() const {
 }
 
 double BaseLight::intensityAtPosition(const Vector& pos, const Vector& normal) {
-    Vector dir = -(m_position - pos);
+    Vector dir = m_position - pos;
     return std::max(dot(normal, dir.normalize()), static_cast<FloatType>(0.0));
     
 //    FloatType amount = dot(normal, m_position);
