@@ -12,6 +12,7 @@
 
 #include "BaseLight.h"
 #include "Bitmap.h"
+#include "Plane.h"
 #include "Renderer.h"
 #include "Scene.h"
 #include "Sphere.h"
@@ -46,6 +47,7 @@
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 50}, 40}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{50, 50, 50}, 20}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 80, 50}, 20}});
+    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -200, 0}, {0, 1, 0}}});
     
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
     light->setPosition({50, 50, 0});

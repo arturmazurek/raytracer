@@ -16,7 +16,7 @@
 
 class Sphere : public BaseObject {
 public:
-    Sphere(const Vector& center, FloatType radius);
+    explicit Sphere(const Vector& center = {}, FloatType radius = 0);
     virtual ~Sphere();
     
     virtual bool intersects(const Ray& r, Vector& intersection) const override;
