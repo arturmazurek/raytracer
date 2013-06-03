@@ -39,7 +39,8 @@ BaseObject* Scene::findIntersection(const Ray& ray, Vector& intersection, Vector
     
     for(const auto& obj : m_objects) {
         Vector temp;
-        if(!obj->intersects(ray, temp, normal)) {
+        Vector tempNormal;
+        if(!obj->intersects(ray, temp, tempNormal)) {
             continue;
         }
         
@@ -48,6 +49,7 @@ BaseObject* Scene::findIntersection(const Ray& ray, Vector& intersection, Vector
         }
         
         intersection = temp;
+        normal = tempNormal;
         found = obj.get();
     }
     

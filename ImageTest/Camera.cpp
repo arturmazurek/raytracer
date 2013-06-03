@@ -39,6 +39,5 @@ Ray Camera::viewPointToRay(FloatType x, FloatType y) const {
     Vector dir = {rx, ry, 1};
     dir.normalize();
     
-//    return {{0, 0, -focalLength()}, dir};
-    return {{x, y, 0}, dir};
+    return {{0, 0, -focalLength()}, dir};
 }

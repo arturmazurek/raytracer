@@ -44,11 +44,9 @@
 }
 
 - (void)setupSpheres:(Scene&)s {
-    auto sphere1 = std::unique_ptr<BaseObject>{new Sphere{{0, -10, 100}, 60}};
-    sphere1->setName("sphere_1");
-    s.addObject(std::move(sphere1));
-//    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{75, 50, 100}, 20}});
-//    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 80, 100}, 20}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 50}, 40}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{50, 50, 50}, 20}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 80, 50}, 20}});
     s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -120, 0}, {0, 1, 0}}});
 }
 
