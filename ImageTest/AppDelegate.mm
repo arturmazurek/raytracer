@@ -12,6 +12,7 @@
 
 #include "BaseLight.h"
 #include "Bitmap.h"
+#include "Cylinder.h"
 #include "Math.h"
 #include "Plane.h"
 #include "Renderer.h"
@@ -44,10 +45,12 @@
 }
 
 - (void)setupSpheres:(Scene&)s {
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 50}, 40}});
+//    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 50}, 40}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{60, 50, 50}, 20}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-60, 80, 50}, 20}});
-//    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -120, 0}, {0, 1, 0}}});
+//    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-60, 80, 50}, 20}});
+    s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{0, 100, 45}, 10, 10, Cylinder::AxisAlignment::Z_AXIS}});
+    
+    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -120, 0}, {0, 1, 0}}});
 }
 
 - (void)setupPlanets:(Scene&)s {
@@ -71,7 +74,7 @@
 - (std::unique_ptr<Bitmap>)createImage {
     Scene s;
 
-    [self setupPlanets:s];
+//    [self setupPlanets:s];
     [self setupSpheres:s];
     
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
@@ -82,7 +85,7 @@
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(4);
+    r.setSuperSampling(1);
     r.setFlipY(true);
     
     return r.renderScene(s);

@@ -18,6 +18,7 @@
 		6D8474A7172EC6D100BAF86F /* BaseObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D8474A5172EC6D100BAF86F /* BaseObject.cpp */; };
 		6D8474AB172ECA6100BAF86F /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D8474A9172ECA6100BAF86F /* Ray.cpp */; };
 		6D8474AE172ECEC600BAF86F /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D8474AC172ECEC500BAF86F /* Sphere.cpp */; };
+		6DB15D31175CE78B00D908B6 /* Cylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DB15D2F175CE78B00D908B6 /* Cylinder.cpp */; };
 		6DE7F2E31757AB8E006FED74 /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7F2E11757AB8D006FED74 /* Bitmap.cpp */; };
 		6DE7F2E61758CE2A006FED74 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7F2E41758CE29006FED74 /* Camera.cpp */; };
 		6DE7F2EA1758ECC2006FED74 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7F2E81758ECC0006FED74 /* Color.cpp */; };
@@ -51,6 +52,8 @@
 		6D8474AC172ECEC500BAF86F /* Sphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sphere.cpp; sourceTree = "<group>"; };
 		6D8474AD172ECEC500BAF86F /* Sphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere.h; sourceTree = "<group>"; };
 		6D8474AF172ECEF400BAF86F /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		6DB15D2F175CE78B00D908B6 /* Cylinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cylinder.cpp; sourceTree = "<group>"; };
+		6DB15D30175CE78B00D908B6 /* Cylinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cylinder.h; sourceTree = "<group>"; };
 		6DE7F2E11757AB8D006FED74 /* Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bitmap.cpp; sourceTree = "<group>"; };
 		6DE7F2E21757AB8E006FED74 /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bitmap.h; sourceTree = "<group>"; };
 		6DE7F2E41758CE29006FED74 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
@@ -144,6 +147,8 @@
 				75122F64175B58FF00A06819 /* Plane.cpp */,
 				75122F65175B58FF00A06819 /* Plane.h */,
 				75122F67175B7AC500A06819 /* Log.h */,
+				6DB15D2F175CE78B00D908B6 /* Cylinder.cpp */,
+				6DB15D30175CE78B00D908B6 /* Cylinder.h */,
 			);
 			path = ImageTest;
 			sourceTree = "<group>";
@@ -236,6 +241,7 @@
 				6DE7F2EA1758ECC2006FED74 /* Color.cpp in Sources */,
 				75E15528175A7D8100D7DA0A /* BaseLight.cpp in Sources */,
 				75122F66175B58FF00A06819 /* Plane.cpp in Sources */,
+				6DB15D31175CE78B00D908B6 /* Cylinder.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
