@@ -45,9 +45,9 @@
 
 - (void)setupSpheres:(Scene&)s {
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 50}, 40}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{50, 50, 50}, 20}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 80, 50}, 20}});
-    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -120, 0}, {0, 1, 0}}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{60, 50, 50}, 20}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-60, 80, 50}, 20}});
+//    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -120, 0}, {0, 1, 0}}});
 }
 
 - (void)setupPlanets:(Scene&)s {
@@ -62,9 +62,8 @@
     const FloatType moonRadius = 1735970;
     moon->setRadius(moonRadius);
     const FloatType moonDistance = 36257000;
-//    const FloatType angle = Math::PI * FloatType(0.01);
-//    moon->setCenter({0, moonDistance * sin(angle), moonDistance * cos(angle)});
-    moon->setCenter({0, 0, moonDistance});
+    const FloatType angle = Math::PI * FloatType(0.1);
+    moon->setCenter({0, moonDistance * sin(angle), moonDistance * cos(angle)});
     moon->setName("moon");
     s.addObject(std::move(moon));
 }
@@ -72,17 +71,18 @@
 - (std::unique_ptr<Bitmap>)createImage {
     Scene s;
 
-//    [self setupPlanets:s];
+    [self setupPlanets:s];
     [self setupSpheres:s];
     
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
-    light->setPosition({0, 200, 0});
+//    light->setPosition({0, 200, 0});
+    light->setPosition({0, 2.5e17, 0});
     
     s.addLight(std::move(light));
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(1);
+    r.setSuperSampling(4);
     r.setFlipY(true);
     
     return r.renderScene(s);

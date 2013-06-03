@@ -141,7 +141,6 @@ Color Renderer::processRay(const Scene& s, const Ray& r) {
 
 void Renderer::prepareRender() {
     double focalLength = m_height / (2 * std::tan(0.5 * m_fovY));
-//    double focalLength = 1800;
     m_camera.setFocalLength(focalLength);
 }
 
@@ -154,14 +153,15 @@ Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& norm
         Ray toLightRay{biasedPos, toLight};
         
         Vector intersection;
-        Vector tempNormal;
-        BaseObject* intersecting = s.findIntersection(toLightRay, intersection, tempNormal);
-        if(!intersecting) {
-            intensity += (*it)->intensityAtPosition(pos, normal);
-        } else {
-//            LOG("In shadow");
-//            return {1,0,0,1};
+        Vector intersectionNormal;
+        BaseObject* intersecting = s.findIntersection(toLightRay, intersection, intersectionNormal);
+        if(intersecting) {
+            if((intersection - biasedPos).lengthSqr() < ((*it)->position() - biasedPos).lengthSqr()) {
+                continue;
+            }
         }
+        
+        intensity += (*it)->intensityAtPosition(pos, normal);
     }
     
     intensity = std::min(intensity, 1.0);
