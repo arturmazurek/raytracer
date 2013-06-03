@@ -11,6 +11,7 @@
 #include <cassert>
 
 #include "Ray.h"
+#include "Util.h"
 
 Cylinder::Cylinder(const Vector& pos, FloatType radius, FloatType extends, AxisAlignment axis) : m_position{pos}, m_radius{radius}, m_extends{extends}, m_axis{axis} {
     
@@ -93,18 +94,90 @@ bool Cylinder::intersects(const Ray& r, Vector& intersection, Vector& normal) co
         return false;
     }
     
-    const FloatType t1 = (-b + sqrt(delta)) / (2*a);
-    const FloatType t2 = (-b - sqrt(delta)) / (2*a);
+    const FloatType t1 = (-b - sqrt(delta)) / (2*a);
+    const FloatType t2 = (-b + sqrt(delta)) / (2*a);
     
     if(t1 < 0 && t2 < 0) {
         return false;
     }
     
-//    FloatType t = t2 < t1 ? t2 : t1;
-    Vector intersection1 = r.origin + t1*r.direction;
-    Vector intersection2 = r.origin + t2*r.direction;;
+    return checkFactors(r, t1, t2, intersection, normal);
+}
+
+// t1 must be smaller than t2
+bool Cylinder::checkFactors(const Ray& r, FloatType t1, FloatType t2, Vector& intersection, Vector& normal) const {
+    intersection = {};
+    normal = {};
     
-    normal = intersection - m_position;
+    bool t1Valid = true;
+    if(t1 >= 0) {
+        intersection = r.origin + t1*r.direction;
+        normal = intersection - m_position;
+        
+        switch (m_axis) {
+            case AxisAlignment::X_AXIS:
+                if(abs(intersection.x - m_position.x) > m_extends) {
+                    t1Valid = false;
+                }
+                break;
+                
+            case AxisAlignment::Y_AXIS:
+                if(abs(intersection.y - m_position.y) > m_extends) {
+                    t1Valid = false;
+                }
+                break;
+                
+            case AxisAlignment::Z_AXIS:
+                if(abs(intersection.z - m_position.z) > m_extends) {
+                    t1Valid = false;
+                }
+                break;
+                
+            default:
+                assert(!"Shouldn't get here");
+        }
+    } else {
+        t1Valid = false;
+    }
+    
+    bool t2Valid = true;
+    Vector intersection2 = r.origin + t2*r.direction;
+    Vector normal2 = intersection2 - m_position;
+    if(t2 >= 0 && !t1Valid) {
+        switch (m_axis) {
+            case AxisAlignment::X_AXIS:
+                if(abs(intersection2.x - m_position.x) > m_extends) {
+                    t2Valid = false;
+                }
+                break;
+                
+            case AxisAlignment::Y_AXIS:
+                if(abs(intersection2.y - m_position.y) > m_extends) {
+                    t2Valid = false;
+                }
+                break;
+                
+            case AxisAlignment::Z_AXIS:
+                if(abs(intersection2.z - m_position.z) > m_extends) {
+                    t2Valid = false;
+                }
+                break;
+                
+            default:
+                assert(!"Shouldn't get here");
+        }
+    } else {
+        t2Valid = false;
+    }
+    
+    if(!t1Valid && !t2Valid) {
+        return false;
+    } else if(t2Valid && !t1Valid) {
+        normal = normal2;
+        intersection = intersection2;
+        normal *= -1;
+    }
+    
     switch (m_axis) {
         case AxisAlignment::X_AXIS:
             if(abs(intersection.x - m_position.x) > m_extends) {
@@ -131,69 +204,6 @@ bool Cylinder::intersects(const Ray& r, Vector& intersection, Vector& normal) co
             assert(!"Shouldn't get here");
     }
     normal.normalize();
-    
-    return t;
-}
 
-bool Cylinder::checkFactors(const Ray& r, FloatType* factors, int count, Vector& intersection, Vector& normal) {
-    FloatType* selected = nullptr;
-    for(int i = 0; i < count; ++i) {
-        Vector intersection = r.origin + factors[i]*r.direction;
-        
-        switch (m_axis) {
-            case AxisAlignment::X_AXIS:
-                if(abs(intersection.x - m_position.x) > m_extends) {
-                    continue;
-                }
-                normal.x = 0;
-                break;
-                
-            case AxisAlignment::Y_AXIS:
-                if(abs(intersection.y - m_position.y) > m_extends) {
-                    continue;
-                }
-                normal.y = 0;
-                break;
-                
-            case AxisAlignment::Z_AXIS:
-                if(abs(intersection.z - m_position.z) > m_extends) {
-                    continue;
-                }
-                normal.z = 0;
-                break;
-                
-            default:
-                assert(!"Shouldn't get here");
-        }
-
-    }
-//    Vector intersection1 = r.origin + t1*r.direction;
-//    Vector intersection2 = r.origin + t2*r.direction;
-//    
-//    switch (m_axis) {
-//        case AxisAlignment::X_AXIS:
-//            if(abs(intersection.x - m_position.x) > m_extends) {
-//                return false;
-//            }
-//            normal.x = 0;
-//            break;
-//            
-//        case AxisAlignment::Y_AXIS:
-//            if(abs(intersection.y - m_position.y) > m_extends) {
-//                return false;
-//            }
-//            normal.y = 0;
-//            break;
-//            
-//        case AxisAlignment::Z_AXIS:
-//            if(abs(intersection.z - m_position.z) > m_extends) {
-//                return false;
-//            }
-//            normal.z = 0;
-//            break;
-//            
-//        default:
-//            assert(!"Shouldn't get here");
-//    }
-//    normal.normalize();
+    return true;
 }
