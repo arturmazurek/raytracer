@@ -48,7 +48,7 @@
 //    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 50}, 40}});
 //    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{10, 70, 25}, 20}});
 //    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-60, 80, 50}, 20}});
-    s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{0, 100, 45}, 20, 60, Cylinder::AxisAlignment::Y_AXIS}});
+    s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{0, 100, 45}, 20, 60, Cylinder::AxisAlignment::X_AXIS}});
     
     s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -120, 0}, {0, 1, 0}}});
 }
