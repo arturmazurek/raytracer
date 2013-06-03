@@ -11,6 +11,8 @@
 
 #include "BaseObject.h"
 
+#include <utility>
+
 #include "Types.h"
 #include "Vector.h"
 
@@ -40,6 +42,9 @@ public:
     AxisAlignment axisAlignment() const;
     
     virtual bool intersects(const Ray& r, Vector& intersection, Vector& normal) const override;
+    
+private:
+    std::pair<bool, bool> checkFactors(const Ray& r, FloatType t1, FloatType t2);
     
 private:
     Vector m_position;
