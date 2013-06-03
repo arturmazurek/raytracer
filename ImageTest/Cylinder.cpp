@@ -135,7 +135,65 @@ bool Cylinder::intersects(const Ray& r, Vector& intersection, Vector& normal) co
     return t;
 }
 
-std::pair<bool, bool> Cylinder::checkFactors(const Ray& r, FloatType t1, FloatType t2) {
-    Vector intersection1 = r.origin + t1*r.direction;
-    Vector intersection2 = r.origin + t2*r.direction;
+bool Cylinder::checkFactors(const Ray& r, FloatType* factors, int count, Vector& intersection, Vector& normal) {
+    FloatType* selected = nullptr;
+    for(int i = 0; i < count; ++i) {
+        Vector intersection = r.origin + factors[i]*r.direction;
+        
+        switch (m_axis) {
+            case AxisAlignment::X_AXIS:
+                if(abs(intersection.x - m_position.x) > m_extends) {
+                    continue;
+                }
+                normal.x = 0;
+                break;
+                
+            case AxisAlignment::Y_AXIS:
+                if(abs(intersection.y - m_position.y) > m_extends) {
+                    continue;
+                }
+                normal.y = 0;
+                break;
+                
+            case AxisAlignment::Z_AXIS:
+                if(abs(intersection.z - m_position.z) > m_extends) {
+                    continue;
+                }
+                normal.z = 0;
+                break;
+                
+            default:
+                assert(!"Shouldn't get here");
+        }
+
+    }
+//    Vector intersection1 = r.origin + t1*r.direction;
+//    Vector intersection2 = r.origin + t2*r.direction;
+//    
+//    switch (m_axis) {
+//        case AxisAlignment::X_AXIS:
+//            if(abs(intersection.x - m_position.x) > m_extends) {
+//                return false;
+//            }
+//            normal.x = 0;
+//            break;
+//            
+//        case AxisAlignment::Y_AXIS:
+//            if(abs(intersection.y - m_position.y) > m_extends) {
+//                return false;
+//            }
+//            normal.y = 0;
+//            break;
+//            
+//        case AxisAlignment::Z_AXIS:
+//            if(abs(intersection.z - m_position.z) > m_extends) {
+//                return false;
+//            }
+//            normal.z = 0;
+//            break;
+//            
+//        default:
+//            assert(!"Shouldn't get here");
+//    }
+//    normal.normalize();
 }

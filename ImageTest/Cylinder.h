@@ -44,7 +44,7 @@ public:
     virtual bool intersects(const Ray& r, Vector& intersection, Vector& normal) const override;
     
 private:
-    std::pair<bool, bool> checkFactors(const Ray& r, FloatType t1, FloatType t2);
+    bool checkFactors(const Ray& r, FloatType* factors, int count, Vector& intersection, Vector& normal);
     
 private:
     Vector m_position;
