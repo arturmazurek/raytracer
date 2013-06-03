@@ -18,9 +18,13 @@
 #include "Renderer.h"
 #include "Scene.h"
 #include "Sphere.h"
+#include "Types.h"
 
 @implementation AppDelegate
 @synthesize imageView = _imageView;
+
+static const FloatType RINGWORLD_RADIUS = 153000000000;
+static const FloatType RINGWORLD_EXTENDS = 400000000;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
@@ -48,9 +52,9 @@
 //    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 50}, 40}});
 //    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{10, 70, 25}, 20}});
 //    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-60, 80, 50}, 20}});
-    s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{0, 100, 45}, 20, 60, Cylinder::AxisAlignment::X_AXIS}});
+    s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{0, RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS, RINGWORLD_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
     
-    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -120, 0}, {0, 1, 0}}});
+//    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -120, 0}, {0, 1, 0}}});
 }
 
 - (void)setupPlanets:(Scene&)s {
@@ -79,12 +83,13 @@
     
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
 //    light->setPosition({0, 200, 0});
-    light->setPosition({0, 2.5e17, 0});
+//    light->setPosition({0, 2.5e17, 0});
+    light->setPosition({0, RINGWORLD_RADIUS, 0});
     s.addLight(std::move(light));
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(1);
+    r.setSuperSampling(4);
     r.setFlipY(true);
     
     return r.renderScene(s);
