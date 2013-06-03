@@ -125,12 +125,15 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
     return b;
 }
 
+BaseObject* _bo;
+
 Color Renderer::processRay(const Scene& s, const Ray& r) {
     Vector intersection;
     Vector normal;
     Color c;
     
-    if(s.findIntersection(r, intersection, normal)) {
+    if(BaseObject* bo = s.findIntersection(r, intersection, normal)) {
+        _bo = bo;
         c += getDiffuse(s, intersection, normal);
     } else {
         c = Color::createFromIntegers(100, 100, 100, 255);
@@ -149,7 +152,6 @@ Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& norm
     for(auto it = s.lightsBegin(); it != s.lightsEnd(); ++it) {
         Vector biasedPos = pos + m_rayBias*normal;
         Vector toLight = (*it)->position() - biasedPos;
-        toLight.normalize();
         Ray toLightRay{biasedPos, toLight};
         
         Vector intersection;
@@ -157,9 +159,13 @@ Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& norm
         BaseObject* intersecting = s.findIntersection(toLightRay, intersection, intersectionNormal);
         if(intersecting) {
             if((intersection - biasedPos).lengthSqr() < ((*it)->position() - biasedPos).lengthSqr()) {
+                if(_bo->name() != "cylinder") {
+                    s.findIntersection(toLightRay, intersection, intersectionNormal);
+                }
                 continue;
             }
         }
+        
         
         intensity += (*it)->intensityAtPosition(pos, normal);
     }

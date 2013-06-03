@@ -14,7 +14,7 @@
 #include "Util.h"
 
 Cylinder::Cylinder(const Vector& pos, FloatType radius, FloatType extends, AxisAlignment axis) : m_position{pos}, m_radius{radius}, m_extends{extends}, m_axis{axis} {
-    
+    setName("cylinder");
 }
 
 Cylinder::~Cylinder() {
@@ -106,6 +106,7 @@ bool Cylinder::intersects(const Ray& r, Vector& intersection, Vector& normal) co
 
 // t1 must be smaller than t2
 bool Cylinder::checkFactors(const Ray& r, FloatType t1, FloatType t2, Vector& intersection, Vector& normal) const {
+    using namespace std;
     intersection = {};
     normal = {};
     

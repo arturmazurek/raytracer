@@ -46,7 +46,7 @@
 
 - (void)setupSpheres:(Scene&)s {
 //    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 50}, 40}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{60, 50, 50}, 20}});
+//    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{10, 70, 25}, 20}});
 //    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-60, 80, 50}, 20}});
     s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{0, 100, 45}, 20, 60, Cylinder::AxisAlignment::Y_AXIS}});
     
@@ -80,7 +80,6 @@
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
 //    light->setPosition({0, 200, 0});
     light->setPosition({0, 2.5e17, 0});
-    
     s.addLight(std::move(light));
     
     Renderer r;
