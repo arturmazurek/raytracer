@@ -49,12 +49,23 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
 }
 
 - (void)setupSpheres:(Scene&)s {
-//    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 50}, 40}});
-//    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{10, 70, 25}, 20}});
-//    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-60, 80, 50}, 20}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 50}, 40}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{10, 70, 25}, 20}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-60, 80, 50}, 20}});
+    
+    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -120, 0}, {0, 1, 0}}});
+    
+    auto light = std::unique_ptr<BaseLight>(new BaseLight{});
+    light->setPosition({0, 200, 0});
+    s.addLight(std::move(light));
+}
+
+- (void)setupRingworld:(Scene&)s {
     s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{0, RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS, RINGWORLD_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
     
-//    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -120, 0}, {0, 1, 0}}});
+    auto light = std::unique_ptr<BaseLight>(new BaseLight{});
+    light->setPosition({0, RINGWORLD_RADIUS, 0});
+    s.addLight(std::move(light));
 }
 
 - (void)setupPlanets:(Scene&)s {
@@ -73,6 +84,10 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
     moon->setCenter({0, moonDistance * sin(angle), moonDistance * cos(angle)});
     moon->setName("moon");
     s.addObject(std::move(moon));
+    
+    auto light = std::unique_ptr<BaseLight>(new BaseLight{});
+    light->setPosition({0, 2.5e17, 0});
+    s.addLight(std::move(light));
 }
 
 - (std::unique_ptr<Bitmap>)createImage {
@@ -80,16 +95,11 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
 
 //    [self setupPlanets:s];
     [self setupSpheres:s];
-    
-    auto light = std::unique_ptr<BaseLight>(new BaseLight{});
-//    light->setPosition({0, 200, 0});
-//    light->setPosition({0, 2.5e17, 0});
-    light->setPosition({0, RINGWORLD_RADIUS, 0});
-    s.addLight(std::move(light));
+//    [self setupRingworld:s];
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(4);
+    r.setSuperSampling(1);
     r.setFlipY(true);
     
     return r.renderScene(s);
