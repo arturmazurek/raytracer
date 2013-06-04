@@ -47,6 +47,10 @@ Color& Color::operator/=(ValueType k) {
     return *this;
 }
 
+Color::ValueType Color::magnitudeSqr() const {
+    return r*r + g*g + b*b;
+}
+
 Color Color::createFromIntegers(int r, int g, int b, int a) {
     return {
         static_cast<ValueType>(r) / 255,

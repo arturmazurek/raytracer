@@ -56,13 +56,12 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
     s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -2, 0}, {0, 1, 0}}});
     
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
-    light->setPosition({0, 200, 0});
+    light->setPosition({10, 20, 0});
     s.addLight(std::move(light));
 }
 
 - (void)setupRingworld:(Scene&)s {
     s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{0, RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS, RINGWORLD_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-1, -1.5, 2}, 0.5}});
     
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
     light->setPosition({0, RINGWORLD_RADIUS, 0});
@@ -100,8 +99,10 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(4);
+    r.setSuperSampling(1);
     r.setFlipY(true);
+    r.setExposure(2);
+    r.setGamma(0.8);
     
     return r.renderScene(s);
 }

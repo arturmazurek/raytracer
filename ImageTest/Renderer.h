@@ -41,6 +41,12 @@ public:
     void setRayBias(double bias);
     double rayBias() const;
     
+    void setExposure(double exposure);
+    double exposure() const;
+    
+    void setGamma(double gamma);
+    double gamma() const;
+    
 private:
     int m_width;
     int m_height;
@@ -49,11 +55,15 @@ private:
     int m_superSampling;
     bool m_flipY;
     double m_rayBias;
+    double m_exposure;
+    double m_gamma;
     
 private:
     void prepareRender();
     Color getDiffuse(const Scene& s, const Vector& pos, const Vector& normal);
     Color processRay(const Scene& s, const Ray& r);
+    void processExposure(Color* buffer, int w, int h) const;
+    void processGamma(Color* buffer, int w, int h) const;
     
 private:
     Renderer(const Renderer&);

@@ -10,7 +10,7 @@
 #define __ImageTest__Color__
 
 struct Color {
-    typedef float ValueType;
+    typedef double ValueType;
     ValueType r, g, b, a;
     
     Color();
@@ -21,6 +21,8 @@ struct Color {
     Color& operator+=(const Color& other);
 
     Color& operator/=(ValueType k);
+    
+    ValueType magnitudeSqr() const;
     
     static Color createFromIntegers(int r, int g, int b, int a);
 };

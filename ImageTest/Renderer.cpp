@@ -27,7 +27,7 @@ static const double DEFAULT_FOV = 0.4 * Math::PI;
 static const int DEFAULT_SUPERSAMPLING = 1;
 static const double DEFAULT_RAY_BIAS = 0.001;
 
-Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{DEFAULT_FOV}, m_superSampling{DEFAULT_SUPERSAMPLING}, m_flipY{false}, m_rayBias{DEFAULT_RAY_BIAS} {
+Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{DEFAULT_FOV}, m_superSampling{DEFAULT_SUPERSAMPLING}, m_flipY{false}, m_rayBias{DEFAULT_RAY_BIAS}, m_exposure{1}, m_gamma{1} {
     
 }
 
@@ -84,7 +84,24 @@ double Renderer::rayBias() const {
     return m_rayBias;
 }
 
+void Renderer::setExposure(double exposure) {
+    m_exposure = exposure;
+}
+
+double Renderer::exposure() const {
+    return m_exposure;
+}
+
+void Renderer::setGamma(double gamma) {
+    m_gamma = gamma;
+}
+
+double Renderer::gamma() const {
+    return m_gamma;
+}
+
 std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
+    using namespace std;
     prepareRender();
     
     Vector intersection;
@@ -102,6 +119,8 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
         }
     }
     
+    processExposure(tempBuffer.get(), w, h);
+    
     auto b = std::unique_ptr<Bitmap>(new Bitmap(m_width, m_height));
     for(int j = 0; j < m_height; ++j) {
         for(int i = 0; i < m_width; ++i) {
@@ -114,6 +133,11 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
             }
             
             c /= m_superSampling * m_superSampling;
+            
+            c.r  = pow(c.r, m_gamma);
+            c.g  = pow(c.g, m_gamma);
+            c.b  = pow(c.b, m_gamma);
+            
             if(m_flipY) {
                 b->pixel(i, m_height - j - 1) = c;
             } else {
@@ -167,4 +191,16 @@ Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& norm
     
     intensity = std::min(intensity, 1.0);
     return {intensity, intensity, intensity, 1};
+}
+
+void Renderer::processExposure(Color* buffer, int w, int h) const {
+    using namespace std;
+
+    for(int j = 0; j < h; ++j) {
+        for(int i = 0; i < w; ++i) {
+            buffer[j*w + i].r = 1.0 - exp(-buffer[j*w + i].r * m_exposure);
+            buffer[j*w + i].g = 1.0 - exp(-buffer[j*w + i].g * m_exposure);
+            buffer[j*w + i].b = 1.0 - exp(-buffer[j*w + i].b * m_exposure);
+        }
+    }
 }
