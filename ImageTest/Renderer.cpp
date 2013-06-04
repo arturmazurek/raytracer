@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <limits>
 #include <memory>
 #include <string>
 
@@ -27,7 +28,8 @@ static const double DEFAULT_FOV = 0.4 * Math::PI;
 static const int DEFAULT_SUPERSAMPLING = 1;
 static const double DEFAULT_RAY_BIAS = 0.001;
 
-Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{DEFAULT_FOV}, m_superSampling{DEFAULT_SUPERSAMPLING}, m_flipY{false}, m_rayBias{DEFAULT_RAY_BIAS}, m_exposure{1}, m_gamma{1} {
+Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{DEFAULT_FOV}, m_superSampling{DEFAULT_SUPERSAMPLING},
+m_flipY{false}, m_rayBias{DEFAULT_RAY_BIAS}, m_exposure{1}, m_gamma{1}, m_highestIntensity{0} {
     
 }
 
@@ -115,6 +117,11 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
             Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
             Color c = processRay(s, r);
             
+            double magn = c.magnitudeSqr();
+            if(magn > m_highestIntensity) {
+                m_highestIntensity = magn;
+            }
+            
             tempBuffer[j*w + i] = c;
         }
     }
@@ -133,10 +140,6 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
             }
             
             c /= m_superSampling * m_superSampling;
-            
-            c.r  = pow(c.r, m_gamma);
-            c.g  = pow(c.g, m_gamma);
-            c.b  = pow(c.b, m_gamma);
             
             if(m_flipY) {
                 b->pixel(i, m_height - j - 1) = c;
@@ -157,8 +160,10 @@ Color Renderer::processRay(const Scene& s, const Ray& r) {
     if(s.findIntersection(r, intersection, normal)) {
         c += getDiffuse(s, intersection, normal);
     } else {
-        c = Color::createFromIntegers(100, 100, 100, 255);
+        c = Color::createFromIntegers(0, 0, 0, 255);
     }
+    
+    c.a = 1;
     
     return c;
 }
@@ -166,6 +171,7 @@ Color Renderer::processRay(const Scene& s, const Ray& r) {
 void Renderer::prepareRender() {
     double focalLength = m_height / (2 * std::tan(0.5 * m_fovY));
     m_camera.setFocalLength(focalLength);
+    m_highestIntensity = std::numeric_limits<double>::min();
 }
 
 Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& normal) {
@@ -189,18 +195,19 @@ Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& norm
         intensity += (*it)->intensityAtPosition(pos, normal);
     }
     
-    intensity = std::min(intensity, 1.0);
     return {intensity, intensity, intensity, 1};
 }
 
 void Renderer::processExposure(Color* buffer, int w, int h) const {
     using namespace std;
-
+    
     for(int j = 0; j < h; ++j) {
         for(int i = 0; i < w; ++i) {
-            buffer[j*w + i].r = 1.0 - exp(-buffer[j*w + i].r * m_exposure);
-            buffer[j*w + i].g = 1.0 - exp(-buffer[j*w + i].g * m_exposure);
-            buffer[j*w + i].b = 1.0 - exp(-buffer[j*w + i].b * m_exposure);
+            Color& c = buffer[j*w + i];
+            
+            c.r = 1.0 - exp(-c.r * m_exposure);
+            c.g = 1.0 - exp(-c.g * m_exposure);
+            c.b = 1.0 - exp(-c.b * m_exposure);
         }
     }
 }

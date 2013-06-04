@@ -57,6 +57,7 @@ private:
     double m_rayBias;
     double m_exposure;
     double m_gamma;
+    double m_highestIntensity;
     
 private:
     void prepareRender();
