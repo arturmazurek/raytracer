@@ -23,7 +23,7 @@
 #include "Scene.h"
 #include "Vector.h"
 
-static const double DEFAULT_FOV = 0.5 * Math::PI;
+static const double DEFAULT_FOV = 0.4 * Math::PI;
 static const int DEFAULT_SUPERSAMPLING = 1;
 static const double DEFAULT_RAY_BIAS = 0.001;
 
@@ -141,7 +141,6 @@ Color Renderer::processRay(const Scene& s, const Ray& r) {
 
 void Renderer::prepareRender() {
     double focalLength = m_height / (2 * std::tan(0.5 * m_fovY));
-    focalLength = 300;
     m_camera.setFocalLength(focalLength);
 }
 

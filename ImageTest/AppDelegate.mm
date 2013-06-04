@@ -49,11 +49,11 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
 }
 
 - (void)setupSpheres:(Scene&)s {
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 50}, 40}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{10, 70, 25}, 20}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-60, 80, 50}, 20}});
-    
-    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -120, 0}, {0, 1, 0}}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 10}, 1}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 10}, 1}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 10}, 1}});
+
+    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -2, 0}, {0, 1, 0}}});
     
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
     light->setPosition({0, 200, 0});
@@ -62,6 +62,7 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
 
 - (void)setupRingworld:(Scene&)s {
     s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{0, RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS, RINGWORLD_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-1, -1.5, 2}, 0.5}});
     
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
     light->setPosition({0, RINGWORLD_RADIUS, 0});
@@ -72,7 +73,7 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
     auto earth = std::unique_ptr<Sphere>{new Sphere{}};
     const FloatType earthRadius = 6378100;
     earth->setRadius(earthRadius);
-    earth->setCenter({0, -(earthRadius + FloatType(200)), 0});
+    earth->setCenter({0, -(earthRadius + FloatType(2)), 0});
     earth->setName("earth");
     s.addObject(std::move(earth));
     
@@ -99,7 +100,7 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(1);
+    r.setSuperSampling(4);
     r.setFlipY(true);
     
     return r.renderScene(s);
