@@ -174,7 +174,9 @@ Color Renderer::processRay(const Scene& s, const Ray& r) {
     Vector normal;
     
     if(s.findIntersection(r, intersection, normal)) {
-        return getDiffuse(s, intersection, normal);
+        Color c = getDiffuse(s, intersection, normal);
+        
+        return c;
     } else {
         return {};
     }

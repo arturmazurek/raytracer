@@ -14,6 +14,11 @@
 struct Ray final {
     Vector origin;
     Vector direction;
+    unsigned depth;
+    
+    Ray() : Ray{{}, {}, 0} {}
+    Ray(const Vector& origin, const Vector& direction, unsigned depth = 0) : origin{origin}, direction{direction}, depth{depth} {}
+    Ray(const Ray& r) : origin{r.origin}, direction{r.direction}, depth{r.depth} {}
 };
 
 #endif /* defined(__ImageTest__Ray__) */
