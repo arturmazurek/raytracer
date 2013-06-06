@@ -99,10 +99,11 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(1);
+    r.setSuperSampling(4);
     r.setFlipY(true);
     r.setExposure(1.5);
     r.setGamma(0.8);
+    r.setOcclusionRays(3);
     
     return r.renderScene(s);
 }

@@ -29,7 +29,8 @@ static const int DEFAULT_SUPERSAMPLING = 1;
 static const double DEFAULT_RAY_BIAS = 0.001;
 
 Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{DEFAULT_FOV}, m_superSampling{DEFAULT_SUPERSAMPLING},
-m_flipY{false}, m_rayBias{DEFAULT_RAY_BIAS}, m_exposure{1}, m_gamma{1}, m_highestIntensity{0} {
+m_flipY{false}, m_rayBias{DEFAULT_RAY_BIAS}, m_exposure{1}, m_gamma{1}, m_highestIntensity{0}, m_occlusionRays{0},
+m_occlusionRaysBounces{0} {
     
 }
 
@@ -102,6 +103,22 @@ double Renderer::gamma() const {
     return m_gamma;
 }
 
+void Renderer::setOcclusionRays(int count) {
+    m_occlusionRays = count;
+}
+
+int Renderer::occlusionRays() const {
+    return m_occlusionRays;
+}
+
+void Renderer::setOcclusionRaysBounces(int count) {
+    m_occlusionRaysBounces = count;
+}
+
+int Renderer::occlusionRaysBounces() const {
+    return m_occlusionRaysBounces;
+}
+
 std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
     using namespace std;
     prepareRender();
@@ -155,17 +172,12 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
 Color Renderer::processRay(const Scene& s, const Ray& r) {
     Vector intersection;
     Vector normal;
-    Color c;
     
     if(s.findIntersection(r, intersection, normal)) {
-        c += getDiffuse(s, intersection, normal);
+        return getDiffuse(s, intersection, normal);
     } else {
-        c = Color::createFromIntegers(0, 0, 0, 255);
+        return {};
     }
-    
-    c.a = 1;
-    
-    return c;
 }
 
 void Renderer::prepareRender() {
@@ -186,7 +198,6 @@ Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& norm
         BaseObject* intersecting = s.findIntersection(toLightRay, intersection, intersectionNormal);
         if(intersecting) {
             if((intersection - biasedPos).lengthSqr() < ((*it)->position() - biasedPos).lengthSqr()) {
-                s.findIntersection(toLightRay, intersection, intersectionNormal);
                 continue;
             }
         }

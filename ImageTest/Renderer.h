@@ -47,6 +47,12 @@ public:
     void setGamma(double gamma);
     double gamma() const;
     
+    void setOcclusionRays(int count);
+    int occlusionRays() const;
+    
+    void setOcclusionRaysBounces(int count);
+    int occlusionRaysBounces() const;
+    
 private:
     int m_width;
     int m_height;
@@ -58,6 +64,8 @@ private:
     double m_exposure;
     double m_gamma;
     double m_highestIntensity;
+    int m_occlusionRays;
+    int m_occlusionRaysBounces;
     
 private:
     void prepareRender();
@@ -65,6 +73,7 @@ private:
     Color processRay(const Scene& s, const Ray& r);
     void processExposure(Color* buffer, int w, int h) const;
     void processGamma(Color* buffer, int w, int h) const;
+    Color bouncedDiffuseAtPosition(const Scene& s, const Vector& pos, const Vector& normal) const;
     
 private:
     Renderer(const Renderer&);
