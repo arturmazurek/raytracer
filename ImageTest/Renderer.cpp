@@ -125,12 +125,43 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
     
     Vector intersection;
     
-    auto tempBuffer = std::unique_ptr<Color[]>(new Color[m_superSampling * m_width * m_superSampling * m_height]);
-    
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
-    for(int j = 0; j < h; ++j) {
-        for(int i = 0; i < w; ++i) {
+    auto tempBuffer = std::unique_ptr<Color[]>(new Color[w * h]);
+    
+    raycast(s, tempBuffer.get(), w, h);
+    processExposure(tempBuffer.get(), w, h);
+    return scaleDown(std::move(tempBuffer));
+}
+
+std::unique_ptr<Bitmap> Renderer::scaleDown(std::unique_ptr<Color[]> rawBuffer) const {
+    auto result = std::unique_ptr<Bitmap>(new Bitmap(m_width, m_height));
+    for(int j = 0; j < m_height; ++j) {
+        for(int i = 0; i < m_width; ++i) {
+            Color c;
+            for(int xs = 0; xs < m_superSampling; ++xs) {
+                for(int ys = 0; ys < m_superSampling; ++ys) {
+                    size_t index = (j*m_superSampling + ys)*m_width*m_superSampling + i*m_superSampling+xs;
+                    c += rawBuffer[index];
+                }
+            }
+            
+            c /= m_superSampling * m_superSampling;
+            
+            if(m_flipY) {
+                result->pixel(i, m_height - j - 1) = c;
+            } else {
+                result->pixel(i, j) = c;
+            }
+        }
+    }
+    
+    return std::move(result);
+}
+ 
+void Renderer::raycast(const Scene& s, Color* result, int width, int height) {
+    for(int j = 0; j < height; ++j) {
+        for(int i = 0; i < width; ++i) {
             Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
             Color c = processRay(s, r);
             
@@ -139,34 +170,9 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
                 m_highestIntensity = magn;
             }
             
-            tempBuffer[j*w + i] = c;
+            result[j*width + i] = c;
         }
     }
-    
-    processExposure(tempBuffer.get(), w, h);
-    
-    auto b = std::unique_ptr<Bitmap>(new Bitmap(m_width, m_height));
-    for(int j = 0; j < m_height; ++j) {
-        for(int i = 0; i < m_width; ++i) {
-            Color c;
-            for(int xs = 0; xs < m_superSampling; ++xs) {
-                for(int ys = 0; ys < m_superSampling; ++ys) {
-                    size_t index = (j*m_superSampling + ys)*w + i*m_superSampling+xs;
-                    c += tempBuffer[index];
-                }
-            }
-            
-            c /= m_superSampling * m_superSampling;
-            
-            if(m_flipY) {
-                b->pixel(i, m_height - j - 1) = c;
-            } else {
-                b->pixel(i, j) = c;
-            }
-        }
-    }
-    
-    return b;
 }
 
 Color Renderer::processRay(const Scene& s, const Ray& r) {

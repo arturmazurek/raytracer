@@ -49,7 +49,7 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
 }
 
 - (void)setupSpheres:(Scene&)s {
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{0, 0, 10}, 1}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-1.5, 0, 10}, 1}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 10}, 1}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 10}, 1}});
 

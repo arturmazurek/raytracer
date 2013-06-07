@@ -70,10 +70,12 @@ private:
 private:
     void prepareRender();
     Color getDiffuse(const Scene& s, const Vector& pos, const Vector& normal);
+    void raycast(const Scene& s, Color* result, int width, int height);
     Color processRay(const Scene& s, const Ray& r);
     void processExposure(Color* buffer, int w, int h) const;
     void processGamma(Color* buffer, int w, int h) const;
     Color bouncedDiffuseAtPosition(const Scene& s, const Vector& pos, const Vector& normal) const;
+    std::unique_ptr<Bitmap> scaleDown(std::unique_ptr<Color[]> rawBuffer) const;
     
 private:
     Renderer(const Renderer&);
