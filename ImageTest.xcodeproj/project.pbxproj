@@ -29,6 +29,7 @@
 /* Begin PBXFileReference section */
 		6D204B9C174BD4EC0016A570 /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
 		6D204B9D174BD4ED0016A570 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
+		6D405B31176236D300FFD949 /* Matrix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Matrix.h; path = ImageTest/Matrix.h; sourceTree = "<group>"; };
 		6D4C67DA15DE5E05002DE1AE /* ImageTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D4C67DE15DE5E05002DE1AE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		6D4C67E115DE5E05002DE1AE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -84,6 +85,7 @@
 		6D4C67CF15DE5E05002DE1AE = {
 			isa = PBXGroup;
 			children = (
+				6D405B31176236D300FFD949 /* Matrix.h */,
 				75AC1ECC175D26BD00DFED12 /* Util.h */,
 				6D4C67E415DE5E05002DE1AE /* ImageTest */,
 				6D4C67DD15DE5E05002DE1AE /* Frameworks */,

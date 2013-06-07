@@ -20,11 +20,17 @@ struct Color {
     
     Color& operator+=(const Color& other);
 
+    Color& operator*=(ValueType k);
     Color& operator/=(ValueType k);
     
     ValueType magnitudeSqr() const;
     
     static Color createFromIntegers(int r, int g, int b, int a);
 };
+
+Color operator*(const Color& c, Color::ValueType k);
+Color operator*(Color::ValueType k, const Color& c);
+
+Color operator/(const Color& c, Color::ValueType k);
 
 #endif /* defined(__ImageTest__Color__) */

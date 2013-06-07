@@ -76,6 +76,7 @@ private:
     Color bouncedDiffuseAtPosition(const Scene& s, const Vector& pos, const Vector& normal) const;
     std::unique_ptr<Bitmap> scaleDown(std::unique_ptr<Color[]> rawBuffer) const;
     void correctGamma(Bitmap& b, int width, int height) const;
+    std::unique_ptr<Ray[]> createBouncedRays(const Vector& intersection, const Vector& normal, int count) const;
     
 private:
     Renderer(const Renderer&);

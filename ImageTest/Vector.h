@@ -9,6 +9,7 @@
 #ifndef Wonderland_Vector_h
 #define Wonderland_Vector_h
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
 
@@ -76,61 +77,77 @@ struct Vector final {
         static Vector result{0, 0, 1};
         return result;
     }
-    };
+};
     
-    static inline Vector operator-(const Vector& a) {
-        Vector result;
-        result.x = -a.x;
-        result.y = -a.y;
-        result.z = -a.z;
-        
-        return result;
-    }
+static inline Vector operator-(const Vector& a) {
+    Vector result;
+    result.x = -a.x;
+    result.y = -a.y;
+    result.z = -a.z;
     
-    static inline Vector operator+(const Vector& a, const Vector& b) {
-        Vector result{a};
-        return result += b;
-    }
+    return result;
+}
+
+static inline Vector operator+(const Vector& a, const Vector& b) {
+    Vector result{a};
+    return result += b;
+}
+
+static inline Vector operator-(const Vector& a, const Vector& b) {
+    Vector result{a};
+    return result -= b;
+}
+
+static inline Vector operator*(const Vector& a, FloatType k) {
+    Vector result{a};
+    return result *= k;
+}
+
+static inline Vector operator*(FloatType k, const Vector& a) {
+    return a * k;
+}
+
+static inline Vector operator/(const Vector& a, FloatType k) {
+    return a * (1.0 / k);
+}
+
+static inline Vector normalized(const Vector& a) {
+    Vector result{a};
+    return result.normalize();
+}
+
+static inline FloatType dot(const Vector& a, const Vector& b) {
+    return a.x*b.x + a.y*b.y + a.z*b.z;
+}
+
+static inline Vector cross(const Vector& a, const Vector& b) {
+    Vector result;
+    result.x = a.y*b.z - a.z*b.y;
+    result.y = a.z*b.x - a.x*b.z;
+    result.z = a.x*b.y - a.y*b.x;
+    return result;
+}
+
+static inline bool equal(const Vector& a, const Vector& b, FloatType epsilon = std::numeric_limits<FloatType>::epsilon()) {
+    using namespace std;
+    return abs(a.x-b.x) <= epsilon && abs(a.y-b.y) <= epsilon && abs(a.z-b.z) <= epsilon;
+}
     
-    static inline Vector operator-(const Vector& a, const Vector& b) {
-        Vector result{a};
-        return result -= b;
-    }
+static inline Vector perpendicular(const Vector& a, const Vector& b) {
+    return cross(a, b).normalize();
+}
+
+static inline Vector perpendicular(Vector to) {
+    using namespace std;
     
-    static inline Vector operator*(const Vector& a, FloatType k) {
-        Vector result{a};
-        return result *= k;
-    }
-    
-    static inline Vector operator*(FloatType k, const Vector& a) {
-        return a * k;
-    }
-    
-    static inline Vector operator/(const Vector& a, FloatType k) {
-        return a * (1.0 / k);
-    }
-    
-    static inline Vector normalized(const Vector& a) {
-        Vector result{a};
-        return result.normalize();
-    }
-    
-    static inline FloatType dot(const Vector& a, const Vector& b) {
-        return a.x*b.x + a.y*b.y + a.z*b.z;
-    }
-    
-    static inline Vector cross(const Vector& a, const Vector& b) {
-        Vector result;
-        result.x = a.y*b.z - a.z*b.y;
-        result.y = a.z*b.x - a.x*b.z;
-        result.z = a.x*b.y - a.y*b.x;
-        return result;
-    }
-    
-    static inline bool equal(const Vector& a, const Vector& b, FloatType epsilon = std::numeric_limits<FloatType>::epsilon()) {
-        using namespace std;
-        return abs(a.x-b.x) <= epsilon && abs(a.y-b.y) <= epsilon && abs(a.z-b.z) <= epsilon;
-    }
+    to.normalize();
+    FloatType maxVal = max(max(to.x, to.y), to.z);
+    if(maxVal == to.x) {
+        return perpendicular(to, Vector::unitY());
+    } else {
+        return perpendicular(to, Vector::unitX());
+    } 
+}
     
 #endif
     

@@ -33,7 +33,14 @@ Color& Color::operator+=(const Color& other) {
     r += other.r;
     g += other.g;
     b += other.b;
-    a += other.a;
+    
+    return *this;
+}
+
+Color& Color::operator*=(ValueType k) {
+    r *= k;
+    g *= k;
+    b *= k;
     
     return *this;
 }
@@ -42,7 +49,6 @@ Color& Color::operator/=(ValueType k) {
     r /= k;
     g /= k;
     b /= k;
-    a /= k;
     
     return *this;
 }
@@ -57,4 +63,20 @@ Color Color::createFromIntegers(int r, int g, int b, int a) {
         static_cast<ValueType>(g) / 255,
         static_cast<ValueType>(b) / 255,
         static_cast<ValueType>(a) / 255 };
+}
+
+Color operator*(const Color& c, Color::ValueType k) {
+    Color result{c};
+    result *= k;
+    return result;
+}
+
+Color operator*(Color::ValueType k, const Color& c) {
+    return c * k;
+}
+
+Color operator/(const Color& c, Color::ValueType k) {
+    Color result{c};
+    result /= k;
+    return result;
 }

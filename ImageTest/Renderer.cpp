@@ -20,6 +20,7 @@
 #include "Bitmap.h"
 #include "Log.h"
 #include "Math.h"
+#include "Matrix.h"
 #include "Ray.h"
 #include "Scene.h"
 #include "Vector.h"
@@ -127,7 +128,7 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
     
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
-    auto tempBuffer = std::unique_ptr<Color[]>(new Color[w * h]);
+    auto tempBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
     
     raycast(s, tempBuffer.get(), w, h);
     processExposure(tempBuffer.get(), w, h);
@@ -138,7 +139,8 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
 }
 
 std::unique_ptr<Bitmap> Renderer::scaleDown(std::unique_ptr<Color[]> rawBuffer) const {
-    auto result = std::unique_ptr<Bitmap>(new Bitmap(m_width, m_height));
+    auto result = std::unique_ptr<Bitmap>{new Bitmap(m_width, m_height)};
+    
     for(int j = 0; j < m_height; ++j) {
         for(int i = 0; i < m_width; ++i) {
             Color c;
@@ -185,10 +187,39 @@ Color Renderer::processRay(const Scene& s, const Ray& r) {
     if(s.findIntersection(r, intersection, normal)) {
         Color c = getDiffuse(s, intersection, normal);
         
+        if(r.depth < m_maxRayDepth) {
+            auto newRays = createBouncedRays(intersection, normal, m_bouncedRays);
+            Color bounced{0, 0, 0, 1};
+            for(int i = 0; i < m_bouncedRays; ++i) {
+                bounced += processRay(s, newRays[i]) * static_cast<Color::ValueType>(dot(normal, newRays[i].direction));
+            }
+            c += bounced / m_bouncedRays;
+        }
+        
         return c;
     } else {
         return {};
     }
+}
+
+std::unique_ptr<Ray[]> Renderer::createBouncedRays(const Vector& intersection, const Vector& normal, int count) const {
+    auto result = std::unique_ptr<Ray[]>{new Ray[count]};
+    const Vector pos = intersection + normal * m_rayBias;
+    
+    const Vector baseA = perpendicular(normal);
+    const Vector baseB = perpendicular(normal, baseA);
+    
+    Matrix matA;
+    matA.setColumn(0, baseA);
+    matA.setColumn(1, baseB);
+    matA.setColumn(2, normal);
+    
+    for(int i = 0; i < count; ++i) {
+        Vector newNormal = normal;
+        
+    }
+    
+    return result;
 }
 
 void Renderer::prepareRender() {
