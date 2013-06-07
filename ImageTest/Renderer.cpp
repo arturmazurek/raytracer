@@ -131,7 +131,10 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
     
     raycast(s, tempBuffer.get(), w, h);
     processExposure(tempBuffer.get(), w, h);
-    return scaleDown(std::move(tempBuffer));
+    auto result = scaleDown(std::move(tempBuffer));
+    correctGamma(*result, m_width, m_height);
+    
+    return std::move(result);
 }
 
 std::unique_ptr<Bitmap> Renderer::scaleDown(std::unique_ptr<Color[]> rawBuffer) const {
@@ -227,6 +230,19 @@ void Renderer::processExposure(Color* buffer, int w, int h) const {
             c.r = 1.0 - exp(-c.r * m_exposure);
             c.g = 1.0 - exp(-c.g * m_exposure);
             c.b = 1.0 - exp(-c.b * m_exposure);
+        }
+    }
+}
+
+void Renderer::correctGamma(Bitmap& b, int w, int h) const {
+    using namespace std;
+    
+    for(int j = 0; j < h; ++j) {
+        for(int i = 0; i < w; ++i) {
+            Bitmap::PixelInfo& pixel = b.pixel(i, j);
+            pixel.r = pow(static_cast<double>(pixel.r) / 255, m_gamma) * 255;
+            pixel.g = pow(static_cast<double>(pixel.g) / 255, m_gamma) * 255;
+            pixel.b = pow(static_cast<double>(pixel.b) / 255, m_gamma) * 255;
         }
     }
 }
