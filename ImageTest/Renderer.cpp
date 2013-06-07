@@ -29,8 +29,8 @@ static const int DEFAULT_SUPERSAMPLING = 1;
 static const double DEFAULT_RAY_BIAS = 0.001;
 
 Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{DEFAULT_FOV}, m_superSampling{DEFAULT_SUPERSAMPLING},
-m_flipY{false}, m_rayBias{DEFAULT_RAY_BIAS}, m_exposure{1}, m_gamma{1}, m_highestIntensity{0}, m_occlusionRays{0},
-m_occlusionRaysBounces{0} {
+m_flipY{false}, m_rayBias{DEFAULT_RAY_BIAS}, m_exposure{1}, m_gamma{1}, m_highestIntensity{0}, m_bouncedRays{0},
+m_maxRayDepth{0} {
     
 }
 
@@ -103,20 +103,20 @@ double Renderer::gamma() const {
     return m_gamma;
 }
 
-void Renderer::setOcclusionRays(int count) {
-    m_occlusionRays = count;
+void Renderer::setBouncedRays(int count) {
+    m_bouncedRays = count;
 }
 
-int Renderer::occlusionRays() const {
-    return m_occlusionRays;
+int Renderer::bouncedRays() const {
+    return m_bouncedRays;
 }
 
-void Renderer::setOcclusionRaysBounces(int count) {
-    m_occlusionRaysBounces = count;
+void Renderer::setMaxRayDepth(int count) {
+    m_maxRayDepth = count;
 }
 
-int Renderer::occlusionRaysBounces() const {
-    return m_occlusionRaysBounces;
+int Renderer::maxRayDepth() const {
+    return m_maxRayDepth;
 }
 
 std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {

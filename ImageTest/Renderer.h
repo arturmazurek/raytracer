@@ -47,11 +47,11 @@ public:
     void setGamma(double gamma);
     double gamma() const;
     
-    void setOcclusionRays(int count);
-    int occlusionRays() const;
+    void setBouncedRays(int count);
+    int bouncedRays() const;
     
-    void setOcclusionRaysBounces(int count);
-    int occlusionRaysBounces() const;
+    void setMaxRayDepth(int depth);
+    int maxRayDepth() const;
     
 private:
     int m_width;
@@ -64,8 +64,8 @@ private:
     double m_exposure;
     double m_gamma;
     double m_highestIntensity;
-    int m_occlusionRays;
-    int m_occlusionRaysBounces;
+    int m_bouncedRays;
+    int m_maxRayDepth;
     
 private:
     void prepareRender();
