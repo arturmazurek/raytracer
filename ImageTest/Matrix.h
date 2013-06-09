@@ -29,7 +29,7 @@ struct Matrix {
     
     Matrix() { memset(m, 0, sizeof(m)); }
     Matrix(const Matrix& other) { std::memcpy(m, other.m, sizeof(m)); }
-    Matrix(float *elements) { std::memcpy(m, elements, sizeof(m)); }
+    Matrix(FloatType *elements) { std::memcpy(m, elements, sizeof(m)); }
     Matrix& operator=(const Matrix& other) { std::memcpy(m, other.m, sizeof(m)); return *this; }
     
     static int index(int i, int j) {
@@ -44,14 +44,14 @@ struct Matrix {
         LOG("");
     }
     
-    Matrix& operator*=(float k) {
+    Matrix& operator*=(FloatType k) {
         for(int i = 0; i < 16; ++i) {
             m[i] *= k;
         }
         return *this;
     }
     
-    Matrix& operator/=(float k) {
+    Matrix& operator/=(FloatType k) {
         return (*this) *= (1.0f / k);
     }
     
@@ -79,12 +79,12 @@ struct Matrix {
         return *this;
     }
     
-    Matrix& setScale(float s) {
+    Matrix& setScale(FloatType s) {
         return setScale(s, s, s);
     }
     
-    Matrix& setScale(float sx, float sy, float sz) {
-        float scales[] = {sx, sy, sz};
+    Matrix& setScale(FloatType sx, FloatType sy, FloatType sz) {
+        FloatType scales[] = {sx, sy, sz};
         
         for(int i = 0; i < 3; ++i) {
             Vector temp = getColumn(i);
@@ -96,11 +96,11 @@ struct Matrix {
         return *this;
     }
     
-    Matrix& scale(float s) {
+    Matrix& scale(FloatType s) {
         return scale(s, s, s);
     }
     
-    Matrix& scale(float sx, float sy, float sz) {
+    Matrix& scale(FloatType sx, FloatType sy, FloatType sz) {
         m[index(0, 0)] *= sx; m[index(1, 0)] *= sx; m[index(2, 0)] *= sx;
         m[index(0, 1)] *= sy; m[index(1, 1)] *= sy; m[index(2, 1)] *= sy;
         m[index(0, 2)] *= sz; m[index(1, 2)] *= sz; m[index(2, 2)] *= sz;
@@ -113,7 +113,7 @@ public:
     Matrix& invert() {
         Matrix inverse = createIdentity();
         int i, j, k, swap;
-        float t;
+        FloatType t;
         
         for (i = 0; i < 4; ++i) {
             /*
@@ -182,11 +182,11 @@ public:
         return result;
     }
     
-    static Matrix createScale(float s) {
+    static Matrix createScale(FloatType s) {
         return createScale(s, s, s);
     }
     
-    static Matrix createScale(float sx, float sy, float sz) {
+    static Matrix createScale(FloatType sx, FloatType sy, FloatType sz) {
         Matrix result;
         result.m[index(0, 0)] = sx;
         result.m[index(1, 1)] = sy;
@@ -205,10 +205,10 @@ public:
         return result;
     }
     
-    static Matrix createPerspective(float fovy, float aspect, float near, float far) {
+    static Matrix createPerspective(FloatType fovy, FloatType aspect, FloatType near, FloatType far) {
         Matrix result;
         
-        float f = 1.f / std::tan(fovy * 0.5f);
+        FloatType f = 1.f / std::tan(fovy * 0.5f);
         result.m[index(0, 0)] = f / aspect;
         result.m[index(1, 1)] = f;
         result.m[index(2, 2)] = (far + near) / (near - far);
@@ -218,7 +218,7 @@ public:
         return result;
     }
     
-    static Matrix createOrtho(float width, float height, float near, float far) {
+    static Matrix createOrtho(FloatType width, FloatType height, FloatType near, FloatType far) {
         Matrix result;
         
         result.m[index(0, 0)] = 2.0f / width;
@@ -234,14 +234,14 @@ public:
     // yaw is rotation around axis Y
     // pitch is rotation around axis Z
     // roll is rotation around axis X
-    static Matrix createRotation(float yaw, float pitch, float roll) {
+    static Matrix createRotation(FloatType rotX, FloatType rotY, FloatType rotZ) {
         using namespace std;
         
         Matrix result;
         
-        const float theta = pitch;
-        const float psi = yaw;
-        const float phi = roll;
+        const FloatType phi = rotX;
+        const FloatType theta = rotY;
+        const FloatType psi = rotZ;
         
         // going in columns
         result.m[index(0,0)] = cos(theta) * cos(psi);
@@ -262,11 +262,11 @@ public:
     }
     
     // axis must be normalised
-    static Matrix createRotation(const Vector& axis, float angle) {
+    static Matrix createRotation(const Vector& axis, FloatType angle) {
         Matrix result;
         
-        const float s = std::sin(angle);
-        const float c = std::cos(angle);
+        const FloatType s = std::sin(angle);
+        const FloatType c = std::cos(angle);
         
         // going in columns
         result.m[index(0, 0)] = c + axis.x*axis.x*(1.0f - c);
@@ -320,7 +320,7 @@ public:
     static Vector multiplyPoint(const Matrix& a, const Vector& v) {
         Vector result;
         
-        float wInv = 1.0f / a.m[15];
+        FloatType wInv = 1.0f / a.m[15];
         
         result.x = (a.m[0]*v.x + a.m[4]*v.y + a.m[8]*v.z + a.m[12]) * wInv;
         result.y = (a.m[1]*v.x + a.m[5]*v.y + a.m[9]*v.z + a.m[13]) * wInv;

@@ -31,7 +31,9 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
     int width = self.imageView.frame.size.width;
     int height = self.imageView.frame.size.height;
     
+    NSLog(@"Start");
     auto bitmap = [self createImage];
+    NSLog(@"End");
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)bitmap->data(), sizeof(Bitmap::PixelInfo)*width*height);
@@ -49,7 +51,7 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
 }
 
 - (void)setupSpheres:(Scene&)s {
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-1.5, 0, 10}, 1}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-1.5, -1, 10}, 1}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 10}, 1}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 10}, 1}});
 
@@ -99,12 +101,12 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(1);
+    r.setSuperSampling(4);
     r.setFlipY(true);
     r.setExposure(1.5);
     r.setGamma(0.8);
-    r.setBouncedRays(3);
-    r.setMaxRayDepth(1);
+    r.setBouncedRays(30);
+    r.setMaxRayDepth(3);
     
     return r.renderScene(s);
 }

@@ -187,10 +187,11 @@ Color Renderer::processRay(const Scene& s, const Ray& r) {
     if(s.findIntersection(r, intersection, normal)) {
         Color c = getDiffuse(s, intersection, normal);
         
-        if(r.depth < m_maxRayDepth) {
+        if(r.depth <= m_maxRayDepth) {
             auto newRays = createBouncedRays(intersection, normal, m_bouncedRays);
             Color bounced{0, 0, 0, 1};
             for(int i = 0; i < m_bouncedRays; ++i) {
+                newRays[i].depth = r.depth + 1;
                 bounced += processRay(s, newRays[i]) * static_cast<Color::ValueType>(dot(normal, newRays[i].direction));
             }
             c += bounced / m_bouncedRays;
@@ -203,20 +204,25 @@ Color Renderer::processRay(const Scene& s, const Ray& r) {
 }
 
 std::unique_ptr<Ray[]> Renderer::createBouncedRays(const Vector& intersection, const Vector& normal, int count) const {
+    using namespace std;
+    
     auto result = std::unique_ptr<Ray[]>{new Ray[count]};
     const Vector pos = intersection + normal * m_rayBias;
     
-    const Vector baseA = perpendicular(normal);
-    const Vector baseB = perpendicular(normal, baseA);
-    
-    Matrix matA;
-    matA.setColumn(0, baseA);
-    matA.setColumn(1, baseB);
-    matA.setColumn(2, normal);
-    
     for(int i = 0; i < count; ++i) {
-        Vector newNormal = normal;
+        FloatType u = (FloatType)(rand() % 10000) / 10000;
+        FloatType v = (FloatType)(rand() % 10000) / 10000;
         
+        FloatType theta = 2 * Math::PI * u;
+        FloatType phi = acos(2*v - 1);
+        
+        Vector newNormal{sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)};
+        FloatType k = dot(newNormal, normal);
+        if(k < 0) {
+            newNormal -= 2 * k * normal;
+        }
+        
+        result[i] = {pos, newNormal};
     }
     
     return result;
