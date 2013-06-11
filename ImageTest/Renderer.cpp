@@ -29,13 +29,13 @@ static const double DEFAULT_FOV = 0.4 * Math::PI;
 static const int DEFAULT_SUPERSAMPLING = 1;
 static const double DEFAULT_RAY_BIAS = 0.001;
 
-static const int BLOCK_BASE_W = 10;
-static const int BLOCK_BASE_H = 10;
+static const int BLOCK_BASE_W = 20;
+static const int BLOCK_BASE_H = 20;
 
 Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{DEFAULT_FOV}, m_superSampling{DEFAULT_SUPERSAMPLING},
 m_flipY{false}, m_rayBias{DEFAULT_RAY_BIAS}, m_exposure{1}, m_gamma{1}, m_highestIntensity{0}, m_bouncedRays{0},
 m_maxRayDepth{0} {
-    
+    srand(static_cast<int>(time(nullptr)));
 }
 
 Renderer::~Renderer() {
@@ -123,7 +123,7 @@ int Renderer::maxRayDepth() const {
     return m_maxRayDepth;
 }
 
-std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
+void Renderer::renderScene(const Scene& s, std::function<void(const Bitmap&, int)> callback) {
     using namespace std;
     prepareRender();
     
@@ -135,15 +135,17 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
     auto result = std::unique_ptr<Bitmap>{new Bitmap{m_width, m_height}};
     
     auto blocks = prepareBlocks();
-    
+    double count = blocks.size();
+    double index = 0;
     for(const auto& block : blocks) {
+        ++index;
         raycast(s, tempBuffer.get(), block);
         processExposure(tempBuffer.get(), block);
         scaleDown(tempBuffer.get(), *result, block);
-        correctGamma(*result, block);
+//        correctGamma(*result, block);
+        
+        callback(*result, static_cast<int>(index / count * 100 + 0.5));
     }
-    
-    return std::move(result);
 }
 
 std::list<Renderer::Block> Renderer::prepareBlocks() const {
@@ -153,7 +155,7 @@ std::list<Renderer::Block> Renderer::prepareBlocks() const {
     int blockW = BLOCK_BASE_W * m_superSampling;
     int blockH = BLOCK_BASE_H * m_superSampling;
     
-    std::list<Block> result;
+    std::vector<Block> result;
     
     for(int j = 0; j < h; j += blockH) {
         for(int i = 0; i < w; i += blockW) {
@@ -161,7 +163,9 @@ std::list<Renderer::Block> Renderer::prepareBlocks() const {
         }
     }
     
-    return std::move(result);
+    std::random_shuffle(begin(result), end(result), [](int max){return rand() % max;});
+    
+    return std::list<Renderer::Block>(begin(result), end(result));
 }
 
 void Renderer::scaleDown(Color* fromBuffer, Bitmap& toBitmap, const Block& b) const {
@@ -294,8 +298,13 @@ void Renderer::processExposure(Color* buffer, const Block& b) const {
 void Renderer::correctGamma(Bitmap& b, const Block& block) const {
     using namespace std;
     
-    for(int j = block.y / m_superSampling; j < (block.y + block.h) / m_superSampling; ++j) {
-        for(int i = block.x / m_superSampling; i < (block.x + block.w) / m_superSampling; ++i) {
+    int x = block.x / m_superSampling;
+    int y = block.y / m_superSampling;
+    int endX = x + block.w / m_superSampling;
+    int endY = y + block.h / m_superSampling;
+    
+    for(int j = y; j < endY; ++j) {
+        for(int i = x; i < endX; ++i) {
             Bitmap::PixelInfo& pixel = b.pixel(i, j);
             pixel.r = pow(static_cast<double>(pixel.r) / 255, m_gamma) * 255;
             pixel.g = pow(static_cast<double>(pixel.g) / 255, m_gamma) * 255;

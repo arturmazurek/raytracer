@@ -36,16 +36,12 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     });
 }
 
-- (void)render {
+- (void)showBitmap:(const Bitmap&)bitmap {
     int width = self.imageView.frame.size.width;
     int height = self.imageView.frame.size.height;
     
-    NSLog(@"Start");
-    auto bitmap = [self createImage];
-    NSLog(@"End");
-    
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)bitmap->data(), sizeof(Bitmap::PixelInfo)*width*height);
+    CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)bitmap.data(), sizeof(Bitmap::PixelInfo)*width*height);
     CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(imageData);
     CGImageRef cgImage = CGImageCreate(width, height, 8, Bitmap::PixelInfo::bitsSize(), width * sizeof(Bitmap::PixelInfo), colorSpace, 0, dataProvider, NULL, TRUE, kCGRenderingIntentDefault);
     
@@ -55,7 +51,7 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     CGDataProviderRelease(dataProvider);
     CGImageRelease(cgImage);
     CFRelease(imageData);
-
+    
     dispatch_sync(dispatch_get_main_queue(), ^() {
         [self.imageView setImage:img];
     });
@@ -113,7 +109,7 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     s.addLight(std::move(light));
 }
 
-- (std::unique_ptr<Bitmap>)createImage {
+- (void)render {
     Scene s;
 
 //    [self setupPlanets:s];
@@ -122,15 +118,19 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(3);
+    r.setSuperSampling(1);
     r.setFlipY(true);
     r.setExposure(1.5);
     r.setGamma(0.8);
-    r.setBouncedRays(2);
+    r.setBouncedRays(8);
 //    r.setBouncedRays(1);
     r.setMaxRayDepth(1);
     
-    return r.renderScene(s);
+    return r.renderScene(s, [self](const Bitmap& b, int progress) {
+        [self showBitmap:b];
+    });
 }
 
 @end
+
+

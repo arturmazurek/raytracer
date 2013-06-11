@@ -9,6 +9,7 @@
 #ifndef __ImageTest__Renderer__
 #define __ImageTest__Renderer__
 
+#include <functional>
 #include <list>
 #include <memory>
 
@@ -24,7 +25,8 @@ public:
     Renderer();
     ~Renderer();
     
-    std::unique_ptr<Bitmap> renderScene(const Scene& s);
+    // function is a callback returning the current state of bitmap, and int [0-100] with the percentage of the process
+    void renderScene(const Scene& s, std::function<void(const Bitmap&, int)> callback);
 
     void setDimensions(int width, int height);
     int width() const;
