@@ -140,9 +140,11 @@ void Renderer::renderScene(const Scene& s, std::function<void(const Bitmap&, int
     for(const auto& block : blocks) {
         ++index;
         raycast(s, tempBuffer.get(), block);
-        processExposure(tempBuffer.get(), block);
+        
+        processImage(tempBuffer.get(), block, [this](Color& c){ this->correctExposure(c); });
+        processImage(tempBuffer.get(), block, [this](Color& c){ this->correctGamma(c); });
+        
         scaleDown(tempBuffer.get(), *result, block);
-        correctGamma(*result, block);
         
         callback(*result, static_cast<int>(index / count * 100 + 0.5));
     }
@@ -281,34 +283,23 @@ Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& norm
     return {intensity, intensity, intensity, 1};
 }
 
-void Renderer::processExposure(Color* buffer, const Block& b) const {
-    using namespace std;
-    
-    for(int j = b.y; j < b.y + b.h; ++j) {
-        for(int i = b.x; i < b.x + b.w; ++i) {
-            Color& c = buffer[j*b.totalW + i];
-            
-            c.r = 1.0 - exp(-c.r * m_exposure);
-            c.g = 1.0 - exp(-c.g * m_exposure);
-            c.b = 1.0 - exp(-c.b * m_exposure);
+void Renderer::processImage(Color* bitmap, const Block& block, std::function<void(Color&)> filter) const {
+    for(int j = block.y; j < block.y + block.h; ++j) {
+        for(int i = block.x; i < block.x + block.w; ++i) {
+            filter(bitmap[j*block.totalW + i]);
         }
     }
 }
 
-void Renderer::correctGamma(Bitmap& b, const Block& block) const {
-    using namespace std;
-
-    int x = block.x / m_superSampling;
-    int y = block.y / m_superSampling;
-    int w = block.w / m_superSampling;
-    int h = block.h / m_superSampling;
-    
-    for(int j = y; j < y + h; ++j) {
-        for(int i = x; i < x + w; ++i) {
-            Bitmap::PixelInfo& pixel = m_flipY ? b.pixel(i, m_height - j - 1) : b.pixel(i, j);
-            pixel.r = pow(static_cast<double>(pixel.r) / 255, m_gamma) * 255;
-            pixel.g = pow(static_cast<double>(pixel.g) / 255, m_gamma) * 255;
-            pixel.b = pow(static_cast<double>(pixel.b) / 255, m_gamma) * 255;
-        }
-    }
+void Renderer::correctGamma(Color& c) const {
+    c.r = pow(c.r, m_gamma);
+    c.g = pow(c.g, m_gamma);
+    c.b = pow(c.b, m_gamma);
 }
+
+void Renderer::correctExposure(Color& c) const {
+    c.r = 1.0 - exp(-c.r * m_exposure);
+    c.g = 1.0 - exp(-c.g * m_exposure);
+    c.b = 1.0 - exp(-c.b * m_exposure);
+}
+
