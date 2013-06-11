@@ -21,6 +21,13 @@
 #include "Sphere.h"
 #include "Types.h"
 
+@interface AppDelegate()
+
+@property (nonatomic, assign) int bitmapWidth;
+@property (nonatomic, assign) int bitmapHeight;
+
+@end
+
 @implementation AppDelegate
 @synthesize imageView = _imageView;
 
@@ -31,19 +38,19 @@ static const FloatType RIM_WALL_EXTENDS = 30;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    self.bitmapWidth = self.imageView.frame.size.width;
+    self.bitmapHeight = self.imageView.frame.size.height;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^() {
         [self render];
     });
 }
 
 - (void)showBitmap:(const Bitmap&)bitmap {
-    int width = self.imageView.frame.size.width;
-    int height = self.imageView.frame.size.height;
-    
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)bitmap.data(), sizeof(Bitmap::PixelInfo)*width*height);
+    CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)bitmap.data(), sizeof(Bitmap::PixelInfo)*self.bitmapWidth*self.bitmapHeight);
     CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(imageData);
-    CGImageRef cgImage = CGImageCreate(width, height, 8, Bitmap::PixelInfo::bitsSize(), width * sizeof(Bitmap::PixelInfo), colorSpace, 0, dataProvider, NULL, TRUE, kCGRenderingIntentDefault);
+    CGImageRef cgImage = CGImageCreate(self.bitmapWidth, self.bitmapHeight, 8, Bitmap::PixelInfo::bitsSize(),
+                                       self.bitmapWidth * sizeof(Bitmap::PixelInfo), colorSpace, 0, dataProvider, NULL, TRUE, kCGRenderingIntentDefault);
     
     NSImage* img = [[NSImage alloc] initWithCGImage:cgImage size:NSZeroSize];
     
@@ -122,8 +129,7 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     r.setFlipY(true);
     r.setExposure(1.5);
     r.setGamma(0.8);
-    r.setBouncedRays(8);
-//    r.setBouncedRays(1);
+    r.setBouncedRays(32);
     r.setMaxRayDepth(1);
     
     return r.renderScene(s, [self](const Bitmap& b, int progress) {

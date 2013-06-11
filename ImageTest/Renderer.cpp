@@ -142,7 +142,7 @@ void Renderer::renderScene(const Scene& s, std::function<void(const Bitmap&, int
         raycast(s, tempBuffer.get(), block);
         processExposure(tempBuffer.get(), block);
         scaleDown(tempBuffer.get(), *result, block);
-//        correctGamma(*result, block);
+        correctGamma(*result, block);
         
         callback(*result, static_cast<int>(index / count * 100 + 0.5));
     }
@@ -297,15 +297,15 @@ void Renderer::processExposure(Color* buffer, const Block& b) const {
 
 void Renderer::correctGamma(Bitmap& b, const Block& block) const {
     using namespace std;
-    
+
     int x = block.x / m_superSampling;
     int y = block.y / m_superSampling;
-    int endX = x + block.w / m_superSampling;
-    int endY = y + block.h / m_superSampling;
+    int w = block.w / m_superSampling;
+    int h = block.h / m_superSampling;
     
-    for(int j = y; j < endY; ++j) {
-        for(int i = x; i < endX; ++i) {
-            Bitmap::PixelInfo& pixel = b.pixel(i, j);
+    for(int j = y; j < y + h; ++j) {
+        for(int i = x; i < x + w; ++i) {
+            Bitmap::PixelInfo& pixel = m_flipY ? b.pixel(i, m_height - j - 1) : b.pixel(i, j);
             pixel.r = pow(static_cast<double>(pixel.r) / 255, m_gamma) * 255;
             pixel.g = pow(static_cast<double>(pixel.g) / 255, m_gamma) * 255;
             pixel.b = pow(static_cast<double>(pixel.b) / 255, m_gamma) * 255;
