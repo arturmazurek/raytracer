@@ -141,8 +141,10 @@ void Renderer::renderScene(const Scene& s, std::function<void(const Bitmap&, int
         ++index;
         raycast(s, tempBuffer.get(), block);
         
-        processImage(tempBuffer.get(), block, [this](Color& c){ this->correctExposure(c); });
-        processImage(tempBuffer.get(), block, [this](Color& c){ this->correctGamma(c); });
+        processImage(tempBuffer.get(), block, [this](Color& c){
+            correctExposure(c);
+            correctGamma(c);
+        });
         
         scaleDown(tempBuffer.get(), *result, block);
         
