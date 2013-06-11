@@ -168,14 +168,7 @@ void Renderer::raycast(const Scene& s, Color* result, int width, int height) {
     for(int j = 0; j < height; ++j) {
         for(int i = 0; i < width; ++i) {
             Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
-            Color c = processRay(s, r);
-            
-            double magn = c.magnitudeSqr();
-            if(magn > m_highestIntensity) {
-                m_highestIntensity = magn;
-            }
-            
-            result[j*width + i] = c;
+            result[j*width + i] = processRay(s, r);
         }
     }
 }
@@ -235,7 +228,7 @@ void Renderer::prepareRender() {
 }
 
 Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& normal) {
-    double intensity = 0;
+    FloatType intensity = 0.075;
     for(auto it = s.lightsBegin(); it != s.lightsEnd(); ++it) {
         Vector biasedPos = pos + m_rayBias*normal;
         Vector toLight = (*it)->position() - biasedPos;

@@ -14,6 +14,7 @@
 #include "Bitmap.h"
 #include "Cylinder.h"
 #include "Math.h"
+#include "PatchRing.h"
 #include "Plane.h"
 #include "Renderer.h"
 #include "Scene.h"
@@ -25,6 +26,8 @@
 
 static const FloatType RINGWORLD_RADIUS = 153000000000;
 static const FloatType RINGWORLD_EXTENDS = 400000000;
+static const FloatType RIM_WALL_HEIGHT = 1600000;
+static const FloatType RIM_WALL_EXTENDS = 30;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
@@ -54,16 +57,26 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-1.5, -1, 10}, 1}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 10}, 1}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 10}, 1}});
-
-    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -2, 0}, {0, 1, 0}}});
+    
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-1.5, -1, 100}, 1}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 100}, 1}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 100}, 1}});
+    
+//    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -2, 0}, {0, 1, 0}}});
     
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
     light->setPosition({10, 20, 0});
-    s.addLight(std::move(light));
+//    s.addLight(std::move(light));
 }
 
 - (void)setupRingworld:(Scene&)s {
     s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{0, RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS, RINGWORLD_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
+    
+    s.addObject(std::unique_ptr<BaseObject>{new PatchRing{{RINGWORLD_EXTENDS, RINGWORLD_RADIUS - 2, 0}, {-1, 0, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RINGWORLD_RADIUS}});
+    s.addObject(std::unique_ptr<BaseObject>{new PatchRing{{-RINGWORLD_EXTENDS, RINGWORLD_RADIUS - 2, 0}, {1, 0, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RINGWORLD_RADIUS}});
+    
+    s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{RINGWORLD_EXTENDS + RIM_WALL_EXTENDS, RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RIM_WALL_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
+    s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{-(RINGWORLD_EXTENDS + RIM_WALL_EXTENDS), RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RIM_WALL_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
     
     auto light = std::unique_ptr<BaseLight>(new BaseLight{});
     light->setPosition({0, RINGWORLD_RADIUS, 0});
@@ -101,12 +114,13 @@ static const FloatType RINGWORLD_EXTENDS = 400000000;
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(4);
+    r.setSuperSampling(1);
     r.setFlipY(true);
     r.setExposure(1.5);
     r.setGamma(0.8);
-    r.setBouncedRays(30);
-    r.setMaxRayDepth(3);
+    r.setBouncedRays(32);
+//    r.setBouncedRays(1);
+    r.setMaxRayDepth(1);
     
     return r.renderScene(s);
 }
