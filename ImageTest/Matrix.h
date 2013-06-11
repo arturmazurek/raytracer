@@ -37,11 +37,11 @@ struct Matrix {
     }
     
     void debugPrint() const {
-        LOG("%Lf %Lf %Lf %Lf", m[0], m[4], m[8], m[12]);
-        LOG("%Lf %Lf %Lf %Lf", m[1], m[5], m[9], m[13]);
-        LOG("%Lf %Lf %Lf %Lf", m[2], m[6], m[10], m[14]);
-        LOG("%Lf %Lf %Lf %Lf", m[3], m[7], m[11], m[15]);
-        LOG("");
+//        LOG("%Lf %Lf %Lf %Lf", m[0], m[4], m[8], m[12]);
+//        LOG("%Lf %Lf %Lf %Lf", m[1], m[5], m[9], m[13]);
+//        LOG("%Lf %Lf %Lf %Lf", m[2], m[6], m[10], m[14]);
+//        LOG("%Lf %Lf %Lf %Lf", m[3], m[7], m[11], m[15]);
+        LOG("Matrix debug print unimplemented");
     }
     
     Matrix& operator*=(FloatType k) {

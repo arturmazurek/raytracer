@@ -31,6 +31,12 @@ static const FloatType RIM_WALL_EXTENDS = 30;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^() {
+        [self render];
+    });
+}
+
+- (void)render {
     int width = self.imageView.frame.size.width;
     int height = self.imageView.frame.size.height;
     
@@ -49,8 +55,10 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     CGDataProviderRelease(dataProvider);
     CGImageRelease(cgImage);
     CFRelease(imageData);
-        
-    [self.imageView setImage:img];
+
+    dispatch_sync(dispatch_get_main_queue(), ^() {
+        [self.imageView setImage:img];
+    });
 }
 
 - (void)setupSpheres:(Scene&)s {
@@ -114,11 +122,11 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(1);
+    r.setSuperSampling(3);
     r.setFlipY(true);
     r.setExposure(1.5);
     r.setGamma(0.8);
-    r.setBouncedRays(32);
+    r.setBouncedRays(2);
 //    r.setBouncedRays(1);
     r.setMaxRayDepth(1);
     

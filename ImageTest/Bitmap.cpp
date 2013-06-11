@@ -31,9 +31,9 @@ const Bitmap::PixelInfo* Bitmap::data() const {
 }
 
 const Bitmap::PixelInfo& Bitmap::pixel(int x, int y) const {
+    assert(x < m_width);
+    assert(y < m_height);
     int index = y*m_width + x;
-    assert(index < m_width * m_height);
-    
     return m_data[index];
 }
 

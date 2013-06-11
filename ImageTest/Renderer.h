@@ -9,6 +9,7 @@
 #ifndef __ImageTest__Renderer__
 #define __ImageTest__Renderer__
 
+#include <list>
 #include <memory>
 
 #include "Camera.h"
@@ -54,6 +55,14 @@ public:
     int maxRayDepth() const;
     
 private:
+    struct Block {
+        int x, y;
+        int w, h;
+        
+        int totalW, totalH;
+    };
+    
+private:
     int m_width;
     int m_height;
     double m_fovY;
@@ -70,13 +79,14 @@ private:
 private:
     void prepareRender();
     Color getDiffuse(const Scene& s, const Vector& pos, const Vector& normal);
-    void raycast(const Scene& s, Color* result, int width, int height);
+    void raycast(const Scene& s, Color* result, const Block& block);
     Color processRay(const Scene& s, const Ray& r);
-    void processExposure(Color* buffer, int w, int h) const;
+    void processExposure(Color* buffer, const Block& block) const;
     Color bouncedDiffuseAtPosition(const Scene& s, const Vector& pos, const Vector& normal) const;
-    std::unique_ptr<Bitmap> scaleDown(std::unique_ptr<Color[]> rawBuffer) const;
-    void correctGamma(Bitmap& b, int width, int height) const;
+    void scaleDown(Color* fromBuffer, Bitmap& toBitmap, const Block& block) const;
+    void correctGamma(Bitmap& b, const Block& block) const;
     std::unique_ptr<Ray[]> createBouncedRays(const Vector& intersection, const Vector& normal, int count) const;
+    std::list<Block> prepareBlocks() const;
     
 private:
     Renderer(const Renderer&);

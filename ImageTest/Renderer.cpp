@@ -29,6 +29,9 @@ static const double DEFAULT_FOV = 0.4 * Math::PI;
 static const int DEFAULT_SUPERSAMPLING = 1;
 static const double DEFAULT_RAY_BIAS = 0.001;
 
+static const int BLOCK_BASE_W = 10;
+static const int BLOCK_BASE_H = 10;
+
 Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{DEFAULT_FOV}, m_superSampling{DEFAULT_SUPERSAMPLING},
 m_flipY{false}, m_rayBias{DEFAULT_RAY_BIAS}, m_exposure{1}, m_gamma{1}, m_highestIntensity{0}, m_bouncedRays{0},
 m_maxRayDepth{0} {
@@ -129,46 +132,70 @@ std::unique_ptr<Bitmap> Renderer::renderScene(const Scene& s) {
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
     auto tempBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
+    auto result = std::unique_ptr<Bitmap>{new Bitmap{m_width, m_height}};
     
-    raycast(s, tempBuffer.get(), w, h);
-    processExposure(tempBuffer.get(), w, h);
-    auto result = scaleDown(std::move(tempBuffer));
-    correctGamma(*result, m_width, m_height);
+    auto blocks = prepareBlocks();
+    
+    for(const auto& block : blocks) {
+        raycast(s, tempBuffer.get(), block);
+        processExposure(tempBuffer.get(), block);
+        scaleDown(tempBuffer.get(), *result, block);
+        correctGamma(*result, block);
+    }
     
     return std::move(result);
 }
 
-std::unique_ptr<Bitmap> Renderer::scaleDown(std::unique_ptr<Color[]> rawBuffer) const {
-    auto result = std::unique_ptr<Bitmap>{new Bitmap(m_width, m_height)};
+std::list<Renderer::Block> Renderer::prepareBlocks() const {
+    int w = m_superSampling * m_width;
+    int h = m_superSampling * m_height;
     
-    for(int j = 0; j < m_height; ++j) {
-        for(int i = 0; i < m_width; ++i) {
+    int blockW = BLOCK_BASE_W * m_superSampling;
+    int blockH = BLOCK_BASE_H * m_superSampling;
+    
+    std::list<Block> result;
+    
+    for(int j = 0; j < h; j += blockH) {
+        for(int i = 0; i < w; i += blockW) {
+            result.push_back({i, j, std::min(blockW, w - i), std::min(blockH, h - j), w, h});
+        }
+    }
+    
+    return std::move(result);
+}
+
+void Renderer::scaleDown(Color* fromBuffer, Bitmap& toBitmap, const Block& b) const {
+    int x = b.x / m_superSampling;
+    int y = b.y / m_superSampling;
+    int w = b.w / m_superSampling;
+    int h = b.h / m_superSampling;
+    
+    for(int j = y; j < y + h; ++j) {
+        for(int i = x; i < x + w; ++i) {
             Color c;
             for(int xs = 0; xs < m_superSampling; ++xs) {
                 for(int ys = 0; ys < m_superSampling; ++ys) {
                     size_t index = (j*m_superSampling + ys)*m_width*m_superSampling + i*m_superSampling+xs;
-                    c += rawBuffer[index];
+                    c += fromBuffer[index];
                 }
             }
             
             c /= m_superSampling * m_superSampling;
             
             if(m_flipY) {
-                result->pixel(i, m_height - j - 1) = c;
+                toBitmap.pixel(i, m_height - j - 1) = c;
             } else {
-                result->pixel(i, j) = c;
+                toBitmap.pixel(i, j) = c;
             }
         }
     }
-    
-    return std::move(result);
 }
  
-void Renderer::raycast(const Scene& s, Color* result, int width, int height) {
-    for(int j = 0; j < height; ++j) {
-        for(int i = 0; i < width; ++i) {
+void Renderer::raycast(const Scene& s, Color* result, const Block& block) {
+    for(int j = block.y; j < block.y + block.h; ++j) {
+        for(int i = block.x; i < block.x + block.w; ++i) {
             Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
-            result[j*width + i] = processRay(s, r);
+            result[j*block.totalW + i] = processRay(s, r);
         }
     }
 }
@@ -250,12 +277,12 @@ Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& norm
     return {intensity, intensity, intensity, 1};
 }
 
-void Renderer::processExposure(Color* buffer, int w, int h) const {
+void Renderer::processExposure(Color* buffer, const Block& b) const {
     using namespace std;
     
-    for(int j = 0; j < h; ++j) {
-        for(int i = 0; i < w; ++i) {
-            Color& c = buffer[j*w + i];
+    for(int j = b.y; j < b.y + b.h; ++j) {
+        for(int i = b.x; i < b.x + b.w; ++i) {
+            Color& c = buffer[j*b.totalW + i];
             
             c.r = 1.0 - exp(-c.r * m_exposure);
             c.g = 1.0 - exp(-c.g * m_exposure);
@@ -264,11 +291,11 @@ void Renderer::processExposure(Color* buffer, int w, int h) const {
     }
 }
 
-void Renderer::correctGamma(Bitmap& b, int w, int h) const {
+void Renderer::correctGamma(Bitmap& b, const Block& block) const {
     using namespace std;
     
-    for(int j = 0; j < h; ++j) {
-        for(int i = 0; i < w; ++i) {
+    for(int j = block.y / m_superSampling; j < (block.y + block.h) / m_superSampling; ++j) {
+        for(int i = block.x / m_superSampling; i < (block.x + block.w) / m_superSampling; ++i) {
             Bitmap::PixelInfo& pixel = b.pixel(i, j);
             pixel.r = pow(static_cast<double>(pixel.r) / 255, m_gamma) * 255;
             pixel.g = pow(static_cast<double>(pixel.g) / 255, m_gamma) * 255;
