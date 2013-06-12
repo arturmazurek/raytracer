@@ -31,6 +31,8 @@ public:
     LightsIterator lightsBegin() const;
     LightsIterator lightsEnd() const;
     
+    void prepare();
+    
 private:
     Scene(const Scene&);
     Scene& operator=(const Scene&);

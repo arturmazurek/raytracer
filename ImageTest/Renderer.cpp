@@ -123,9 +123,9 @@ int Renderer::maxRayDepth() const {
     return m_maxRayDepth;
 }
 
-void Renderer::renderScene(const Scene& s, std::function<void(const Bitmap&, int)> callback) {
+void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
     using namespace std;
-    prepareRender();
+    prepareRender(s);
     
     Vector intersection;
     
@@ -256,10 +256,12 @@ std::unique_ptr<Ray[]> Renderer::createBouncedRays(const Vector& intersection, c
     return result;
 }
 
-void Renderer::prepareRender() {
+void Renderer::prepareRender(Scene& s) {
     double focalLength = m_height / (2 * std::tan(0.5 * m_fovY));
     m_camera.setFocalLength(focalLength);
     m_highestIntensity = std::numeric_limits<double>::min();
+    
+    s.prepare();
 }
 
 Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& normal) {

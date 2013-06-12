@@ -40,6 +40,7 @@ static const FloatType RIM_WALL_EXTENDS = 30;
 {
     self.bitmapWidth = self.imageView.frame.size.width;
     self.bitmapHeight = self.imageView.frame.size.height;
+    NSLog(@"Start");
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^() {
         [self render];
     });
@@ -125,14 +126,17 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(1);
+    r.setSuperSampling(4);
     r.setFlipY(true);
     r.setExposure(1.5);
     r.setGamma(0.8);
-    r.setBouncedRays(16);
+    r.setBouncedRays(32);
     r.setMaxRayDepth(1);
     
     return r.renderScene(s, [self](const Bitmap& b, int progress) {
+        if(progress == 100) {
+            NSLog(@"End");
+        }
         [self showBitmap:b];
     });
 }

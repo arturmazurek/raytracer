@@ -63,3 +63,9 @@ Scene::LightsIterator Scene::lightsBegin() const {
 Scene::LightsIterator Scene::lightsEnd() const {
     return m_lights.end();
 }
+
+void Scene::prepare() {
+    for(auto& obj : m_objects) {
+        obj->prepareObject();
+    }
+}

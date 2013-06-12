@@ -26,7 +26,7 @@ public:
     ~Renderer();
     
     // function is a callback returning the current state of bitmap, and int [0-100] with the percentage of the process
-    void renderScene(const Scene& s, std::function<void(const Bitmap&, int)> callback);
+    void renderScene(Scene& s, std::function<void(const Bitmap&, int)> callback);
 
     void setDimensions(int width, int height);
     int width() const;
@@ -79,7 +79,8 @@ private:
     int m_maxRayDepth;
     
 private:
-    void prepareRender();
+    void prepareRender(Scene& s);
+    
     Color getDiffuse(const Scene& s, const Vector& pos, const Vector& normal);
     void raycast(const Scene& s, Color* result, const Block& block);
     Color processRay(const Scene& s, const Ray& r);
