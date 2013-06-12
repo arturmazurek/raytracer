@@ -215,7 +215,7 @@ Color Renderer::processRay(const Scene& s, const Ray& r) {
     if(s.findIntersection(r, intersection, normal)) {
         Color c = getDiffuse(s, intersection, normal);
         
-        if(r.depth <= m_maxRayDepth) {
+        if(r.depth < m_maxRayDepth) {
             auto newRays = createBouncedRays(intersection, normal, m_bouncedRays);
             Color bounced{0, 0, 0, 1};
             for(int i = 0; i < m_bouncedRays; ++i) {
