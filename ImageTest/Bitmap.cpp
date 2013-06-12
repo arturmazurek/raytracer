@@ -9,6 +9,7 @@
 #include "Bitmap.h"
 
 #include <cassert>
+#include <cstring>
 
 Bitmap::Bitmap(int width, int height) : m_width{width}, m_height{height}, m_data{new PixelInfo[width * height]} {
     
@@ -16,6 +17,20 @@ Bitmap::Bitmap(int width, int height) : m_width{width}, m_height{height}, m_data
 
 Bitmap::~Bitmap() {
     
+}
+
+std::unique_ptr<Bitmap> Bitmap::copy() const {
+    auto result = std::unique_ptr<Bitmap>{new Bitmap{m_width, m_height}};
+    copyTo(*result);
+    
+    return result;
+}
+
+void Bitmap::copyTo(Bitmap& other) const {
+    assert(m_width == other.m_width);
+    assert(m_height == other.m_height);
+    
+    memcpy(m_data.get(), other.m_data.get(), m_width * m_height * sizeof(PixelInfo));
 }
 
 int Bitmap::width() const {

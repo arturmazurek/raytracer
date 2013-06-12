@@ -148,7 +148,7 @@ void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> cal
         
         scaleDown(tempBuffer.get(), *result, block);
         
-        callback(*result, static_cast<int>(index / count * 100 + 0.5));
+        callback(*result, static_cast<int>(index / count * 100));
     }
 }
 

@@ -38,6 +38,9 @@ public:
     Bitmap(int width, int height);
     virtual ~Bitmap();
     
+    std::unique_ptr<Bitmap> copy() const;
+    void copyTo(Bitmap& other) const;
+    
     int width() const;
     int height() const;
     const PixelInfo* data() const;
