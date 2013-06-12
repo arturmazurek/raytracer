@@ -19,7 +19,8 @@ class Plane : public BaseObject {
 public:
     explicit Plane(const Vector& origin = {}, const Vector& normal = {});
     
-    virtual bool intersects(const Ray& r, Vector& intersection, Vector& normal) const override;
+private:
+    virtual bool checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const override;
     
 private:
     Vector m_origin;

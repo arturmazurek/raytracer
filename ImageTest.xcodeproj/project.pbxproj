@@ -14,6 +14,7 @@
 		6D4C67EF15DE5E05002DE1AE /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 6D4C67ED15DE5E05002DE1AE /* Credits.rtf */; };
 		6D4C67F215DE5E05002DE1AE /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6D4C67F115DE5E05002DE1AE /* AppDelegate.mm */; };
 		6D4C67F515DE5E05002DE1AE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D4C67F315DE5E05002DE1AE /* MainMenu.xib */; };
+		6D68BBE417686D8500F5FB9F /* AABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D68BBE217686D8500F5FB9F /* AABB.cpp */; };
 		6D8474A4172EC63800BAF86F /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D8474A2172EC63800BAF86F /* Scene.cpp */; };
 		6D8474A7172EC6D100BAF86F /* BaseObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D8474A5172EC6D100BAF86F /* BaseObject.cpp */; };
 		6D8474AB172ECA6100BAF86F /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D8474A9172ECA6100BAF86F /* Ray.cpp */; };
@@ -44,6 +45,8 @@
 		6D4C67F015DE5E05002DE1AE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		6D4C67F115DE5E05002DE1AE /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		6D4C67F415DE5E05002DE1AE /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		6D68BBE217686D8500F5FB9F /* AABB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AABB.cpp; sourceTree = "<group>"; };
+		6D68BBE317686D8500F5FB9F /* AABB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AABB.h; sourceTree = "<group>"; };
 		6D8474A2172EC63800BAF86F /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		6D8474A3172EC63800BAF86F /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		6D8474A5172EC6D100BAF86F /* BaseObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseObject.cpp; sourceTree = "<group>"; };
@@ -126,6 +129,8 @@
 		6D4C67E415DE5E05002DE1AE /* ImageTest */ = {
 			isa = PBXGroup;
 			children = (
+				6D68BBE217686D8500F5FB9F /* AABB.cpp */,
+				6D68BBE317686D8500F5FB9F /* AABB.h */,
 				6DE7F2E71758D17F006FED74 /* Math.h */,
 				6D8474A9172ECA6100BAF86F /* Ray.cpp */,
 				6D8474AA172ECA6100BAF86F /* Ray.h */,
@@ -247,6 +252,7 @@
 				6D204B9E174BD4ED0016A570 /* Renderer.cpp in Sources */,
 				6DE7F2E31757AB8E006FED74 /* Bitmap.cpp in Sources */,
 				6DE7F2E61758CE2A006FED74 /* Camera.cpp in Sources */,
+				6D68BBE417686D8500F5FB9F /* AABB.cpp in Sources */,
 				6DE7F2EA1758ECC2006FED74 /* Color.cpp in Sources */,
 				75E15528175A7D8100D7DA0A /* BaseLight.cpp in Sources */,
 				75122F66175B58FF00A06819 /* Plane.cpp in Sources */,

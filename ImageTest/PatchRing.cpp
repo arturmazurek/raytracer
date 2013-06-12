@@ -18,7 +18,7 @@ PatchRing::~PatchRing() {
     
 }
 
-bool PatchRing::intersects(const Ray& r, Vector& intersection, Vector& normal) const {
+bool PatchRing::checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const {
     FloatType nominator = dot(m_normal, {m_position - r.origin});
     FloatType denominator = dot(m_normal, r.direction);
     

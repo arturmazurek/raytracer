@@ -40,10 +40,10 @@ public:
     
     void setAxisAlignment(AxisAlignment axis);
     AxisAlignment axisAlignment() const;
-    
-    virtual bool intersects(const Ray& r, Vector& intersection, Vector& normal) const override;
-    
+
 private:
+    virtual bool checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const override;
+
     bool checkFactors(const Ray& r, FloatType t1, FloatType t2, Vector& intersection, Vector& normal) const;
     
 private:

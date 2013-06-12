@@ -31,3 +31,19 @@ void BaseObject::setName(const std::string& name) {
 const std::string& BaseObject::name() const {
     return m_name;
 }
+
+bool BaseObject::intersects(const Ray& r, Vector& intersection, Vector& normal) const {
+    if(m_AABB.intersects(r)) {
+        return checkIntersection(r, intersection, normal);
+    } else {
+        return false;
+    }
+}
+
+bool BaseObject::checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const {
+    return false;
+}
+
+AABB BaseObject::getAABB() const {
+    return {};
+}

@@ -15,7 +15,7 @@ Plane::Plane(const Vector& origin, const Vector& normal) : m_origin{origin}, m_n
     m_normal.normalize();
 }
 
-bool Plane::intersects(const Ray& r, Vector& intersection, Vector& normal) const {
+bool Plane::checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const {
     FloatType nominator = dot(m_normal, {m_origin - r.origin});
     FloatType denominator = dot(m_normal, r.direction);
     

@@ -129,7 +129,7 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     r.setFlipY(true);
     r.setExposure(1.5);
     r.setGamma(0.8);
-    r.setBouncedRays(32);
+    r.setBouncedRays(16);
     r.setMaxRayDepth(1);
     
     return r.renderScene(s, [self](const Bitmap& b, int progress) {

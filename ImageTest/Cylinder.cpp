@@ -53,7 +53,7 @@ Cylinder::AxisAlignment Cylinder::axisAlignment() const {
     return m_axis;
 }
 
-bool Cylinder::intersects(const Ray& r, Vector& intersection, Vector& normal) const {
+bool Cylinder::checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const {
     Ray alteredRay = r;
     Vector alteredPosition = m_position;
     switch (m_axis) {

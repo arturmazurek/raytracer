@@ -37,7 +37,7 @@ FloatType Sphere::radius() const {
     return m_radius;
 }
 
-bool Sphere::intersects(const Ray& r, Vector& intersection, Vector& normal) const {
+bool Sphere::checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const {
     const FloatType A = r.origin.x - m_center.x;
     const FloatType B = r.origin.y - m_center.y;
     const FloatType C = r.origin.z - m_center.z;

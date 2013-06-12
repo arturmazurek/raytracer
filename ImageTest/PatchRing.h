@@ -19,8 +19,6 @@ public:
     explicit PatchRing(const Vector& position = {}, const Vector& normal = {}, FloatType radiusA = 0, FloatType radiusB = 0);
     virtual ~PatchRing();
     
-    virtual bool intersects(const Ray& r, Vector& intersection, Vector& normal) const override;
-    
     void setPosition(const Vector& position);
     const Vector& position() const;
     
@@ -32,6 +30,9 @@ public:
     
     void setRadiusB(FloatType radiusB);
     FloatType radiusB() const;
+    
+private:
+    virtual bool checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const override;
     
 private:
     Vector m_position;
