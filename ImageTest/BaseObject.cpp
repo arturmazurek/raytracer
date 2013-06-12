@@ -47,3 +47,7 @@ bool BaseObject::checkIntersection(const Ray& r, Vector& intersection, Vector& n
 AABB BaseObject::getAABB() const {
     return {};
 }
+
+void BaseObject::prepareObject() {
+    m_AABB = getAABB();
+}

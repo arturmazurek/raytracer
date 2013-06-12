@@ -43,6 +43,7 @@ public:
 
 private:
     virtual bool checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const override;
+    virtual AABB getAABB() const override;
 
     bool checkFactors(const Ray& r, FloatType t1, FloatType t2, Vector& intersection, Vector& normal) const;
     

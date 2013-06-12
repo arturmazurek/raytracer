@@ -11,6 +11,7 @@
 
 #include "BaseObject.h"
 
+#include "AABB.h"
 #include "Types.h"
 #include "Vector.h"
 
@@ -27,6 +28,7 @@ public:
     
 private:
     virtual bool checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const override;
+    virtual AABB getAABB() const override;
     
 private:
     Vector m_center;

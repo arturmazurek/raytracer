@@ -68,3 +68,7 @@ bool Sphere::checkIntersection(const Ray& r, Vector& intersection, Vector& norma
     
     return t;
 }
+
+AABB Sphere::getAABB() const {
+    return {m_center, {m_radius, m_radius, m_radius}};
+}

@@ -208,3 +208,19 @@ bool Cylinder::checkFactors(const Ray& r, FloatType t1, FloatType t2, Vector& in
 
     return true;
 }
+
+AABB Cylinder::getAABB() const {
+    switch (m_axis) {
+        case AxisAlignment::X_AXIS:
+            return {m_position, {m_extends, m_radius, m_radius}};
+            
+        case AxisAlignment::Y_AXIS:
+            return {m_position, {m_radius, m_extends, m_radius}};
+            
+        case AxisAlignment::Z_AXIS:
+            return {m_position, {m_radius, m_radius, m_extends}};
+            
+        default:
+            assert(!"Shouldn't get here");
+    }
+}

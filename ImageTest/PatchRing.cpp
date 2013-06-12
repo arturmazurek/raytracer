@@ -18,6 +18,39 @@ PatchRing::~PatchRing() {
     
 }
 
+void PatchRing::setPosition(const Vector& position) {
+    m_position = position;
+}
+
+const Vector& PatchRing::position() const {
+    return m_position;
+}
+
+void PatchRing::setNormal(const Vector& normal) {
+    m_normal = normal;
+    m_normal.normalize();
+}
+
+const Vector& PatchRing::normal() const {
+    return m_normal;
+}
+
+void PatchRing::setRadiusA(FloatType radiusA) {
+    m_radiusA = radiusA;
+}
+
+FloatType PatchRing::radiusA() const {
+    return m_radiusA;
+}
+
+void PatchRing::setRadiusB(FloatType radiusB) {
+    m_radiusB = radiusB;
+}
+
+FloatType PatchRing::radiusB() const {
+    return m_radiusB;
+}
+
 bool PatchRing::checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const {
     FloatType nominator = dot(m_normal, {m_position - r.origin});
     FloatType denominator = dot(m_normal, r.direction);
@@ -50,35 +83,6 @@ bool PatchRing::checkIntersection(const Ray& r, Vector& intersection, Vector& no
     return true;
 }
 
-void PatchRing::setPosition(const Vector& position) {
-    m_position = position;
-}
-
-const Vector& PatchRing::position() const {
-    return m_position;
-}
-
-void PatchRing::setNormal(const Vector& normal) {
-    m_normal = normal;
-    m_normal.normalize();
-}
-
-const Vector& PatchRing::normal() const {
-    return m_normal;
-}
-
-void PatchRing::setRadiusA(FloatType radiusA) {
-    m_radiusA = radiusA;
-}
-
-FloatType PatchRing::radiusA() const {
-    return m_radiusA;
-}
-
-void PatchRing::setRadiusB(FloatType radiusB) {
-    m_radiusB = radiusB;
-}
-
-FloatType PatchRing::radiusB() const {
-    return m_radiusB;
+AABB PatchRing::getAABB() const {
+    return {m_position, {m_radiusB, m_radiusB, m_radiusB}};
 }
