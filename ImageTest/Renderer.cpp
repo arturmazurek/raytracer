@@ -138,54 +138,47 @@ void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> cal
     auto blocks = prepareBlocks();
     double count = blocks.size();
     double index = 0;
-//    for(const auto& block : blocks) {
-//        ++index;
-//        raycast(s, tempBuffer.get(), block);
-//
-//        processImage(tempBuffer.get(), block, [this](Color& c){
-//            correctExposure(c);
-//            correctGamma(c);
-//        });
-//        
-//        scaleDown(tempBuffer.get(), *result, block);
-//        
-//        callback(*result, static_cast<int>(index / count * 100));
     
-    unsigned threadsCount = std::thread::hardware_concurrency();
-    std::vector<std::thread> threads;
     std::mutex blocksLock;
     std::mutex callbackLock;
     
-    for(int i = 0; i < threadsCount; ++i) {
-        auto worker = [&]() {
-            while(true) {
-                Block block;
-                blocksLock.lock();
-                ++index;
-                if(blocks.size()) {
-                    block = blocks.front();
-                    blocks.pop_front();
-                    blocksLock.unlock();
-                } else {
-                    blocksLock.unlock();
-                    return;
-                }
-                
-                raycast(s, tempBuffer.get(), block);
-                
-                processImage(tempBuffer.get(), block, [this](Color& c){
-                    correctExposure(c);
-                    correctGamma(c);
-                });
-                
-                scaleDown(tempBuffer.get(), *result, block);
-                if(callbackLock.try_lock()) {
-                    callback(*result, static_cast<int>(index / count * 100));
-                    callbackLock.unlock();
-                }
+    auto worker = [&]() {
+        while(true) {
+            Block block;
+            blocksLock.lock();
+            ++index;
+            if(blocks.size()) {
+                block = blocks.front();
+                blocks.pop_front();
+                blocksLock.unlock();
+            } else {
+                blocksLock.unlock();
+                return;
             }
-        };
-        
+            
+            raycast(s, tempBuffer.get(), block);
+            
+            processImage(tempBuffer.get(), block, [this](Color& c){
+                correctExposure(c);
+                correctGamma(c);
+            });
+            
+            scaleDown(tempBuffer.get(), *result, block);
+            if(callbackLock.try_lock()) {
+                callback(*result, static_cast<int>(index / count * 100));
+                callbackLock.unlock();
+            }
+        }
+    };
+    
+    processParallel(worker);
+}
+
+void Renderer::processParallel(std::function<void()> worker) const {
+    unsigned threadsCount = std::thread::hardware_concurrency();
+    std::vector<std::thread> threads;
+    
+    for(int i = 0; i < threadsCount; ++i) {
         threads.push_back(std::thread{worker});
     }
     

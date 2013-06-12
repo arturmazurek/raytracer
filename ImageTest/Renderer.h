@@ -80,9 +80,6 @@ private:
     int m_bouncedRays;
     int m_maxRayDepth;
     
-//    std::vector<std::thread> m_threads;
-//    std::mutex m_renderLock;
-    
 private:
     void prepareRender(Scene& s);
     
@@ -97,6 +94,8 @@ private:
     void processImage(Color* bitmap, const Block& block, std::function<void(Color&)> filter) const;
     void correctGamma(Color& c) const;
     void correctExposure(Color& c) const;
+    
+    void processParallel(std::function<void()> worker) const;
     
 private:
     Renderer(const Renderer&);
