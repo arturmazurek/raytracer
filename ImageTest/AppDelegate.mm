@@ -46,9 +46,9 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     });
 }
 
-- (void)showBitmap:(const Bitmap&)bitmap {
+- (void)showBitmap:(Bitmap*)bitmap {
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)bitmap.data(), sizeof(Bitmap::PixelInfo)*self.bitmapWidth*self.bitmapHeight);
+    CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)bitmap->data(), sizeof(Bitmap::PixelInfo)*self.bitmapWidth*self.bitmapHeight);
     CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(imageData);
     CGImageRef cgImage = CGImageCreate(self.bitmapWidth, self.bitmapHeight, 8, Bitmap::PixelInfo::bitsSize(),
                                        self.bitmapWidth * sizeof(Bitmap::PixelInfo), colorSpace, 0, dataProvider, NULL, TRUE, kCGRenderingIntentDefault);
@@ -59,10 +59,9 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     CGDataProviderRelease(dataProvider);
     CGImageRelease(cgImage);
     CFRelease(imageData);
+    delete bitmap;
     
-    dispatch_sync(dispatch_get_main_queue(), ^() {
-        [self.imageView setImage:img];
-    });
+    [self.imageView setImage:img];
 }
 
 - (void)setupSpheres:(Scene&)s {
@@ -137,7 +136,10 @@ static const FloatType RIM_WALL_EXTENDS = 30;
         if(progress == 100) {
             NSLog(@"End");
         }
-        [self showBitmap:b];
+        auto bitmap = b.copy().release();
+        dispatch_sync(dispatch_get_main_queue(), ^() {
+            [self showBitmap:bitmap];
+        });
     });
 }
 

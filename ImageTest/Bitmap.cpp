@@ -23,14 +23,14 @@ std::unique_ptr<Bitmap> Bitmap::copy() const {
     auto result = std::unique_ptr<Bitmap>{new Bitmap{m_width, m_height}};
     copyTo(*result);
     
-    return result;
+    return std::move(result);
 }
 
 void Bitmap::copyTo(Bitmap& other) const {
     assert(m_width == other.m_width);
     assert(m_height == other.m_height);
     
-    memcpy(m_data.get(), other.m_data.get(), m_width * m_height * sizeof(PixelInfo));
+    memcpy(other.m_data.get(), m_data.get(), m_width * m_height * sizeof(PixelInfo));
 }
 
 int Bitmap::width() const {
