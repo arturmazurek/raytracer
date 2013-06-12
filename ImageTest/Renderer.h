@@ -12,6 +12,8 @@
 #include <functional>
 #include <list>
 #include <memory>
+#include <thread>
+#include <vector>
 
 #include "Camera.h"
 #include "Color.h"
@@ -77,6 +79,9 @@ private:
     double m_highestIntensity;
     int m_bouncedRays;
     int m_maxRayDepth;
+    
+//    std::vector<std::thread> m_threads;
+//    std::mutex m_renderLock;
     
 private:
     void prepareRender(Scene& s);
