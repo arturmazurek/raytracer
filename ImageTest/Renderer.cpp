@@ -125,10 +125,7 @@ int Renderer::maxRayDepth() const {
 }
 
 void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
-    using namespace std;
     prepareRender(s);
-    
-    Vector intersection;
     
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
@@ -136,17 +133,16 @@ void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> cal
     auto result = std::unique_ptr<Bitmap>{new Bitmap{m_width, m_height}};
     
     auto blocks = prepareBlocks();
-    double count = blocks.size();
-    double index = 0;
+    const double initialCount = blocks.size();
+    double left = initialCount;
     
     std::mutex blocksLock;
-    std::mutex callbackLock;
+    std::mutex counterLock;
     
     auto worker = [&]() {
         while(true) {
             Block block;
             blocksLock.lock();
-            ++index;
             if(blocks.size()) {
                 block = blocks.front();
                 blocks.pop_front();
@@ -164,14 +160,34 @@ void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> cal
             });
             
             scaleDown(tempBuffer.get(), *result, block);
-            if(callbackLock.try_lock()) {
-                callback(*result, static_cast<int>(index / count * 100));
-                callbackLock.unlock();
-            }
+            
+            counterLock.lock();
+            --left;
+            counterLock.unlock();
         }
     };
     
+    auto notifier = [&]() {
+        const std::chrono::milliseconds sleepDuration{200};
+        
+        while(true) {
+            int localLeft;
+            counterLock.lock();
+            localLeft = left;
+            counterLock.unlock();
+            
+            callback(*result, static_cast<int>((initialCount - localLeft) / initialCount * 100));
+            if(localLeft == 0) {
+                break;
+            }
+            
+            std::this_thread::sleep_for(sleepDuration);
+        };
+    };
+    std::thread notifierThread(notifier);
+    
     processParallel(worker);
+    notifierThread.join();
 }
 
 void Renderer::processParallel(std::function<void()> worker) const {
