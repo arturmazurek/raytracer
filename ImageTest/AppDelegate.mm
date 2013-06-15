@@ -46,7 +46,7 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     });
 }
 
-- (void)showBitmap:(Bitmap*)bitmap {
+- (void)showBitmap:(std::unique_ptr<Bitmap>)bitmap {
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CFDataRef imageData = CFDataCreate(kCFAllocatorDefault, (UInt8*)bitmap->data(), sizeof(Bitmap::PixelInfo)*self.bitmapWidth*self.bitmapHeight);
     CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(imageData);
@@ -59,7 +59,6 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     CGDataProviderRelease(dataProvider);
     CGImageRelease(cgImage);
     CFRelease(imageData);
-    delete bitmap;
     
     [self.imageView setImage:img];
 }
@@ -138,7 +137,7 @@ static const FloatType RIM_WALL_EXTENDS = 30;
         }
         auto bitmap = b.copy().release();
         dispatch_sync(dispatch_get_main_queue(), ^() {
-            [self showBitmap:bitmap];
+            [self showBitmap:std::unique_ptr<Bitmap>{bitmap}];
         });
     });
 }
