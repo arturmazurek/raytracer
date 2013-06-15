@@ -37,10 +37,10 @@
 		6D4C67E115DE5E05002DE1AE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		6D4C67E215DE5E05002DE1AE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		6D4C67E315DE5E05002DE1AE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		6D4C67E615DE5E05002DE1AE /* ImageTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ImageTest-Info.plist"; sourceTree = "<group>"; };
+		6D4C67E615DE5E05002DE1AE /* Raytracer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Raytracer-Info.plist"; sourceTree = "<group>"; };
 		6D4C67E815DE5E05002DE1AE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6D4C67EA15DE5E05002DE1AE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		6D4C67EC15DE5E05002DE1AE /* ImageTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ImageTest-Prefix.pch"; sourceTree = "<group>"; };
+		6D4C67EC15DE5E05002DE1AE /* Raytracer-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Raytracer-Prefix.pch"; sourceTree = "<group>"; };
 		6D4C67EE15DE5E05002DE1AE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		6D4C67F015DE5E05002DE1AE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		6D4C67F115DE5E05002DE1AE /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
@@ -170,10 +170,10 @@
 		6D4C67E515DE5E05002DE1AE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				6D4C67E615DE5E05002DE1AE /* ImageTest-Info.plist */,
+				6D4C67E615DE5E05002DE1AE /* Raytracer-Info.plist */,
 				6D4C67E715DE5E05002DE1AE /* InfoPlist.strings */,
 				6D4C67EA15DE5E05002DE1AE /* main.m */,
-				6D4C67EC15DE5E05002DE1AE /* ImageTest-Prefix.pch */,
+				6D4C67EC15DE5E05002DE1AE /* Raytracer-Prefix.pch */,
 				6D4C67ED15DE5E05002DE1AE /* Credits.rtf */,
 			);
 			name = "Supporting Files";
@@ -182,9 +182,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		6D4C67D915DE5E05002DE1AE /* ImageTest */ = {
+		6D4C67D915DE5E05002DE1AE /* Raytracer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6D4C67F815DE5E05002DE1AE /* Build configuration list for PBXNativeTarget "ImageTest" */;
+			buildConfigurationList = 6D4C67F815DE5E05002DE1AE /* Build configuration list for PBXNativeTarget "Raytracer" */;
 			buildPhases = (
 				6D4C67D615DE5E05002DE1AE /* Sources */,
 				6D4C67D715DE5E05002DE1AE /* Frameworks */,
@@ -194,7 +194,7 @@
 			);
 			dependencies = (
 			);
-			name = ImageTest;
+			name = Raytracer;
 			productName = ImageTest;
 			productReference = 6D4C67DA15DE5E05002DE1AE /* ImageTest.app */;
 			productType = "com.apple.product-type.application";
@@ -208,7 +208,7 @@
 				LastUpgradeCheck = 0440;
 				ORGANIZATIONNAME = "Artur Mazurek";
 			};
-			buildConfigurationList = 6D4C67D415DE5E05002DE1AE /* Build configuration list for PBXProject "ImageTest" */;
+			buildConfigurationList = 6D4C67D415DE5E05002DE1AE /* Build configuration list for PBXProject "Raytracer" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -220,7 +220,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				6D4C67D915DE5E05002DE1AE /* ImageTest */,
+				6D4C67D915DE5E05002DE1AE /* Raytracer */,
 			);
 		};
 /* End PBXProject section */
@@ -347,9 +347,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ImageTest/ImageTest-Prefix.pch";
-				INFOPLIST_FILE = "ImageTest/ImageTest-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "ImageTest/Raytracer-Prefix.pch";
+				INFOPLIST_FILE = "ImageTest/Raytracer-Info.plist";
+				PRODUCT_NAME = Raytracer;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -362,9 +362,9 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ImageTest/ImageTest-Prefix.pch";
-				INFOPLIST_FILE = "ImageTest/ImageTest-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "ImageTest/Raytracer-Prefix.pch";
+				INFOPLIST_FILE = "ImageTest/Raytracer-Info.plist";
+				PRODUCT_NAME = Raytracer;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -372,7 +372,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		6D4C67D415DE5E05002DE1AE /* Build configuration list for PBXProject "ImageTest" */ = {
+		6D4C67D415DE5E05002DE1AE /* Build configuration list for PBXProject "Raytracer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6D4C67F615DE5E05002DE1AE /* Debug */,
@@ -381,7 +381,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6D4C67F815DE5E05002DE1AE /* Build configuration list for PBXNativeTarget "ImageTest" */ = {
+		6D4C67F815DE5E05002DE1AE /* Build configuration list for PBXNativeTarget "Raytracer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6D4C67F915DE5E05002DE1AE /* Debug */,
