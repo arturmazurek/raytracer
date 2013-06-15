@@ -31,7 +31,7 @@
 /* Begin PBXFileReference section */
 		6D204B9C174BD4EC0016A570 /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
 		6D204B9D174BD4ED0016A570 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
-		6D4C67DA15DE5E05002DE1AE /* ImageTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = ImageTest.app; path = Raytracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D4C67DA15DE5E05002DE1AE /* Raytracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Raytracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D4C67DE15DE5E05002DE1AE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		6D4C67E115DE5E05002DE1AE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		6D4C67E215DE5E05002DE1AE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -98,7 +98,7 @@
 		6D4C67DB15DE5E05002DE1AE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6D4C67DA15DE5E05002DE1AE /* ImageTest.app */,
+				6D4C67DA15DE5E05002DE1AE /* Raytracer.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -192,7 +192,7 @@
 			);
 			name = Raytracer;
 			productName = ImageTest;
-			productReference = 6D4C67DA15DE5E05002DE1AE /* ImageTest.app */;
+			productReference = 6D4C67DA15DE5E05002DE1AE /* Raytracer.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -343,8 +343,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ImageTest/Raytracer-Prefix.pch";
-				INFOPLIST_FILE = "ImageTest/Raytracer-Info.plist";
+				GCC_PREFIX_HEADER = "Raytracer/Raytracer-Prefix.pch";
+				INFOPLIST_FILE = "Raytracer/Raytracer-Info.plist";
 				PRODUCT_NAME = Raytracer;
 				WRAPPER_EXTENSION = app;
 			};
@@ -358,8 +358,8 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ImageTest/Raytracer-Prefix.pch";
-				INFOPLIST_FILE = "ImageTest/Raytracer-Info.plist";
+				GCC_PREFIX_HEADER = "Raytracer/Raytracer-Prefix.pch";
+				INFOPLIST_FILE = "Raytracer/Raytracer-Info.plist";
 				PRODUCT_NAME = Raytracer;
 				WRAPPER_EXTENSION = app;
 			};
