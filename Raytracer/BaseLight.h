@@ -16,7 +16,7 @@ class BaseLight {
 public:
     enum class Type {
         TYPE_POINT_LIGHT,
-        TYPE_SPHERICAL_LIGHT,
+        TYPE_SPHERE_LIGHT,
         
         TYPE_ENUM_SIZE
     };

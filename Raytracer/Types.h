@@ -12,4 +12,8 @@
 typedef double FloatType;
 //static_assert(sizeof(FloatType) > sizeof(double), "Oops not a real long double");
 
+static inline long double max(long double a, long double b) {
+    return a > b ? a : b;
+}
+
 #endif

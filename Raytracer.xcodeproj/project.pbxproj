@@ -25,6 +25,7 @@
 		6DE7F2E61758CE2A006FED74 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7F2E41758CE29006FED74 /* Camera.cpp */; };
 		6DE7F2EA1758ECC2006FED74 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7F2E81758ECC0006FED74 /* Color.cpp */; };
 		7510BA56176E32FD0008CA30 /* PointLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7510BA54176E32FD0008CA30 /* PointLight.cpp */; };
+		7510BA59176E37510008CA30 /* SphereLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7510BA57176E37510008CA30 /* SphereLight.cpp */; };
 		75122F66175B58FF00A06819 /* Plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75122F64175B58FF00A06819 /* Plane.cpp */; };
 		75E15528175A7D8100D7DA0A /* BaseLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75E15526175A7D8100D7DA0A /* BaseLight.cpp */; };
 /* End PBXBuildFile section */
@@ -70,6 +71,8 @@
 		6DE7F2E91758ECC1006FED74 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
 		7510BA54176E32FD0008CA30 /* PointLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLight.cpp; sourceTree = "<group>"; };
 		7510BA55176E32FD0008CA30 /* PointLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointLight.h; sourceTree = "<group>"; };
+		7510BA57176E37510008CA30 /* SphereLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphereLight.cpp; sourceTree = "<group>"; };
+		7510BA58176E37510008CA30 /* SphereLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphereLight.h; sourceTree = "<group>"; };
 		75122F64175B58FF00A06819 /* Plane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plane.cpp; sourceTree = "<group>"; };
 		75122F65175B58FF00A06819 /* Plane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plane.h; sourceTree = "<group>"; };
 		75122F67175B7AC500A06819 /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
@@ -164,6 +167,8 @@
 				6DC8E92C17674635008430EF /* PatchRing.h */,
 				7510BA54176E32FD0008CA30 /* PointLight.cpp */,
 				7510BA55176E32FD0008CA30 /* PointLight.h */,
+				7510BA57176E37510008CA30 /* SphereLight.cpp */,
+				7510BA58176E37510008CA30 /* SphereLight.h */,
 			);
 			path = Raytracer;
 			sourceTree = "<group>";
@@ -248,6 +253,7 @@
 				7510BA56176E32FD0008CA30 /* PointLight.cpp in Sources */,
 				6D4C67F215DE5E05002DE1AE /* AppDelegate.mm in Sources */,
 				6D8474A4172EC63800BAF86F /* Scene.cpp in Sources */,
+				7510BA59176E37510008CA30 /* SphereLight.cpp in Sources */,
 				6D8474A7172EC6D100BAF86F /* BaseObject.cpp in Sources */,
 				6D8474AB172ECA6100BAF86F /* Ray.cpp in Sources */,
 				6D8474AE172ECEC600BAF86F /* Sphere.cpp in Sources */,

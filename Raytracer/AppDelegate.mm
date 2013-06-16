@@ -18,6 +18,7 @@
 #include "Plane.h"
 #include "PointLight.h"
 #include "Renderer.h"
+#include "SphereLight.h"
 #include "Scene.h"
 #include "Sphere.h"
 #include "Types.h"
@@ -32,10 +33,13 @@
 @implementation AppDelegate
 @synthesize imageView = _imageView;
 
-static const FloatType RINGWORLD_RADIUS = 153000000000;
+static const FloatType RINGWORLD_RADIUS = 1.53e8 * 1000;
 static const FloatType RINGWORLD_EXTENDS = 400000000;
 static const FloatType RIM_WALL_HEIGHT = 1600000;
 static const FloatType RIM_WALL_EXTENDS = 30;
+
+static const FloatType SUN_DISTANCE = 1.496e8 * 1000;
+static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
@@ -66,17 +70,12 @@ static const FloatType RIM_WALL_EXTENDS = 30;
 
 - (void)setupSpheres:(Scene&)s {
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-1.5, -1, 10}, 1}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 10}, 1}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 10}, 2}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 10}, 1}});
     
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-1.5, -1, 100}, 1}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 100}, 1}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 100}, 1}});
-    
-//    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -2, 0}, {0, 1, 0}}});
-    
-    auto light = std::unique_ptr<BaseLight>{new PointLight{{10, 20, 0}}};
-//    s.addLight(std::move(light));
 }
 
 - (void)setupRingworld:(Scene&)s {
@@ -88,15 +87,14 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{RINGWORLD_EXTENDS + RIM_WALL_EXTENDS, RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RIM_WALL_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
     s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{-(RINGWORLD_EXTENDS + RIM_WALL_EXTENDS), RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RIM_WALL_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
     
-    auto light = std::unique_ptr<BaseLight>{new PointLight{{0, RINGWORLD_RADIUS, 0}}};
-    s.addLight(std::move(light));
+    s.addLight(std::unique_ptr<BaseLight>{new SphereLight{{0, RINGWORLD_RADIUS, 0}, SUN_RADIUS}});
 }
 
 - (void)setupPlanets:(Scene&)s {
     auto earth = std::unique_ptr<Sphere>{new Sphere{}};
     const FloatType earthRadius = 6378100;
     earth->setRadius(earthRadius);
-    earth->setCenter({0, -(earthRadius + FloatType(2)), 0});
+    earth->setCenter({0, -(earthRadius + 2), 0});
     earth->setName("earth");
     s.addObject(std::move(earth));
     
@@ -104,13 +102,12 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     const FloatType moonRadius = 1735970;
     moon->setRadius(moonRadius);
     const FloatType moonDistance = 36257000;
-    const FloatType angle = Math::PI * FloatType(0.1);
+    const FloatType angle = Math::PI * 0.1;
     moon->setCenter({0, moonDistance * sin(angle), moonDistance * cos(angle)});
     moon->setName("moon");
     s.addObject(std::move(moon));
     
-    auto light = std::unique_ptr<BaseLight>{new PointLight{{0, 2.5e17, 0}}};
-    s.addLight(std::move(light));
+    s.addLight(std::unique_ptr<BaseLight>{new SphereLight{{0, SUN_DISTANCE, 0}, SUN_RADIUS}});
 }
 
 - (void)render {
@@ -126,7 +123,7 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     r.setFlipY(true);
     r.setExposure(1.5);
     r.setGamma(0.8);
-    r.setBouncedRays(32);
+    r.setBouncedRays(64);
     r.setMaxRayDepth(1);
     
     return r.renderScene(s, [self](const Bitmap& b, int progress) {

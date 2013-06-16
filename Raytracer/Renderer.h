@@ -22,6 +22,7 @@ class Bitmap;
 class PointLight;
 class Ray;
 class Scene;
+class SphereLight;
 
 class Renderer {
 public:
@@ -92,6 +93,7 @@ private:
     std::unique_ptr<Ray[]> createBouncedRays(const Vector& intersection, const Vector& normal, int count) const;
     std::list<Block> prepareBlocks() const;
     FloatType handlePointLight(const Scene& s, const PointLight& light, const Vector& pos, const Vector& normal) const;
+    FloatType handleSphereLight(const Scene& s, const SphereLight& light, const Vector& pos, const Vector& normal) const;
     
     void processImage(Color* bitmap, const Block& block, std::function<void(Color&)> filter) const;
     void correctGamma(Color& c) const;

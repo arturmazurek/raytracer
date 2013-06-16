@@ -23,6 +23,7 @@
 #include "Math.h"
 #include "Matrix.h"
 #include "PointLight.h"
+#include "SphereLight.h"
 #include "Ray.h"
 #include "Scene.h"
 #include "Vector.h"
@@ -33,6 +34,17 @@ static const double DEFAULT_RAY_BIAS = 0.001;
 
 static const int BLOCK_BASE_W = 20;
 static const int BLOCK_BASE_H = 20;
+
+static inline FloatType uniRand() {
+    return (FloatType)(rand() % 100000) / 100000;
+}
+
+static inline Vector onSphereRand() {    
+    FloatType theta = 2 * Math::PI * uniRand();
+    FloatType phi = acos(2*uniRand() - 1);
+    
+    return {sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)};
+}
 
 Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{DEFAULT_FOV}, m_superSampling{DEFAULT_SUPERSAMPLING},
 m_flipY{false}, m_rayBias{DEFAULT_RAY_BIAS}, m_exposure{1}, m_gamma{1}, m_highestIntensity{0}, m_bouncedRays{0},
@@ -290,13 +302,7 @@ std::unique_ptr<Ray[]> Renderer::createBouncedRays(const Vector& intersection, c
     const Vector pos = intersection + normal * m_rayBias;
     
     for(int i = 0; i < count; ++i) {
-        FloatType u = (FloatType)(rand() % 10000) / 10000;
-        FloatType v = (FloatType)(rand() % 10000) / 10000;
-        
-        FloatType theta = 2 * Math::PI * u;
-        FloatType phi = acos(2*v - 1);
-        
-        Vector newNormal{sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)};
+        Vector newNormal = onSphereRand();
         FloatType k = dot(newNormal, normal);
         if(k < 0) {
             newNormal -= 2 * k * normal;
@@ -326,6 +332,10 @@ Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& norm
                 intensity += handlePointLight(s, *static_cast<PointLight*>((*it).get()), biasedPos, normal);
                 break;
                 
+            case BaseLight::Type::TYPE_SPHERE_LIGHT:
+                intensity += handleSphereLight(s, *static_cast<SphereLight*>((*it).get()), biasedPos, normal);
+                break;
+                
             default:
                 assert(!"Unsupported light type");
                 break;
@@ -336,6 +346,8 @@ Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& norm
 }
 
 FloatType Renderer::handlePointLight(const Scene& s, const PointLight& light, const Vector& pos, const Vector& normal) const {
+    using namespace std;
+    
     Vector toLight = light.position() - pos;
     toLight.normalize();
     Ray ray{pos, toLight};
@@ -343,11 +355,37 @@ FloatType Renderer::handlePointLight(const Scene& s, const PointLight& light, co
     Vector intersection;
     Vector intersectionNormal;
     BaseObject* intersecting = s.findIntersection(ray, intersection, intersectionNormal);
-    if(intersecting && (intersection - pos).lengthSqr() > (light.position() - pos).lengthSqr()) {
-        return std::max(dot(normal, toLight), 0.0);
-    } else {
+    if(intersecting && (intersection - pos).lengthSqr() < (light.position() - pos).lengthSqr()) {
         return 0;
+    } else {
+        return max(dot(normal, toLight), 0);
     }
+}
+
+FloatType Renderer::handleSphereLight(const Scene& s, const SphereLight& light, const Vector& pos, const Vector& normal) const {
+    using namespace std;
+    
+    Vector toCenter = light.center() - pos;
+    
+    FloatType result = 0;
+    int samples = m_bouncedRays;
+    Vector intersection;
+    Vector intersectionNormal;
+    
+    for(int i = 0; i < samples; ++i) {
+        Vector sampleDir = onSphereRand() * light.radius() + toCenter;
+        sampleDir.normalize();
+        BaseObject* intersecting = s.findIntersection({pos, sampleDir}, intersection, intersectionNormal);
+        // TODO: this one doesn't handle cases well some of the cases
+        // make the light's sphere actually an object in the scene
+        if(intersecting && (intersection - pos).lengthSqr() < (light.center() - pos).lengthSqr()) {
+            continue;
+        } else {
+            result += max(dot(normal, sampleDir), 0);
+        }
+    }
+    
+    return result / samples;
 }
 
 void Renderer::processImage(Color* bitmap, const Block& block, std::function<void(Color&)> filter) const {
