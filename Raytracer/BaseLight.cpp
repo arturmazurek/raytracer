@@ -10,21 +10,12 @@
 
 #include <algorithm>
 
-BaseLight::BaseLight() : m_position{}, m_color{1, 1, 1, 1}, m_intensity{1} {
+BaseLight::BaseLight() : m_color{1, 1, 1, 1}, m_intensity{1} {
     
 }
 
 BaseLight::~BaseLight() {
     
-}
-
-void BaseLight::setPosition(const Vector& position) {
-    m_position = position;
-//    m_position.normalize();
-}
-
-const Vector& BaseLight::position() const {
-    return m_position;
 }
 
 void BaseLight::setColor(const Color& c) {
@@ -41,9 +32,4 @@ void BaseLight::setIntensity(double intensity) {
 
 double BaseLight::intensity() const {
     return m_intensity;
-}
-
-double BaseLight::intensityAtPosition(const Vector& pos, const Vector& normal) {
-    Vector dir = m_position - pos;
-    return std::max(dot(normal, dir.normalize()), static_cast<FloatType>(0.0));
 }

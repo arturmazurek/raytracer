@@ -19,6 +19,7 @@
 #include "Color.h"
 
 class Bitmap;
+class PointLight;
 class Ray;
 class Scene;
 
@@ -90,6 +91,7 @@ private:
     void scaleDown(Color* fromBuffer, Bitmap& toBitmap, const Block& block) const;
     std::unique_ptr<Ray[]> createBouncedRays(const Vector& intersection, const Vector& normal, int count) const;
     std::list<Block> prepareBlocks() const;
+    FloatType handlePointLight(const Scene& s, const PointLight& light, const Vector& pos, const Vector& normal) const;
     
     void processImage(Color* bitmap, const Block& block, std::function<void(Color&)> filter) const;
     void correctGamma(Color& c) const;

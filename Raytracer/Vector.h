@@ -78,6 +78,10 @@ struct Vector final {
         return result;
     }
 };
+
+static inline bool operator==(const Vector& a, const Vector& b) {
+    return a.x == b.x && a.y == b.y && a.z == b.z;
+}
     
 static inline Vector operator-(const Vector& a) {
     Vector result;

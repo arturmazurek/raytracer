@@ -16,6 +16,7 @@
 #include "Math.h"
 #include "PatchRing.h"
 #include "Plane.h"
+#include "PointLight.h"
 #include "Renderer.h"
 #include "Scene.h"
 #include "Sphere.h"
@@ -74,8 +75,7 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     
 //    s.addObject(std::unique_ptr<BaseObject>{new Plane{{0, -2, 0}, {0, 1, 0}}});
     
-    auto light = std::unique_ptr<BaseLight>(new BaseLight{});
-    light->setPosition({10, 20, 0});
+    auto light = std::unique_ptr<BaseLight>{new PointLight{{10, 20, 0}}};
 //    s.addLight(std::move(light));
 }
 
@@ -88,8 +88,7 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{RINGWORLD_EXTENDS + RIM_WALL_EXTENDS, RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RIM_WALL_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
     s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{-(RINGWORLD_EXTENDS + RIM_WALL_EXTENDS), RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RIM_WALL_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
     
-    auto light = std::unique_ptr<BaseLight>(new BaseLight{});
-    light->setPosition({0, RINGWORLD_RADIUS, 0});
+    auto light = std::unique_ptr<BaseLight>{new PointLight{{0, RINGWORLD_RADIUS, 0}}};
     s.addLight(std::move(light));
 }
 
@@ -110,8 +109,7 @@ static const FloatType RIM_WALL_EXTENDS = 30;
     moon->setName("moon");
     s.addObject(std::move(moon));
     
-    auto light = std::unique_ptr<BaseLight>(new BaseLight{});
-    light->setPosition({0, 2.5e17, 0});
+    auto light = std::unique_ptr<BaseLight>{new PointLight{{0, 2.5e17, 0}}};
     s.addLight(std::move(light));
 }
 

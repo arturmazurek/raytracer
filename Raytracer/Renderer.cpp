@@ -22,6 +22,7 @@
 #include "Log.h"
 #include "Math.h"
 #include "Matrix.h"
+#include "PointLight.h"
 #include "Ray.h"
 #include "Scene.h"
 #include "Vector.h"
@@ -319,23 +320,34 @@ Color Renderer::getDiffuse(const Scene& s, const Vector& pos, const Vector& norm
     FloatType intensity = 0.075;
     for(auto it = s.lightsBegin(); it != s.lightsEnd(); ++it) {
         Vector biasedPos = pos + m_rayBias*normal;
-        Vector toLight = (*it)->position() - biasedPos;
-        Ray toLightRay{biasedPos, toLight};
         
-        Vector intersection;
-        Vector intersectionNormal;
-        BaseObject* intersecting = s.findIntersection(toLightRay, intersection, intersectionNormal);
-        if(intersecting) {
-            if((intersection - biasedPos).lengthSqr() < ((*it)->position() - biasedPos).lengthSqr()) {
-                continue;
-            }
+        switch ((*it)->type()) {
+            case BaseLight::Type::TYPE_POINT_LIGHT:
+                intensity += handlePointLight(s, *static_cast<PointLight*>((*it).get()), biasedPos, normal);
+                break;
+                
+            default:
+                assert(!"Unsupported light type");
+                break;
         }
-        
-        
-        intensity += (*it)->intensityAtPosition(pos, normal);
     }
     
     return {intensity, intensity, intensity, 1};
+}
+
+FloatType Renderer::handlePointLight(const Scene& s, const PointLight& light, const Vector& pos, const Vector& normal) const {
+    Vector toLight = light.position() - pos;
+    toLight.normalize();
+    Ray ray{pos, toLight};
+    
+    Vector intersection;
+    Vector intersectionNormal;
+    BaseObject* intersecting = s.findIntersection(ray, intersection, intersectionNormal);
+    if(intersecting && (intersection - pos).lengthSqr() > (light.position() - pos).lengthSqr()) {
+        return std::max(dot(normal, toLight), 0.0);
+    } else {
+        return 0;
+    }
 }
 
 void Renderer::processImage(Color* bitmap, const Block& block, std::function<void(Color&)> filter) const {
