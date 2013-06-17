@@ -14,11 +14,17 @@
 
 class BaseLight {
 public:
+    enum class Type {
+        TYPE_POINT_LIGHT,
+        TYPE_SPHERE_LIGHT,
+        
+        TYPE_ENUM_SIZE
+    };
+    
     BaseLight();
     virtual ~BaseLight();
     
-    void setPosition(const Vector& position);
-    const Vector& position() const;
+    virtual Type type() const = 0;
     
     void setColor(const Color& c);
     const Color& color() const;
@@ -26,10 +32,7 @@ public:
     void setIntensity(double intensity);
     double intensity() const;
     
-    double intensityAtPosition(const Vector& pos, const Vector& normal);
-    
 private:
-    Vector m_position;
     Color m_color;
     double m_intensity;
 };
