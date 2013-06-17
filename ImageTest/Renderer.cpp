@@ -135,6 +135,7 @@ void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> cal
     auto blocks = prepareBlocks();
     const double initialCount = blocks.size();
     double left = initialCount;
+    bool change = false;
     
     std::mutex blocksLock;
     std::mutex counterLock;
@@ -163,20 +164,28 @@ void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> cal
             
             counterLock.lock();
             --left;
+            change = true;
             counterLock.unlock();
         }
     };
     
     auto notifier = [&]() {
         const std::chrono::milliseconds sleepDuration{200};
-        
+
         while(true) {
             int localLeft;
+            bool localChange;
             counterLock.lock();
             localLeft = left;
+            localChange = change;
+            if(localChange) {
+                change = false;
+            }
             counterLock.unlock();
             
-            callback(*result, static_cast<int>((initialCount - localLeft) / initialCount * 100));
+            if(localChange) {
+                callback(*result, static_cast<int>((initialCount - localLeft) / initialCount * 100));
+            }
             if(localLeft == 0) {
                 break;
             }
