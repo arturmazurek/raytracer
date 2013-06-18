@@ -171,14 +171,19 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
         // assume just one light
         Sphere* emiter = static_cast<Sphere*>(s.allEmiters()[0]);
         Vector toCenter = emiter->center() - biasedPos;
-        Vector baseA = perpendicular(toCenter);
-        Vector baseB = perpendicular(toCenter, baseA);
-        Vector diff = (2*uniRand() - 1) * baseA + (2*uniRand() -1) * baseB;
-        if(diff.lengthSqr() == 0) {
-            return {};
+//        Vector baseA = perpendicular(toCenter);
+//        Vector baseB = perpendicular(toCenter, baseA);
+//        Vector diff = (2*uniRand() - 1) * baseA + (2*uniRand() -1) * baseB;
+//        if(diff.lengthSqr() == 0) {
+//            return {};
+//        }
+//        diff.normalize();
+//        diff *= emiter->radius();
+        Vector diff = onSphereRand() * emiter->radius();
+        FloatType k = dot(diff, toCenter);
+        if(k > 0) {
+            diff -= 2*k*normalized(toCenter);
         }
-        diff.normalize();
-        diff *= emiter->radius();
         
         Vector dir = (toCenter + diff).normalize();
         Ray toLight{biasedPos, dir};
