@@ -95,6 +95,8 @@ private:
     FloatType handlePointLight(const Scene& s, const PointLight& light, const Vector& pos, const Vector& normal) const;
     FloatType handleSphereLight(const Scene& s, const SphereLight& light, const Vector& pos, const Vector& normal) const;
     
+    Color tracePath(const Scene& s, const Ray& r) const;
+    
     void processImage(Color* bitmap, const Block& block, std::function<void(Color&)> filter) const;
     void correctGamma(Color& c) const;
     void correctExposure(Color& c) const;

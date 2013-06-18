@@ -26,6 +26,7 @@
 #include "SphereLight.h"
 #include "Ray.h"
 #include "Scene.h"
+#include "Sphere.h"
 #include "Vector.h"
 
 static const double DEFAULT_FOV = 0.4 * Math::PI;
@@ -137,13 +138,95 @@ int Renderer::maxRayDepth() const {
     return m_maxRayDepth;
 }
 
+Color Renderer::tracePath(const Scene& s, const Ray& r) const {
+    if(r.depth > m_maxRayDepth) {
+        return {};
+    }
+    
+    Vector intersection;
+    Vector normal;
+    BaseObject* obj = s.findIntersection(r, intersection, normal);
+    
+    if(!obj) {
+        return {};
+    }
+    if(obj->emits) {
+        return {10,10,10,1};
+    }
+    
+    Vector biasedPos = intersection + m_rayBias*normal;
+    FloatType BRDF = 0;
+    Color reflected;
+    
+    if(r.depth + 1 < m_maxRayDepth) {
+        Ray newRay{biasedPos, onSphereRand(), r.depth + 1};
+        FloatType k = dot(newRay.direction, normal);
+        if(k < 0) {
+            newRay.direction -= 2 * k * normal;
+        }
+        BRDF = 2 * dot(newRay.direction, normal);
+        reflected = tracePath(s, newRay);
+    } else {
+        // shoot straight to light
+        // assume just one light
+        Sphere* emiter = static_cast<Sphere*>(s.allEmiters()[0]);
+        Vector toCenter = emiter->center() - biasedPos;
+        Vector baseA = perpendicular(toCenter);
+        Vector baseB = perpendicular(toCenter, baseA);
+        Vector diff = (2*uniRand() - 1) * baseA + (2*uniRand() -1) * baseB;
+        if(diff.lengthSqr() == 0) {
+            return {};
+        }
+        diff.normalize();
+        diff *= emiter->radius();
+        
+        Vector dir = (toCenter + diff).normalize();
+        Ray toLight{biasedPos, dir};
+        Vector lastNormal;
+        obj = s.findIntersection(toLight, intersection, lastNormal);
+        if(obj == emiter) {
+            return {1, 1, 1, 1};
+        } else {
+            return {};
+        }
+    }
+    
+    // Apply the Rendering Equation here.
+    return {BRDF * reflected};
+}
+
 void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
     prepareRender(s);
+    
     
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
     auto tempBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
     auto result = std::unique_ptr<Bitmap>{new Bitmap{m_width, m_height}};
+    
+    for(int iter = 1; iter <= 1000000; ++iter) {
+//        printf("Iter - %d\n", iter);
+        for(int j = 0; j < h; ++j) {
+            for(int i = 0; i < w; ++i) {
+                Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
+                tempBuffer[j*w + i] *= (iter - 1);
+                tempBuffer[j*w + i] /= iter;
+                tempBuffer[j*w + i] += (tracePath(s, r) / iter);
+            }
+        }
+        
+        if(iter % 100 == 0) {
+            printf("Iter - %d\n", iter);
+        }
+        
+        if(iter % 50 == 0) {
+            Block b{0, 0, w, h, w, h};
+            scaleDown(tempBuffer.get(), *result, b);
+            callback(*result, iter/1000);
+        }
+    }
+    
+    return;
     
     auto blocks = prepareBlocks();
     const double initialCount = blocks.size();
@@ -253,6 +336,8 @@ void Renderer::scaleDown(Color* fromBuffer, Bitmap& toBitmap, const Block& b) co
             }
             
             c /= m_superSampling * m_superSampling;
+            
+            correctExposure(c);
             
             if(m_flipY) {
                 toBitmap.pixel(i, m_height - j - 1) = c;

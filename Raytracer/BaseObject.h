@@ -28,6 +28,8 @@ public:
     
     bool intersects(const Ray& r, Vector& intersection, Vector& normal) const;
     
+    bool emits;
+    
 private:
     virtual bool checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const;
     virtual AABB getAABB() const;

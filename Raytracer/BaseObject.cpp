@@ -22,6 +22,8 @@ BaseObject::BaseObject(const std::string& name) : m_name{name} {
         
         m_name = ss.str();
     }
+        
+    emits = false;
 }
 
 void BaseObject::setName(const std::string& name) {

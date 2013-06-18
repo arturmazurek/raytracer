@@ -27,6 +27,10 @@ Scene::~Scene() {
 }
 
 void Scene::addObject(std::unique_ptr<BaseObject> obj) {
+    if(obj->emits) {
+        m_emiters.push_back(obj.get());
+    }
+    
     m_objects.push_back(std::move(obj));
 }
 
@@ -54,6 +58,10 @@ BaseObject* Scene::findIntersection(const Ray& ray, Vector& intersection, Vector
     }
     
     return const_cast<BaseObject*>(found);
+}
+
+const std::vector<BaseObject*>& Scene::allEmiters() const {
+    return m_emiters;
 }
 
 Scene::LightsIterator Scene::lightsBegin() const {
