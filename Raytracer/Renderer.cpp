@@ -200,6 +200,54 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
     return {BRDF * reflected};
 }
 
+Color Renderer::traceBiPath(const Scene& s, const Ray& lightRay, const Ray& eyeRay) const {
+    
+    Vector lightIntersection, lightNormal;
+    BaseObject* lightHit = s.findIntersection(lightRay, lightIntersection, lightNormal);
+    if(!lightHit) {
+        return {};
+    }
+    
+    Vector eyeIntersection, eyeNormal;
+    BaseObject* eyeHit = s.findIntersection(eyeRay, eyeIntersection, eyeNormal);
+    if(!eyeHit) {
+        return {};
+    }
+    
+    int nextDepth = eyeRay.depth + 1;
+    
+    if(nextDepth == m_maxRayDepth) {
+        // attach intersection points
+        Vector connectionIntersection, connectionNormal;
+        Ray connectionRay{eyeIntersection + m_rayBias*eyeNormal, (eyeIntersection - lightIntersection).normalize()};
+        BaseObject* connectionHit = s.findIntersection(connectionRay, connectionIntersection, connectionNormal);
+        if(connectionHit) {
+            return {};
+        } else {
+            FloatType d2 = (connectionIntersection - eyeIntersection).lengthSqr();
+            Color result{1000, 1000, 1000, 1};
+            result /= d2;
+            return result;
+        }
+    } else {
+        // shoot more rays
+        Vector newNormal = onSphereRand();
+        FloatType k = dot(newNormal, lightNormal);
+        if(k < 0) {
+            newNormal += 2*k*lightNormal;
+        }
+        Ray newLightRay{lightIntersection + lightNormal*m_rayBias, newNormal, nextDepth};
+        
+        newNormal = onSphereRand();
+        k = dot(newNormal, eyeNormal);
+        if(k < 0) {
+            newNormal += 2*k*eyeNormal;
+        }
+        Ray newEyeRay{eyeIntersection + eyeNormal*m_rayBias, newNormal, nextDepth};
+        return traceBiPath(s, newLightRay, newEyeRay);
+    }
+}
+
 void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
     prepareRender(s);
     
@@ -209,22 +257,32 @@ void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> cal
     auto tempBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
     auto result = std::unique_ptr<Bitmap>{new Bitmap{m_width, m_height}};
     
+    Sphere* light = static_cast<Sphere*>(s.allEmiters()[0]);
+    
     for(int iter = 1; iter <= 1000000; ++iter) {
 //        printf("Iter - %d\n", iter);
         for(int j = 0; j < h; ++j) {
             for(int i = 0; i < w; ++i) {
                 Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
+                Vector direction = onSphereRand();
+                Vector normal = onSphereRand();
+                FloatType k = dot(direction, normal);
+                if(k < 0) {
+                    direction += 2*k*normal;
+                }
+                normal *= light->radius();
+                Ray lightRay{light->center() + normal, direction};
+                
+                
                 tempBuffer[j*w + i] *= (iter - 1);
                 tempBuffer[j*w + i] /= iter;
-                tempBuffer[j*w + i] += (tracePath(s, r) / iter);
+//                tempBuffer[j*w + i] += (tracePath(s, r) / iter);
+                tempBuffer[j*w + i] += (traceBiPath(s, lightRay, r) / iter);
             }
         }
         
-        if(iter % 100 == 0) {
+        if(iter % 10 == 0) {
             printf("Iter - %d\n", iter);
-        }
-        
-        if(iter % 50 == 0) {
             Block b{0, 0, w, h, w, h};
             scaleDown(tempBuffer.get(), *result, b);
             callback(*result, iter/1000);

@@ -88,7 +88,8 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
     s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{-(RINGWORLD_EXTENDS + RIM_WALL_EXTENDS), RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RIM_WALL_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
     
 //    s.addLight(std::unique_ptr<BaseLight>{new SphereLight{{0, RINGWORLD_RADIUS, 0}, SUN_RADIUS}});
-    auto light = std::unique_ptr<BaseObject>{new Sphere{{0, 4 * SUN_RADIUS, 0}, SUN_RADIUS}};
+//    auto light = std::unique_ptr<BaseObject>{new Sphere{{0, 4 * SUN_RADIUS, 0}, SUN_RADIUS}};
+    auto light = std::unique_ptr<BaseObject>{new Sphere{{0, 30, 0}, 10}};
     light->emits = true;
     s.addObject(std::move(light));
 }
@@ -127,7 +128,7 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
     r.setExposure(1.5);
     r.setGamma(0.8);
     r.setBouncedRays(64);
-    r.setMaxRayDepth(3);
+    r.setMaxRayDepth(1);
     
     return r.renderScene(s, [self](const Bitmap& b, int progress) {
         if(progress == 100) {
