@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <iostream>
 #include <limits>
 #include <memory>
 #include <string>
@@ -250,7 +251,7 @@ Color Renderer::traceBiPath(const Scene& s, const Ray& lightRay, const Ray& eyeR
 
 void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
     prepareRender(s);
-    pathTraceScene(s, callback, 10000);
+    pathTraceScene(s, callback, 100);
 }
 
 void Renderer::raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
@@ -320,10 +321,9 @@ void Renderer::raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> c
 void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations) {
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
+    
     auto tempBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
     auto result = std::unique_ptr<Bitmap>{new Bitmap{m_width, m_height}};
-    
-//    Sphere* light = static_cast<Sphere*>(s.allEmiters()[0]);
     
     auto blocks = prepareBlocks();
     std::mutex blocksMutex;
@@ -338,19 +338,28 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
             }
             b = blocks.front();
             blocks.pop_front();
+            
+//            std::cout << "Having block - " << std::this_thread::get_id() << std::endl;
+            
             blocksMutex.unlock();
             
             int count = 100;
             pathTracing(s, tempBuffer.get(), b, count);
+            processImage(tempBuffer.get(), b, [this](Color& c){
+                correctExposure(c);
+                correctGamma(c);
+            });
+            
+            scaleDown(tempBuffer.get(), *result, b);
+            
             b.iterations += count;
             
-            if(b.iterations >= iterations) {
-                return;
+            if(b.iterations < iterations) {
+                blocksMutex.lock();
+                blocks.push_back(b);
+                blocksMutex.unlock();
             }
-            
-            blocksMutex.lock();
-            blocks.push_back(b);
-            blocksMutex.unlock();
+//            std::cout << "Finished block - " << std::this_thread::get_id() << std::endl;
         }
     };
     
