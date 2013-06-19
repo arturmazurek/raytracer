@@ -148,7 +148,7 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
     BaseObject* obj = s.findIntersection(r, intersection, normal);
     
     if(!obj) {
-        return {};
+        return {0.1, 0.1, 0.1, 1};
     }
     if(obj->emits) {
         return {10,10,10,1};
@@ -192,7 +192,7 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
         if(obj == emiter) {
             return {1, 1, 1, 1};
         } else {
-            return {};
+            return {0.1, 0.1, 0.1, 1};
         }
     }
     
@@ -250,46 +250,14 @@ Color Renderer::traceBiPath(const Scene& s, const Ray& lightRay, const Ray& eyeR
 
 void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
     prepareRender(s);
-    
-    
+    pathTraceScene(s, callback, 10000);
+}
+
+void Renderer::raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
     auto tempBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
     auto result = std::unique_ptr<Bitmap>{new Bitmap{m_width, m_height}};
-    
-    Sphere* light = static_cast<Sphere*>(s.allEmiters()[0]);
-    
-    for(int iter = 1; iter <= 1000000; ++iter) {
-//        printf("Iter - %d\n", iter);
-        for(int j = 0; j < h; ++j) {
-            for(int i = 0; i < w; ++i) {
-                Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
-                Vector direction = onSphereRand();
-                Vector normal = onSphereRand();
-                FloatType k = dot(direction, normal);
-                if(k < 0) {
-                    direction += 2*k*normal;
-                }
-                normal *= light->radius();
-                Ray lightRay{light->center() + normal, direction};
-                
-                
-                tempBuffer[j*w + i] *= (iter - 1);
-                tempBuffer[j*w + i] /= iter;
-//                tempBuffer[j*w + i] += (tracePath(s, r) / iter);
-                tempBuffer[j*w + i] += (traceBiPath(s, lightRay, r) / iter);
-            }
-        }
-        
-        if(iter % 10 == 0) {
-            printf("Iter - %d\n", iter);
-            Block b{0, 0, w, h, w, h};
-            scaleDown(tempBuffer.get(), *result, b);
-            callback(*result, iter/1000);
-        }
-    }
-    
-    return;
     
     auto blocks = prepareBlocks();
     const double initialCount = blocks.size();
@@ -349,6 +317,111 @@ void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> cal
     notifierThread.join();
 }
 
+void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations) {
+    int w = m_superSampling * m_width;
+    int h = m_superSampling * m_height;
+    auto tempBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
+    auto result = std::unique_ptr<Bitmap>{new Bitmap{m_width, m_height}};
+    
+//    Sphere* light = static_cast<Sphere*>(s.allEmiters()[0]);
+    
+    auto blocks = prepareBlocks();
+    std::mutex blocksMutex;
+    
+    auto pathWorker = [&]() {
+        while(true) {
+            Block b;
+            blocksMutex.lock();
+            if(blocks.empty()) {
+                blocksMutex.unlock();
+                return;
+            }
+            b = blocks.front();
+            blocks.pop_front();
+            blocksMutex.unlock();
+            
+            int count = 100;
+            pathTracing(s, tempBuffer.get(), b, count);
+            b.iterations += count;
+            
+            if(b.iterations >= iterations) {
+                return;
+            }
+            
+            blocksMutex.lock();
+            blocks.push_back(b);
+            blocksMutex.unlock();
+        }
+    };
+    
+    auto notifier = [&]() {
+        const std::chrono::milliseconds sleepDuration{200};
+        
+        while(true) {
+            int localLeft;
+            blocksMutex.lock();
+            if(blocks.empty()) {
+                callback(*result, 100);
+                blocksMutex.unlock();
+                return;
+            }
+            localLeft = iterations - blocks.front().iterations;
+            blocksMutex.unlock();
+            localLeft = std::max(localLeft, 0);
+            
+            callback(*result, static_cast<int>((iterations - localLeft) / iterations * 100));
+            
+            std::this_thread::sleep_for(sleepDuration);
+        };
+    };
+    std::thread notifierThread(notifier);
+    
+    processParallel(pathWorker);
+    notifierThread.join();
+    
+    
+//    for(int iter = 1; iter <= 1000000; ++iter) {
+//        //        printf("Iter - %d\n", iter);
+//        for(int j = 0; j < h; ++j) {
+//            for(int i = 0; i < w; ++i) {
+//                Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
+//                Vector direction = onSphereRand();
+//                Vector normal = onSphereRand();
+//                FloatType k = dot(direction, normal);
+//                if(k < 0) {
+//                    direction += 2*k*normal;
+//                }
+//                normal *= light->radius();
+//                Ray lightRay{light->center() + normal, direction};
+//                
+//                
+//                tempBuffer[j*w + i] *= (iter - 1);
+//                tempBuffer[j*w + i] /= iter;
+//                tempBuffer[j*w + i] += (tracePath(s, r) / iter);
+//                //                tempBuffer[j*w + i] += (traceBiPath(s, lightRay, r) / iter);
+//            }
+//        }
+//        
+//        if(iter % 10 == 0) {
+//            printf("Iter - %d\n", iter);
+//            Block b{0, 0, w, h, w, h};
+//            scaleDown(tempBuffer.get(), *result, b);
+//            callback(*result, iter/1000);
+//        }
+//    }
+}
+
+void Renderer::pathTracing(const Scene& s, Color* result, const Block& block, int pixelIters) {
+    for(int iter = 0; iter < pixelIters; ++iter) {
+        for(int j = block.y; j < block.y + block.h; ++j) {
+            for(int i = block.x; i < block.x + block.w; ++i) {
+                Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
+                result[j*block.totalW + i] = (tracePath(s, r) / iter);
+            }
+        }
+    }
+}
+
 void Renderer::processParallel(std::function<void()> worker) const {
     unsigned threadsCount = std::thread::hardware_concurrency();
     std::vector<std::thread> threads;
@@ -362,7 +435,7 @@ void Renderer::processParallel(std::function<void()> worker) const {
     }
 }
 
-std::list<Renderer::Block> Renderer::prepareBlocks() const {
+std::deque<Renderer::Block> Renderer::prepareBlocks() const {
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
     
@@ -373,13 +446,13 @@ std::list<Renderer::Block> Renderer::prepareBlocks() const {
     
     for(int j = 0; j < h; j += blockH) {
         for(int i = 0; i < w; i += blockW) {
-            result.push_back({i, j, std::min(blockW, w - i), std::min(blockH, h - j), w, h});
+            result.push_back({i, j, std::min(blockW, w - i), std::min(blockH, h - j), w, h, 0});
         }
     }
     
     std::random_shuffle(begin(result), end(result), [](int max){return rand() % max;});
     
-    return std::list<Renderer::Block>(begin(result), end(result));
+    return std::deque<Renderer::Block>(begin(result), end(result));
 }
 
 void Renderer::scaleDown(Color* fromBuffer, Bitmap& toBitmap, const Block& b) const {

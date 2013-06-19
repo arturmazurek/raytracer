@@ -9,6 +9,7 @@
 #ifndef __ImageTest__Renderer__
 #define __ImageTest__Renderer__
 
+#include <deque>
 #include <functional>
 #include <list>
 #include <memory>
@@ -66,6 +67,8 @@ private:
         int w, h;
         
         int totalW, totalH;
+        
+        int iterations;
     };
     
 private:
@@ -82,6 +85,8 @@ private:
     int m_bouncedRays;
     int m_maxRayDepth;
     
+    int m_pathTracingIteration;
+    
 private:
     void prepareRender(Scene& s);
     
@@ -91,9 +96,14 @@ private:
     Color bouncedDiffuseAtPosition(const Scene& s, const Vector& pos, const Vector& normal) const;
     void scaleDown(Color* fromBuffer, Bitmap& toBitmap, const Block& block) const;
     std::unique_ptr<Ray[]> createBouncedRays(const Vector& intersection, const Vector& normal, int count) const;
-    std::list<Block> prepareBlocks() const;
+    std::deque<Block> prepareBlocks() const;
     FloatType handlePointLight(const Scene& s, const PointLight& light, const Vector& pos, const Vector& normal) const;
     FloatType handleSphereLight(const Scene& s, const SphereLight& light, const Vector& pos, const Vector& normal) const;
+    
+    void raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback);
+    void pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations);
+    
+    void pathTracing(const Scene& s, Color* result, const Block& block, int pixelIters);
     
     Color tracePath(const Scene& s, const Ray& r) const;
     Color traceBiPath(const Scene& s, const Ray& lightRay, const Ray& eyeRay) const;
