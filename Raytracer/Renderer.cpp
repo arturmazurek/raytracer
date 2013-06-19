@@ -149,7 +149,7 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
     BaseObject* obj = s.findIntersection(r, intersection, normal);
     
     if(!obj) {
-        return {0.1, 0.1, 0.1, 1};
+        return {};
     }
     if(obj->emits) {
         return {10,10,10,1};
@@ -193,7 +193,7 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
         if(obj == emiter) {
             return {1, 1, 1, 1};
         } else {
-            return {0.1, 0.1, 0.1, 1};
+            return {};
         }
     }
     
@@ -251,7 +251,7 @@ Color Renderer::traceBiPath(const Scene& s, const Ray& lightRay, const Ray& eyeR
 
 void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
     prepareRender(s);
-    pathTraceScene(s, callback, 100);
+    pathTraceScene(s, callback, 1000);
 }
 
 void Renderer::raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
@@ -319,6 +319,8 @@ void Renderer::raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> c
 }
 
 void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations) {
+    iterations = 10000;
+    
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
     
@@ -327,30 +329,30 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
     
     auto blocks = prepareBlocks();
     std::mutex blocksMutex;
+    int doneCount = 0;
     
     auto pathWorker = [&]() {
         while(true) {
             Block b;
             blocksMutex.lock();
             if(blocks.empty()) {
+                ++doneCount;
                 blocksMutex.unlock();
                 return;
             }
             b = blocks.front();
             blocks.pop_front();
             
-//            std::cout << "Having block - " << std::this_thread::get_id() << std::endl;
-            
             blocksMutex.unlock();
             
-            int count = 100;
+            int count = iterations;
             pathTracing(s, tempBuffer.get(), b, count);
             processImage(tempBuffer.get(), b, [this](Color& c){
                 correctExposure(c);
                 correctGamma(c);
             });
             
-            scaleDown(tempBuffer.get(), *result, b);
+            scaleDown(tempBuffer.get(), *result, b, true);
             
             b.iterations += count;
             
@@ -359,24 +361,33 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
                 blocks.push_back(b);
                 blocksMutex.unlock();
             }
-//            std::cout << "Finished block - " << std::this_thread::get_id() << std::endl;
         }
     };
     
     auto notifier = [&]() {
-        const std::chrono::milliseconds sleepDuration{200};
+        const std::chrono::milliseconds sleepDuration{500};
+        Block b{0, 0, w, h, w, h, 0};
         
         while(true) {
             int localLeft;
             blocksMutex.lock();
-            if(blocks.empty()) {
-                callback(*result, 100);
+            if(doneCount == std::thread::hardware_concurrency()) {
                 blocksMutex.unlock();
+//                processImage(tempBuffer.get(), b, [this](Color& c){
+//                    correctExposure(c);
+//                    correctGamma(c);
+//                });
+//                
+//                scaleDown(tempBuffer.get(), *result, b, true);
+                callback(*result, 100);
                 return;
             }
             localLeft = iterations - blocks.front().iterations;
             blocksMutex.unlock();
+            
             localLeft = std::max(localLeft, 0);
+            
+            
             
             callback(*result, static_cast<int>((iterations - localLeft) / iterations * 100));
             
@@ -385,39 +396,9 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
     };
     std::thread notifierThread(notifier);
     
+//    pathWorker();
     processParallel(pathWorker);
     notifierThread.join();
-    
-    
-//    for(int iter = 1; iter <= 1000000; ++iter) {
-//        //        printf("Iter - %d\n", iter);
-//        for(int j = 0; j < h; ++j) {
-//            for(int i = 0; i < w; ++i) {
-//                Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
-//                Vector direction = onSphereRand();
-//                Vector normal = onSphereRand();
-//                FloatType k = dot(direction, normal);
-//                if(k < 0) {
-//                    direction += 2*k*normal;
-//                }
-//                normal *= light->radius();
-//                Ray lightRay{light->center() + normal, direction};
-//                
-//                
-//                tempBuffer[j*w + i] *= (iter - 1);
-//                tempBuffer[j*w + i] /= iter;
-//                tempBuffer[j*w + i] += (tracePath(s, r) / iter);
-//                //                tempBuffer[j*w + i] += (traceBiPath(s, lightRay, r) / iter);
-//            }
-//        }
-//        
-//        if(iter % 10 == 0) {
-//            printf("Iter - %d\n", iter);
-//            Block b{0, 0, w, h, w, h};
-//            scaleDown(tempBuffer.get(), *result, b);
-//            callback(*result, iter/1000);
-//        }
-//    }
 }
 
 void Renderer::pathTracing(const Scene& s, Color* result, const Block& block, int pixelIters) {
@@ -425,7 +406,8 @@ void Renderer::pathTracing(const Scene& s, Color* result, const Block& block, in
         for(int j = block.y; j < block.y + block.h; ++j) {
             for(int i = block.x; i < block.x + block.w; ++i) {
                 Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
-                result[j*block.totalW + i] = (tracePath(s, r) / iter);
+                result[j*block.totalW + i] += (tracePath(s, r) / pixelIters);
+//                result[j*block.totalW + i] = {0.05, 0, 0, 1};
             }
         }
     }
@@ -464,7 +446,7 @@ std::deque<Renderer::Block> Renderer::prepareBlocks() const {
     return std::deque<Renderer::Block>(begin(result), end(result));
 }
 
-void Renderer::scaleDown(Color* fromBuffer, Bitmap& toBitmap, const Block& b) const {
+void Renderer::scaleDown(Color* fromBuffer, Bitmap& toBitmap, const Block& b, bool overwrite) const {
     int x = b.x / m_superSampling;
     int y = b.y / m_superSampling;
     int w = b.w / m_superSampling;

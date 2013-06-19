@@ -94,7 +94,7 @@ private:
     void raycast(const Scene& s, Color* result, const Block& block);
     Color processRay(const Scene& s, const Ray& r);
     Color bouncedDiffuseAtPosition(const Scene& s, const Vector& pos, const Vector& normal) const;
-    void scaleDown(Color* fromBuffer, Bitmap& toBitmap, const Block& block) const;
+    void scaleDown(Color* fromBuffer, Bitmap& toBitmap, const Block& block, bool overwrite = false) const;
     std::unique_ptr<Ray[]> createBouncedRays(const Vector& intersection, const Vector& normal, int count) const;
     std::deque<Block> prepareBlocks() const;
     FloatType handlePointLight(const Scene& s, const PointLight& light, const Vector& pos, const Vector& normal) const;
