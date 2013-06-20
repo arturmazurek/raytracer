@@ -34,9 +34,6 @@ static const double DEFAULT_FOV = 0.4 * Math::PI;
 static const int DEFAULT_SUPERSAMPLING = 1;
 static const double DEFAULT_RAY_BIAS = 0.001;
 
-static const int BLOCK_BASE_W = 20;
-static const int BLOCK_BASE_H = 20;
-
 static inline FloatType uniRand() {
     return (FloatType)(rand() % 100000) / 100000;
 }
@@ -47,6 +44,9 @@ static inline Vector onSphereRand() {
     
     return {sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)};
 }
+
+const int Renderer::BLOCK_DEFAULT_W{20};
+const int Renderer::BLOCK_DEFAULT_H{20};
 
 Renderer::Renderer() : m_width{0}, m_height{0}, m_fovY{DEFAULT_FOV}, m_superSampling{DEFAULT_SUPERSAMPLING},
 m_flipY{false}, m_rayBias{DEFAULT_RAY_BIAS}, m_exposure{1}, m_gamma{1}, m_highestIntensity{0}, m_bouncedRays{0},
@@ -426,12 +426,12 @@ void Renderer::processParallel(std::function<void()> worker) const {
     }
 }
 
-std::deque<Renderer::Block> Renderer::prepareBlocks() const {
+std::deque<Renderer::Block> Renderer::prepareBlocks(int width, int height) const {
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
     
-    int blockW = BLOCK_BASE_W * m_superSampling;
-    int blockH = BLOCK_BASE_H * m_superSampling;
+    int blockW = width * m_superSampling;
+    int blockH = height * m_superSampling;
     
     std::vector<Block> result;
     

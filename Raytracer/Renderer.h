@@ -72,6 +72,9 @@ private:
     };
     
 private:
+    static const int BLOCK_DEFAULT_W;
+    static const int BLOCK_DEFAULT_H;
+    
     int m_width;
     int m_height;
     double m_fovY;
@@ -96,7 +99,7 @@ private:
     Color bouncedDiffuseAtPosition(const Scene& s, const Vector& pos, const Vector& normal) const;
     void scaleDown(Color* fromBuffer, Bitmap& toBitmap, const Block& block, bool overwrite = false) const;
     std::unique_ptr<Ray[]> createBouncedRays(const Vector& intersection, const Vector& normal, int count) const;
-    std::deque<Block> prepareBlocks() const;
+    std::deque<Block> prepareBlocks(int blockWidth = BLOCK_DEFAULT_W, int blockHeight = BLOCK_DEFAULT_H) const;
     FloatType handlePointLight(const Scene& s, const PointLight& light, const Vector& pos, const Vector& normal) const;
     FloatType handleSphereLight(const Scene& s, const SphereLight& light, const Vector& pos, const Vector& normal) const;
     
