@@ -127,10 +127,16 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
     r.setFlipY(true);
     r.setExposure(1.5);
     r.setGamma(0.8);
-    r.setBouncedRays(64);
+    r.setBouncedRays(16);
     r.setMaxRayDepth(2);
     
     return r.renderScene(s, [self](const Bitmap& b, int progress) {
+        static int lastProgress;
+        if(lastProgress != progress) {
+            NSLog(@"Progress - %d", progress);
+            lastProgress = progress;
+        }
+        
         if(progress == 100) {
             NSLog(@"End");
         }

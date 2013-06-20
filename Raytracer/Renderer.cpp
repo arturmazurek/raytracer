@@ -35,7 +35,7 @@ static const int DEFAULT_SUPERSAMPLING = 1;
 static const double DEFAULT_RAY_BIAS = 0.001;
 
 static inline FloatType uniRand() {
-    return (FloatType)(rand() % 100000) / 100000;
+    return (FloatType)(rand() % 1000000) / 1000000;
 }
 
 static inline Vector onSphereRand() {    
@@ -257,7 +257,7 @@ void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> cal
 void Renderer::raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
-    auto tempBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
+    auto colorBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
     auto result = std::unique_ptr<Bitmap>{new Bitmap{m_width, m_height}};
     
     auto blocks = prepareBlocks();
@@ -280,14 +280,14 @@ void Renderer::raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> c
                 return;
             }
             
-            raycast(s, tempBuffer.get(), block);
+            raycast(s, colorBuffer.get(), block);
             
-            processImage(tempBuffer.get(), block, [this](Color& c){
+            processImage(colorBuffer.get(), block, [this](Color& c){
                 correctExposure(c);
                 correctGamma(c);
             });
             
-            scaleDown(tempBuffer.get(), *result, block);
+            scaleDown(colorBuffer.get(), *result, block);
             
             counterLock.lock();
             --left;
@@ -319,95 +319,75 @@ void Renderer::raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> c
 }
 
 void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations) {
-    iterations = 10000;
+    iterations = 100000;
     
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
     
-    auto tempBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
+    auto colorBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
     auto result = std::unique_ptr<Bitmap>{new Bitmap{m_width, m_height}};
     
-    auto blocks = prepareBlocks();
+    int threadsCount = std::thread::hardware_concurrency();
+    
+    auto doneBlocks = prepareBlocks(m_width / threadsCount + 1, m_height);
+    decltype(doneBlocks) blocks;
+    
     std::mutex blocksMutex;
-    int doneCount = 0;
     
     auto pathWorker = [&]() {
-        while(true) {
-            Block b;
-            blocksMutex.lock();
-            if(blocks.empty()) {
-                ++doneCount;
-                blocksMutex.unlock();
-                return;
-            }
-            b = blocks.front();
-            blocks.pop_front();
-            
-            blocksMutex.unlock();
-            
-            int count = iterations;
-            pathTracing(s, tempBuffer.get(), b, count);
+        Block b;
+        blocksMutex.lock();
+        b = blocks.front();
+        blocks.pop_front();
+        blocksMutex.unlock();
+        
+        int count = 10;
+        pathTracing(s, colorBuffer.get(), b, count, b.iterations);
+        
+        b.iterations += count;
+        
+        blocksMutex.lock();
+        doneBlocks.push_back(b);
+        blocksMutex.unlock();
+    };
+    
+    auto tempBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
+    
+    while(true) {
+        int percent = 100 - 100 * (iterations - doneBlocks.front().iterations) / iterations;
+        
+        memcpy(tempBuffer.get(), colorBuffer.get(), w * h * sizeof(Color));
+        for(const auto& b : doneBlocks) {
             processImage(tempBuffer.get(), b, [this](Color& c){
                 correctExposure(c);
-                correctGamma(c);
+//                correctGamma(c);
             });
             
             scaleDown(tempBuffer.get(), *result, b, true);
-            
-            b.iterations += count;
-            
-            if(b.iterations < iterations) {
-                blocksMutex.lock();
-                blocks.push_back(b);
-                blocksMutex.unlock();
-            }
         }
-    };
-    
-    auto notifier = [&]() {
-        const std::chrono::milliseconds sleepDuration{500};
-        Block b{0, 0, w, h, w, h, 0};
         
-        while(true) {
-            int localLeft;
-            blocksMutex.lock();
-            if(doneCount == std::thread::hardware_concurrency()) {
-                blocksMutex.unlock();
-//                processImage(tempBuffer.get(), b, [this](Color& c){
-//                    correctExposure(c);
-//                    correctGamma(c);
-//                });
-//                
-//                scaleDown(tempBuffer.get(), *result, b, true);
-                callback(*result, 100);
-                return;
-            }
-            localLeft = iterations - blocks.front().iterations;
-            blocksMutex.unlock();
-            
-            localLeft = std::max(localLeft, 0);
-            
-            
-            
-            callback(*result, static_cast<int>((iterations - localLeft) / iterations * 100));
-            
-            std::this_thread::sleep_for(sleepDuration);
-        };
-    };
-    std::thread notifierThread(notifier);
-    
-//    pathWorker();
-    processParallel(pathWorker);
-    notifierThread.join();
+        callback(*result, percent);
+        
+        if(percent == 100) {
+            break;
+        }
+        
+        blocks = doneBlocks;
+        doneBlocks.clear();
+        
+        processParallel(pathWorker);
+    }
 }
 
-void Renderer::pathTracing(const Scene& s, Color* result, const Block& block, int pixelIters) {
-    for(int iter = 0; iter < pixelIters; ++iter) {
+void Renderer::pathTracing(const Scene& s, Color* result, const Block& block, int pixelIters, int total) {
+    for(int iter = 1; iter <= pixelIters; ++iter) {
         for(int j = block.y; j < block.y + block.h; ++j) {
             for(int i = block.x; i < block.x + block.w; ++i) {
                 Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
-                result[j*block.totalW + i] += (tracePath(s, r) / pixelIters);
-//                result[j*block.totalW + i] = {0.05, 0, 0, 1};
+                
+                Color& resultingColor = result[j*block.totalW + i];
+                resultingColor = resultingColor * (total + iter - 1) / (total + iter);
+                resultingColor += tracePath(s, r) / (total + iter);
             }
         }
     }

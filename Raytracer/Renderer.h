@@ -106,7 +106,7 @@ private:
     void raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback);
     void pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations);
     
-    void pathTracing(const Scene& s, Color* result, const Block& block, int pixelIters);
+    void pathTracing(const Scene& s, Color* result, const Block& block, int pixelIters, int total);
     
     Color tracePath(const Scene& s, const Ray& r) const;
     Color traceBiPath(const Scene& s, const Ray& lightRay, const Ray& eyeRay) const;
