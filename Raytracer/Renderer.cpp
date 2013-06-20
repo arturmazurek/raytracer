@@ -152,7 +152,7 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
         return {};
     }
     if(obj->emits) {
-        return {10,10,10,1};
+        return {10, 10, 10, 1};
     }
     
     Vector biasedPos = intersection + m_rayBias*normal;
@@ -180,7 +180,7 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
         }
         diff.normalize();
         diff *= emiter->radius();
-//        Vector diff = onSphereRand() * emiter->radius();
+
         FloatType k = dot(diff, toCenter);
         if(k > 0) {
             diff -= 2*k*normalized(toCenter);
@@ -191,7 +191,9 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
         Vector lastNormal;
         obj = s.findIntersection(toLight, intersection, lastNormal);
         if(obj == emiter) {
-            return {1, 1, 1, 1};
+            Color result{10, 10, 10, 1};
+            result /= (intersection - biasedPos).lengthSqr();
+            return result;
         } else {
             return {};
         }
@@ -319,7 +321,7 @@ void Renderer::raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> c
 }
 
 void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations) {
-    iterations = 1000;
+    iterations = 10000;
     
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
@@ -327,28 +329,32 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
     auto colorBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
     auto result = std::unique_ptr<Bitmap>{new Bitmap{m_width, m_height}};
     
-    int threadsCount = std::thread::hardware_concurrency();
-    
-    auto doneBlocks = prepareBlocks(m_width / threadsCount + 1, m_height);
+    auto doneBlocks = prepareBlocks();
     decltype(doneBlocks) blocks;
     
     std::mutex blocksMutex;
     
     auto pathWorker = [&]() {
-        Block b;
-        blocksMutex.lock();
-        b = blocks.front();
-        blocks.pop_front();
-        blocksMutex.unlock();
-        
-        int count = 10;
-        pathTracing(s, colorBuffer.get(), b, count, b.iterations);
-        
-        b.iterations += count;
-        
-        blocksMutex.lock();
-        doneBlocks.push_back(b);
-        blocksMutex.unlock();
+        while(true) {
+            Block b;
+            blocksMutex.lock();
+            if(blocks.empty()) {
+                blocksMutex.unlock();
+                break;
+            }
+            b = blocks.front();
+            blocks.pop_front();
+            blocksMutex.unlock();
+            
+            int count = 10;
+            pathTracing(s, colorBuffer.get(), b, count, b.iterations);
+            
+            b.iterations += count;
+            
+            blocksMutex.lock();
+            doneBlocks.push_back(b);
+            blocksMutex.unlock();
+        }
     };
     
     auto tempBuffer = std::unique_ptr<Color[]>{new Color[w * h]};
@@ -358,7 +364,8 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
         
         memcpy(tempBuffer.get(), colorBuffer.get(), w * h * sizeof(Color));
         auto notifyBlocks = doneBlocks;
-        auto notify = [&]() {
+        
+        std::thread notifyThread{[&]() {
             for(const auto& b : notifyBlocks) {
                 processImage(tempBuffer.get(), b, [this](Color& c){
                     correctExposure(c);
@@ -369,9 +376,7 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
             }
             
             callback(*result, percent);
-        };
-        
-        std::thread notifyThread{notify};
+        }};
     
         if(percent == 100) {
             break;

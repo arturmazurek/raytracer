@@ -73,9 +73,9 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 10}, 2}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 10}, 1}});
     
-//    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-1.5, -1, 100}, 1}});
-//    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 100}, 1}});
-//    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 100}, 1}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-1.5, -1, 100}, 1}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 100}, 1}});
+    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 100}, 1}});
 }
 
 - (void)setupRingworld:(Scene&)s {
@@ -89,7 +89,7 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
     
 //    s.addLight(std::unique_ptr<BaseLight>{new SphereLight{{0, RINGWORLD_RADIUS, 0}, SUN_RADIUS}});
 //    auto light = std::unique_ptr<BaseObject>{new Sphere{{0, 4 * SUN_RADIUS, 0}, SUN_RADIUS}};
-    auto light = std::unique_ptr<BaseObject>{new Sphere{{0, 30, 0}, 10}};
+    auto light = std::unique_ptr<BaseObject>{new Sphere{{0, 800, 0}, 250}};
     light->emits = true;
     s.addObject(std::move(light));
 }
@@ -125,10 +125,10 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
     r.setSuperSampling(1);
     r.setFlipY(true);
-    r.setExposure(1.6);
-    r.setGamma(0.8);
+    r.setExposure(1);
+    r.setGamma(1);
     r.setBouncedRays(16);
-    r.setMaxRayDepth(2);
+    r.setMaxRayDepth(4);
     
     return r.renderScene(s, [self](const Bitmap& b, int progress) {
         static int lastProgress;
