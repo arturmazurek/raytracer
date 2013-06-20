@@ -125,7 +125,7 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
     r.setSuperSampling(1);
     r.setFlipY(true);
-    r.setExposure(1.5);
+    r.setExposure(1.6);
     r.setGamma(0.8);
     r.setBouncedRays(16);
     r.setMaxRayDepth(2);

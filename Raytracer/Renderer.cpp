@@ -172,15 +172,15 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
         // assume just one light
         Sphere* emiter = static_cast<Sphere*>(s.allEmiters()[0]);
         Vector toCenter = emiter->center() - biasedPos;
-//        Vector baseA = perpendicular(toCenter);
-//        Vector baseB = perpendicular(toCenter, baseA);
-//        Vector diff = (2*uniRand() - 1) * baseA + (2*uniRand() -1) * baseB;
-//        if(diff.lengthSqr() == 0) {
-//            return {};
-//        }
-//        diff.normalize();
-//        diff *= emiter->radius();
-        Vector diff = onSphereRand() * emiter->radius();
+        Vector baseA = perpendicular(toCenter);
+        Vector baseB = perpendicular(toCenter, baseA);
+        Vector diff = (2*uniRand() - 1) * baseA + (2*uniRand() -1) * baseB;
+        if(diff.lengthSqr() == 0) {
+            return {};
+        }
+        diff.normalize();
+        diff *= emiter->radius();
+//        Vector diff = onSphereRand() * emiter->radius();
         FloatType k = dot(diff, toCenter);
         if(k > 0) {
             diff -= 2*k*normalized(toCenter);
@@ -319,7 +319,7 @@ void Renderer::raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> c
 }
 
 void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations) {
-    iterations = 100000;
+    iterations = 1000;
     
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
@@ -357,17 +357,22 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
         int percent = 100 - 100 * (iterations - doneBlocks.front().iterations) / iterations;
         
         memcpy(tempBuffer.get(), colorBuffer.get(), w * h * sizeof(Color));
-        for(const auto& b : doneBlocks) {
-            processImage(tempBuffer.get(), b, [this](Color& c){
-                correctExposure(c);
-//                correctGamma(c);
-            });
+        auto notifyBlocks = doneBlocks;
+        auto notify = [&]() {
+            for(const auto& b : notifyBlocks) {
+                processImage(tempBuffer.get(), b, [this](Color& c){
+                    correctExposure(c);
+                    correctGamma(c);
+                });
+                
+                scaleDown(tempBuffer.get(), *result, b, true);
+            }
             
-            scaleDown(tempBuffer.get(), *result, b, true);
-        }
+            callback(*result, percent);
+        };
         
-        callback(*result, percent);
-        
+        std::thread notifyThread{notify};
+    
         if(percent == 100) {
             break;
         }
@@ -376,6 +381,7 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
         doneBlocks.clear();
         
         processParallel(pathWorker);
+        notifyThread.join();
     }
 }
 
