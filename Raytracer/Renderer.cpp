@@ -158,7 +158,7 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
     Vector biasedPos = intersection + m_rayBias*normal;
     Color reflected;
     
-//    if(r.depth + 1 < m_maxRayDepth) {
+    if(r.depth + 1 < m_maxRayDepth) {
         Ray newRay{biasedPos, onSphereRand(), r.depth + 1};
         FloatType k = dot(newRay.direction, normal);
         if(k < 0) {
@@ -170,42 +170,44 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
         BDRF *= 2;
         if(((long int)obj >> 4) % 2 == 0) {
             BDRF *= Color{1, 0, 0, 1};
+        } else if(((long int)obj >> 4) % 3 == 0) {
+            BDRF *= Color{0, 0, 1, 1};
         }
         
         reflected = tracePath(s, newRay);
         // Apply the Rendering Equation here.
         return {BDRF * reflected};
-//    } else {
-//        // shoot straight to light
-//        // assume just one light
-//        Sphere* emiter = static_cast<Sphere*>(s.allEmiters()[0]);
-//        Vector toCenter = emiter->center() - biasedPos;
-//        Vector baseA = perpendicular(toCenter);
-//        Vector baseB = perpendicular(toCenter, baseA);
-//        Vector diff = (2*uniRand() - 1) * baseA + (2*uniRand() -1) * baseB;
-//        if(diff.lengthSqr() == 0) {
-//            return {};
-//        }
-//        diff.normalize();
-//        diff *= emiter->radius();
-//
-//        FloatType k = dot(diff, toCenter);
-//        if(k > 0) {
-//            diff -= 2*k*normalized(toCenter);
-//        }
-//        
-//        Vector dir = (toCenter + diff).normalize();
-//        Ray toLight{biasedPos, dir};
-//        Vector lastNormal;
-//        obj = s.findIntersection(toLight, intersection, lastNormal);
-//        if(obj == emiter) {
-//            Color result{10, 10, 10, 1};
-//            result /= (intersection - biasedPos).lengthSqr();
-//            return result;
-//        } else {
-//            return {};
-//        }
-//    }
+    } else {
+        // shoot straight to light
+        // assume just one light
+        Sphere* emiter = static_cast<Sphere*>(s.allEmiters()[0]);
+        Vector toCenter = emiter->center() - biasedPos;
+        Vector baseA = perpendicular(toCenter);
+        Vector baseB = perpendicular(toCenter, baseA);
+        Vector diff = (2*uniRand() - 1) * baseA + (2*uniRand() -1) * baseB;
+        if(diff.lengthSqr() == 0) {
+            return {};
+        }
+        diff.normalize();
+        diff *= emiter->radius();
+
+        FloatType k = dot(diff, toCenter);
+        if(k > 0) {
+            diff -= 2*k*normalized(toCenter);
+        }
+        
+        Vector dir = (toCenter + diff).normalize();
+        Ray toLight{biasedPos, dir};
+        Vector lastNormal;
+        obj = s.findIntersection(toLight, intersection, lastNormal);
+        if(obj == emiter) {
+            Color result{10, 10, 10, 1};
+            result /= (intersection - biasedPos).lengthSqr();
+            return result;
+        } else {
+            return {};
+        }
+    }
 }
 
 Color Renderer::traceBiPath(const Scene& s, const Ray& lightRay, const Ray& eyeRay) const {
@@ -258,7 +260,7 @@ Color Renderer::traceBiPath(const Scene& s, const Ray& lightRay, const Ray& eyeR
 
 void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
     prepareRender(s);
-    pathTraceScene(s, callback, 10000);
+    pathTraceScene(s, callback, 100000);
 }
 
 void Renderer::raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
