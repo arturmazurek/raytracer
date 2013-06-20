@@ -128,7 +128,7 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
     r.setExposure(1);
     r.setGamma(1);
     r.setBouncedRays(16);
-    r.setMaxRayDepth(4);
+    r.setMaxRayDepth(2);
     
     return r.renderScene(s, [self](const Bitmap& b, int progress) {
         static int lastProgress;

@@ -321,7 +321,7 @@ void Renderer::raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> c
 }
 
 void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations) {
-    iterations = 10000;
+    iterations = 1000;
     
     int w = m_superSampling * m_width;
     int h = m_superSampling * m_height;
@@ -346,7 +346,7 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
             blocks.pop_front();
             blocksMutex.unlock();
             
-            int count = 10;
+            int count = 30;
             pathTracing(s, colorBuffer.get(), b, count, b.iterations);
             
             b.iterations += count;
@@ -375,10 +375,13 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
                 scaleDown(tempBuffer.get(), *result, b, true);
             }
             
-            callback(*result, percent);
+            callback(*result, std::min(100, percent));
         }};
     
-        if(percent == 100) {
+        if(percent >= 100) {
+            if(notifyThread.joinable()) {
+                notifyThread.join();
+            }
             break;
         }
         
@@ -386,7 +389,9 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
         doneBlocks.clear();
         
         processParallel(pathWorker);
-        notifyThread.join();
+        if(notifyThread.joinable()) {
+            notifyThread.join();
+        }
     }
 }
 
