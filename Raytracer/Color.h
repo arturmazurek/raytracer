@@ -21,6 +21,7 @@ struct Color {
     Color& operator+=(const Color& other);
 
     Color& operator*=(ValueType k);
+    Color& operator*=(const Color& other);
     Color& operator/=(ValueType k);
     
     ValueType magnitudeSqr() const;
@@ -30,6 +31,7 @@ struct Color {
 
 Color operator*(const Color& c, Color::ValueType k);
 Color operator*(Color::ValueType k, const Color& c);
+Color operator*(const Color& a, const Color& b);
 
 Color operator/(const Color& c, Color::ValueType k);
 

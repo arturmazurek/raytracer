@@ -45,6 +45,14 @@ Color& Color::operator*=(ValueType k) {
     return *this;
 }
 
+Color& Color::operator*=(const Color& other) {
+    r *= other.r;
+    g *= other.g;
+    b *= other.b;
+    
+    return *this;
+}
+
 Color& Color::operator/=(ValueType k) { 
     r /= k;
     g /= k;
@@ -73,6 +81,12 @@ Color operator*(const Color& c, Color::ValueType k) {
 
 Color operator*(Color::ValueType k, const Color& c) {
     return c * k;
+}
+
+Color operator*(const Color& a, const Color& b) {
+    Color result{a};
+    result *= b;
+    return result;
 }
 
 Color operator/(const Color& c, Color::ValueType k) {
