@@ -89,6 +89,12 @@ Color operator*(const Color& a, const Color& b) {
     return result;
 }
 
+Color operator+(const Color& a, const Color& b) {
+    Color result{a};
+    result += b;
+    return result;
+}
+
 Color operator/(const Color& c, Color::ValueType k) {
     Color result{c};
     result /= k;

@@ -10,6 +10,7 @@
 #define __ImageTest__BaseLight__
 
 #include "Color.h"
+#include "Ray.h"
 #include "Vector.h"
 
 class BaseLight {

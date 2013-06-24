@@ -92,7 +92,7 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
 //    s.addLight(std::unique_ptr<BaseLight>{new SphereLight{{0, RINGWORLD_RADIUS, 0}, SUN_RADIUS}});
 //    auto light = std::unique_ptr<BaseObject>{new Sphere{{0, 4 * SUN_RADIUS, 0}, SUN_RADIUS}};
     auto light = std::unique_ptr<BaseObject>{new Sphere{{-1.5, 2, 10}, 0.5}};
-    light->material()->setEmmitance({10, 10, 10, 1});
+    light->material()->setEmmitance({20, 20, 20, 1});
 //    light->emits = true;
     s.addObject(std::move(light));
 }

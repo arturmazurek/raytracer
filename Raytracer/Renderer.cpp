@@ -45,6 +45,16 @@ static inline Vector onSphereRand() {
     return {sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)};
 }
 
+static inline Vector hemisphereRand(const Vector& normal) {
+    Vector result = onSphereRand();
+    FloatType k = dot(result, normal);
+    if(k < 0) {
+        result -= 2 * k * normal;
+    }
+    
+    return result;
+}
+
 const int Renderer::BLOCK_DEFAULT_W{20};
 const int Renderer::BLOCK_DEFAULT_H{20};
 
@@ -151,59 +161,18 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
     if(!obj) {
         return {};
     }
-    if(obj->material()->emmitance() != Color{}) {
-        return {10, 10, 10, 1};
-    }
     
     Vector biasedPos = intersection + m_rayBias*normal;
     Color reflected;
     
-//    if(r.depth + 1 < m_maxRayDepth) {
-        Ray newRay{biasedPos, onSphereRand(), r.depth + 1};
-        FloatType k = dot(newRay.direction, normal);
-        if(k < 0) {
-            newRay.direction -= 2 * k * normal;
-        }
-        
-        FloatType cosTheta = dot(newRay.direction, normal);
-        Color BDRF = {cosTheta, cosTheta, cosTheta, 1};
-        BDRF *= 2;
-        BDRF *= obj->material()->color();
-        
-        reflected = tracePath(s, newRay);
-        // Apply the Rendering Equation here.
-        return {BDRF * reflected};
-//    } else {
-//        // shoot straight to light
-//        // assume just one light
-//        Sphere* emiter = static_cast<Sphere*>(s.allEmiters()[0]);
-//        Vector toCenter = emiter->center() - biasedPos;
-//        Vector baseA = perpendicular(toCenter);
-//        Vector baseB = perpendicular(toCenter, baseA);
-//        Vector diff = (2*uniRand() - 1) * baseA + (2*uniRand() -1) * baseB;
-//        if(diff.lengthSqr() == 0) {
-//            return {};
-//        }
-//        diff.normalize();
-//        diff *= emiter->radius();
-//
-//        FloatType k = dot(diff, toCenter);
-//        if(k > 0) {
-//            diff -= 2*k*normalized(toCenter);
-//        }
-//        
-//        Vector dir = (toCenter + diff).normalize();
-//        Ray toLight{biasedPos, dir};
-//        Vector lastNormal;
-//        obj = s.findIntersection(toLight, intersection, lastNormal);
-//        if(obj == emiter) {
-//            Color result{10, 10, 10, 1};
-//            result /= (intersection - biasedPos).lengthSqr();
-//            return result;
-//        } else {
-//            return {};
-//        }
-//    }
+    Ray newRay{biasedPos, hemisphereRand(normal), r.depth + 1};
+    
+    FloatType cosTheta = dot(newRay.direction, normal);
+    Color BDRF = obj->material()->reflectance() * Color{cosTheta, cosTheta, cosTheta, 1};
+    BDRF *= obj->material()->color();
+    
+    reflected = tracePath(s, newRay);
+    return obj->material()->emmitance() + Color{BDRF * reflected};
 }
 
 Color Renderer::traceBiPath(const Scene& s, const Ray& lightRay, const Ray& eyeRay) const {

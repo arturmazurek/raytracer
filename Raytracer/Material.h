@@ -27,6 +27,9 @@ public:
     const Color& emmitance() const;
     void setEmmitance(const Color& emmitance);
     
+    const Color& reflectance() const;
+    void setReflectance(const Color& reflectance);
+    
 protected:
     virtual Color getShading(const HitInfo& hit) const;
     
@@ -37,6 +40,7 @@ private:
 private:
     Color m_color;
     Color m_emmitance;
+    Color m_reflectance;
 };
 
 #endif /* defined(__Raytracer__Material__) */

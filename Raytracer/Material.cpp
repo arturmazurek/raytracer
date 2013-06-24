@@ -8,7 +8,7 @@
 
 #include "Material.h"
 
-Material::Material() : m_color{1, 1, 1, 1}, m_emmitance{0, 0, 0, 1} {
+Material::Material() : m_color{1, 1, 1, 1}, m_emmitance{0, 0, 0, 1}, m_reflectance{1, 1, 1, 1} {
     
 }
 
@@ -38,4 +38,12 @@ void Material::setEmmitance(const Color& emmitance) {
 
 Color Material::getShading(const HitInfo& hit) const {
     return m_color;
+}
+
+const Color& Material::reflectance() const {
+    return m_reflectance;
+}
+
+void Material::setReflectance(const Color& reflectance) {
+    m_reflectance = reflectance;
 }

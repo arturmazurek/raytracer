@@ -33,6 +33,8 @@ Color operator*(const Color& c, Color::ValueType k);
 Color operator*(Color::ValueType k, const Color& c);
 Color operator*(const Color& a, const Color& b);
 
+Color operator+(const Color& a, const Color& b);
+
 bool operator==(const Color& a, const Color& b);
 bool operator!=(const Color& a, const Color& b);
 
