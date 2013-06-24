@@ -16,7 +16,7 @@ class BaseObject;
 struct HitInfo {
     Vector location;
     Vector normal;
-    BaseObject* hit;
+    const BaseObject* obj;
 };
 
 #endif /* defined(__Raytracer__HitInfo__) */

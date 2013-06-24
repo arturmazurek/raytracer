@@ -15,6 +15,7 @@
 
 #include "BaseLight.h"
 #include "BaseObject.h"
+#include "HitInfo.h"
 #include "Ray.h"
 #include "Vector.h"
 
@@ -30,26 +31,24 @@ void Scene::addObject(std::unique_ptr<BaseObject> obj) {
     m_objects.push_back(std::move(obj));
 }
 
-BaseObject* Scene::findIntersection(const Ray& ray, Vector& intersection, Vector& normal) const {
-    const BaseObject* found = nullptr;
+bool Scene::findIntersection(const Ray& ray, HitInfo& hit) const {
+    bool found = false;
     
+    HitInfo temp;
     for(const auto& obj : m_objects) {
-        Vector temp;
-        Vector tempNormal;
-        if(!obj->intersects(ray, temp, tempNormal)) {
+        if(!obj->intersects(ray, temp)) {
             continue;
         }
         
-        if(found && (temp - ray.origin).lengthSqr() > (intersection - ray.origin).lengthSqr()) {
+        if(found && (temp.location - ray.origin).lengthSqr() > (hit.location - ray.origin).lengthSqr()) {
             continue;
         }
         
-        intersection = temp;
-        normal = tempNormal;
-        found = obj.get();
+        hit = temp;
+        found = true;
     }
     
-    return const_cast<BaseObject*>(found);
+    return found;
 }
 
 void Scene::prepare() {

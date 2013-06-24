@@ -27,7 +27,7 @@ public:
     FloatType radius() const;
     
 private:
-    virtual bool checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const override;
+    virtual bool checkIntersection(const Ray& r, HitInfo& hit) const override;
     virtual AABB getAABB() const override;
     
 private:

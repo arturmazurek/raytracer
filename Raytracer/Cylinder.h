@@ -42,10 +42,10 @@ public:
     AxisAlignment axisAlignment() const;
 
 private:
-    virtual bool checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const override;
+    virtual bool checkIntersection(const Ray& r, HitInfo& hit) const override;
     virtual AABB getAABB() const override;
 
-    bool checkFactors(const Ray& r, FloatType t1, FloatType t2, Vector& intersection, Vector& normal) const;
+    bool checkFactors(const Ray& r, FloatType t1, FloatType t2, HitInfo& hit) const;
     
 private:
     Vector m_position;

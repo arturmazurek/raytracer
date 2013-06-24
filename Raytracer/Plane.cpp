@@ -8,6 +8,7 @@
 
 #include "Plane.h"
 
+#include "HitInfo.h"
 #include "Ray.h"
 #include "Types.h"
 
@@ -15,7 +16,7 @@ Plane::Plane(const Vector& origin, const Vector& normal) : m_origin{origin}, m_n
     m_normal.normalize();
 }
 
-bool Plane::checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const {
+bool Plane::checkIntersection(const Ray& r, HitInfo& hit) const {
     FloatType nominator = dot(m_normal, {m_origin - r.origin});
     FloatType denominator = dot(m_normal, r.direction);
     
@@ -28,8 +29,9 @@ bool Plane::checkIntersection(const Ray& r, Vector& intersection, Vector& normal
     if(t < 0) {
         return false;
     } else {
-        intersection = r.origin + t*r.direction;
-        normal = m_normal;
+        hit.location = r.origin + t*r.direction;
+        hit.normal = m_normal;
+        hit.obj = this;
         return true;
     }
 }

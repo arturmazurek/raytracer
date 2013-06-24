@@ -10,6 +10,7 @@
 
 #include <cassert>
 
+#include "HitInfo.h"
 #include "Ray.h"
 #include "Util.h"
 
@@ -53,7 +54,7 @@ Cylinder::AxisAlignment Cylinder::axisAlignment() const {
     return m_axis;
 }
 
-bool Cylinder::checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const {
+bool Cylinder::checkIntersection(const Ray& r, HitInfo& hit) const {
     Ray alteredRay = r;
     Vector alteredPosition = m_position;
     switch (m_axis) {
@@ -101,14 +102,16 @@ bool Cylinder::checkIntersection(const Ray& r, Vector& intersection, Vector& nor
         return false;
     }
     
-    return checkFactors(r, t1, t2, intersection, normal);
+    return checkFactors(r, t1, t2, hit);
 }
 
 // t1 must be smaller than t2
-bool Cylinder::checkFactors(const Ray& r, FloatType t1, FloatType t2, Vector& intersection, Vector& normal) const {
+bool Cylinder::checkFactors(const Ray& r, FloatType t1, FloatType t2, HitInfo& hit) const {
     using namespace std;
-    intersection = {};
-    normal = {};
+    
+    auto& intersection = hit.location;
+    auto& normal = hit.normal;
+    hit.obj = this;
     
     bool t1Valid = true;
     if(t1 >= 0) {

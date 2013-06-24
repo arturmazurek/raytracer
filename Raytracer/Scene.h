@@ -14,6 +14,7 @@
 
 class BaseLight;
 class BaseObject;
+struct HitInfo;
 struct Ray;
 struct Vector;
 
@@ -24,7 +25,7 @@ public:
     
     void addObject(std::unique_ptr<BaseObject> obj);
     
-    BaseObject* findIntersection(const Ray& ray, Vector& intersection, Vector& normal) const;
+    bool findIntersection(const Ray& ray, HitInfo& hit) const;
 
     void prepare();
     

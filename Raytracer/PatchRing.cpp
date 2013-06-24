@@ -8,6 +8,7 @@
 
 #include "PatchRing.h"
 
+#include "HitInfo.h"
 #include "Ray.h"
 
 PatchRing::PatchRing(const Vector& position, const Vector& normal, FloatType radiusA, FloatType radiusB) : m_position{position}, m_normal{normal}, m_radiusA{radiusA}, m_radiusB{radiusB} {
@@ -51,7 +52,7 @@ FloatType PatchRing::radiusB() const {
     return m_radiusB;
 }
 
-bool PatchRing::checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const {
+bool PatchRing::checkIntersection(const Ray& r, HitInfo& hit) const {
     FloatType nominator = dot(m_normal, {m_position - r.origin});
     FloatType denominator = dot(m_normal, r.direction);
     
@@ -65,9 +66,9 @@ bool PatchRing::checkIntersection(const Ray& r, Vector& intersection, Vector& no
         return false;
     }
     
-    intersection = r.origin + t*r.direction;
+    hit.location = r.origin + t*r.direction;
     
-    FloatType diffSqr = (intersection - m_position).lengthSqr();
+    FloatType diffSqr = (hit.location - m_position).lengthSqr();
     if(diffSqr > m_radiusB*m_radiusB) {
         return false;
     }
@@ -76,10 +77,11 @@ bool PatchRing::checkIntersection(const Ray& r, Vector& intersection, Vector& no
         return false;
     }
     
-    normal = m_normal;
+    hit.normal = m_normal;
     if(dot(m_normal, r.direction) > 0) {
-        normal *= -1;
+        hit.normal *= -1;
     }
+    hit.obj = this;
     return true;
 }
 

@@ -10,6 +10,8 @@
 
 #include <sstream>
 
+#include "HitInfo.h"
+
 static const std::string DEFAULT_NAME = "object_";
 
 int BaseObject::s_instanceCounter = 1;
@@ -32,15 +34,15 @@ const std::string& BaseObject::name() const {
     return m_name;
 }
 
-bool BaseObject::intersects(const Ray& r, Vector& intersection, Vector& normal) const {
+bool BaseObject::intersects(const Ray& r, HitInfo& hit) const {
     if(m_AABB.intersects(r)) {
-        return checkIntersection(r, intersection, normal);
+        return checkIntersection(r, hit);
     } else {
         return false;
     }
 }
 
-bool BaseObject::checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const {
+bool BaseObject::checkIntersection(const Ray& r, HitInfo& hit) const {
     return false;
 }
 
@@ -57,6 +59,10 @@ Material* BaseObject::material() {
         m_material = std::unique_ptr<Material>(new Material());
     }
     return m_material.get();
+}
+        
+const Material* BaseObject::material() const {
+    return const_cast<BaseObject&>(*this).material();
 }
         
 void BaseObject::setMaterial(std::unique_ptr<Material> material) {

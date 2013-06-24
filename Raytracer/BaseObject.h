@@ -16,6 +16,7 @@
 #include <memory>
 #include <string>
 
+struct HitInfo;
 class Material;
 struct Ray;
 
@@ -29,13 +30,14 @@ public:
     
     void prepareObject();
     
-    bool intersects(const Ray& r, Vector& intersection, Vector& normal) const;
+    bool intersects(const Ray& r, HitInfo& hit) const;
     
     Material* material();
+    const Material* material() const;
     void setMaterial(std::unique_ptr<Material> material);
     
 private:
-    virtual bool checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const;
+    virtual bool checkIntersection(const Ray& r, HitInfo& hit) const;
     virtual AABB getAABB() const;
     
 private:

@@ -20,7 +20,7 @@ public:
     explicit Plane(const Vector& origin = {}, const Vector& normal = {});
     
 private:
-    virtual bool checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const override;
+    virtual bool checkIntersection(const Ray& r, HitInfo& hit) const override;
     
 private:
     Vector m_origin;

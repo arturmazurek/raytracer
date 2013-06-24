@@ -20,6 +20,7 @@
 #include "BaseLight.h"
 #include "BaseObject.h"
 #include "Bitmap.h"
+#include "HitInfo.h"
 #include "Log.h"
 #include "Math.h"
 #include "Matrix.h"
@@ -154,25 +155,22 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
         return {};
     }
     
-    Vector intersection;
-    Vector normal;
-    BaseObject* obj = s.findIntersection(r, intersection, normal);
-    
-    if(!obj) {
+    HitInfo hit;
+    if(!s.findIntersection(r, hit)) {
         return {};
     }
     
-    Vector biasedPos = intersection + m_rayBias*normal;
+    Vector biasedPos = hit.location + m_rayBias*hit.normal;
     Color reflected;
     
-    Ray newRay{biasedPos, hemisphereRand(normal), r.depth + 1};
+    Ray newRay{biasedPos, hemisphereRand(hit.normal), r.depth + 1};
     
-    FloatType cosTheta = dot(newRay.direction, normal);
-    Color BDRF = obj->material()->reflectance() * Color{cosTheta, cosTheta, cosTheta, 1};
-    BDRF *= obj->material()->color();
+    FloatType cosTheta = dot(newRay.direction, hit.normal);
+    Color BDRF = hit.obj->material()->reflectance() * Color{cosTheta, cosTheta, cosTheta, 1};
+    BDRF *= hit.obj->material()->color();
     
     reflected = tracePath(s, newRay);
-    return obj->material()->emmitance() + Color{BDRF * reflected};
+    return hit.obj->material()->emmitance() + Color{BDRF * reflected};
 }
 
 void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {

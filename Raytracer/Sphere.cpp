@@ -11,6 +11,7 @@
 #include <cassert>
 #include <cmath>
 
+#include "HitInfo.h"
 #include "Ray.h"
 
 Sphere::Sphere(const Vector& center, FloatType radius) : m_center{center}, m_radius{radius} {
@@ -37,7 +38,7 @@ FloatType Sphere::radius() const {
     return m_radius;
 }
 
-bool Sphere::checkIntersection(const Ray& r, Vector& intersection, Vector& normal) const {
+bool Sphere::checkIntersection(const Ray& r, HitInfo& hit) const {
     const FloatType A = r.origin.x - m_center.x;
     const FloatType B = r.origin.y - m_center.y;
     const FloatType C = r.origin.z - m_center.z;
@@ -61,10 +62,11 @@ bool Sphere::checkIntersection(const Ray& r, Vector& intersection, Vector& norma
     }
     
     FloatType t = t2 < t1 ? t2 : t1;
-    intersection = r.origin + t*r.direction;
+    hit.location = r.origin + t*r.direction;
     
-    normal = intersection - m_center;
-    normal.normalize();
+    hit.normal = hit.location - m_center;
+    hit.normal.normalize();
+    hit.obj = this;
     
     return t;
 }
