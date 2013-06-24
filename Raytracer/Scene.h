@@ -23,16 +23,9 @@ public:
     ~Scene();
     
     void addObject(std::unique_ptr<BaseObject> obj);
-    void addLight(std::unique_ptr<BaseLight> light);
     
     BaseObject* findIntersection(const Ray& ray, Vector& intersection, Vector& normal) const;
-    
-    typedef std::vector<std::unique_ptr<BaseLight>>::const_iterator LightsIterator;
-    LightsIterator lightsBegin() const;
-    LightsIterator lightsEnd() const;
-    
-    const std::vector<BaseObject*>& allEmiters() const;
-    
+
     void prepare();
     
 private:
@@ -41,9 +34,6 @@ private:
     
 private:
     std::vector<std::unique_ptr<BaseObject>> m_objects;
-    std::vector<std::unique_ptr<BaseLight>> m_lights;
-    
-    std::vector<BaseObject*> m_emiters;
 };
 
 #endif /* defined(__ImageTest__Scene__) */

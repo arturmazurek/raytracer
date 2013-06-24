@@ -27,15 +27,7 @@ Scene::~Scene() {
 }
 
 void Scene::addObject(std::unique_ptr<BaseObject> obj) {
-//    if(obj->emits) {
-//        m_emiters.push_back(obj.get());
-//    }
-    
     m_objects.push_back(std::move(obj));
-}
-
-void Scene::addLight(std::unique_ptr<BaseLight> light) {
-    m_lights.push_back(std::move(light));
 }
 
 BaseObject* Scene::findIntersection(const Ray& ray, Vector& intersection, Vector& normal) const {
@@ -58,18 +50,6 @@ BaseObject* Scene::findIntersection(const Ray& ray, Vector& intersection, Vector
     }
     
     return const_cast<BaseObject*>(found);
-}
-
-const std::vector<BaseObject*>& Scene::allEmiters() const {
-    return m_emiters;
-}
-
-Scene::LightsIterator Scene::lightsBegin() const {
-    return m_lights.begin();
-}
-
-Scene::LightsIterator Scene::lightsEnd() const {
-    return m_lights.end();
 }
 
 void Scene::prepare() {

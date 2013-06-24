@@ -114,7 +114,7 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
     moon->setName("moon");
     s.addObject(std::move(moon));
     
-    s.addLight(std::unique_ptr<BaseLight>{new SphereLight{{0, SUN_DISTANCE, 0}, SUN_RADIUS}});
+//    s.addLight(std::unique_ptr<BaseLight>{new SphereLight{{0, SUN_DISTANCE, 0}, SUN_RADIUS}});
 }
 
 - (void)render {
