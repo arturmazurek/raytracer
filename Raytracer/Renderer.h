@@ -93,23 +93,12 @@ private:
 private:
     void prepareRender(Scene& s);
     
-    Color getDiffuse(const Scene& s, const Vector& pos, const Vector& normal);
-    void raycast(const Scene& s, Color* result, const Block& block);
-    Color processRay(const Scene& s, const Ray& r);
-    Color bouncedDiffuseAtPosition(const Scene& s, const Vector& pos, const Vector& normal) const;
     void scaleDown(Color* fromBuffer, Bitmap& toBitmap, const Block& block, bool overwrite = false) const;
-    std::unique_ptr<Ray[]> createBouncedRays(const Vector& intersection, const Vector& normal, int count) const;
     std::deque<Block> prepareBlocks(int blockWidth = BLOCK_DEFAULT_W, int blockHeight = BLOCK_DEFAULT_H) const;
-    FloatType handlePointLight(const Scene& s, const PointLight& light, const Vector& pos, const Vector& normal) const;
-    FloatType handleSphereLight(const Scene& s, const SphereLight& light, const Vector& pos, const Vector& normal) const;
     
-    void raytraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback);
     void pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations);
-    
     void pathTracing(const Scene& s, Color* result, const Block& block, int pixelIters, int total);
-    
     Color tracePath(const Scene& s, const Ray& r) const;
-    Color traceBiPath(const Scene& s, const Ray& lightRay, const Ray& eyeRay) const;
     
     void processImage(Color* bitmap, const Block& block, std::function<void(Color&)> filter) const;
     void correctGamma(Color& c) const;
