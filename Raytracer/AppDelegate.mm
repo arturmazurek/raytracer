@@ -69,7 +69,9 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
 }
 
 - (void)setupSpheres:(Scene&)s {
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-1.5, -1, 10}, 1}});
+    auto sphere = std::unique_ptr<BaseObject>{new Sphere{{-1.5, -1, 10}, 1}};
+    sphere->material()->setColor({1, 0, 0, 1});
+    s.addObject(std::move(sphere));
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 10}, 2}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 10}, 1}});
     
@@ -90,7 +92,8 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
 //    s.addLight(std::unique_ptr<BaseLight>{new SphereLight{{0, RINGWORLD_RADIUS, 0}, SUN_RADIUS}});
 //    auto light = std::unique_ptr<BaseObject>{new Sphere{{0, 4 * SUN_RADIUS, 0}, SUN_RADIUS}};
     auto light = std::unique_ptr<BaseObject>{new Sphere{{-1.5, 2, 10}, 0.5}};
-    light->emits = true;
+    light->material()->setEmmitance({10, 10, 10, 1});
+//    light->emits = true;
     s.addObject(std::move(light));
 }
 

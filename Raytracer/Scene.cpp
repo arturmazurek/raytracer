@@ -27,9 +27,9 @@ Scene::~Scene() {
 }
 
 void Scene::addObject(std::unique_ptr<BaseObject> obj) {
-    if(obj->emits) {
-        m_emiters.push_back(obj.get());
-    }
+//    if(obj->emits) {
+//        m_emiters.push_back(obj.get());
+//    }
     
     m_objects.push_back(std::move(obj));
 }

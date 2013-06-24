@@ -28,6 +28,8 @@
 		7510BA59176E37510008CA30 /* SphereLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7510BA57176E37510008CA30 /* SphereLight.cpp */; };
 		75122F66175B58FF00A06819 /* Plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75122F64175B58FF00A06819 /* Plane.cpp */; };
 		75E15528175A7D8100D7DA0A /* BaseLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75E15526175A7D8100D7DA0A /* BaseLight.cpp */; };
+		75E2C1B81778D7D30063FC81 /* HitInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75E2C1B61778D7D30063FC81 /* HitInfo.cpp */; };
+		75E2C1BB1778D81F0063FC81 /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75E2C1B91778D81F0063FC81 /* Material.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +80,10 @@
 		75122F67175B7AC500A06819 /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
 		75E15526175A7D8100D7DA0A /* BaseLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseLight.cpp; sourceTree = "<group>"; };
 		75E15527175A7D8100D7DA0A /* BaseLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseLight.h; sourceTree = "<group>"; };
+		75E2C1B61778D7D30063FC81 /* HitInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitInfo.cpp; sourceTree = "<group>"; };
+		75E2C1B71778D7D30063FC81 /* HitInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HitInfo.h; sourceTree = "<group>"; };
+		75E2C1B91778D81F0063FC81 /* Material.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Material.cpp; sourceTree = "<group>"; };
+		75E2C1BA1778D81F0063FC81 /* Material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Material.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +137,8 @@
 		6D4C67E415DE5E05002DE1AE /* Raytracer */ = {
 			isa = PBXGroup;
 			children = (
+				75E2C1B91778D81F0063FC81 /* Material.cpp */,
+				75E2C1BA1778D81F0063FC81 /* Material.h */,
 				6D68BBE217686D8500F5FB9F /* AABB.cpp */,
 				6D68BBE317686D8500F5FB9F /* AABB.h */,
 				6DE7F2E71758D17F006FED74 /* Math.h */,
@@ -169,6 +177,8 @@
 				7510BA55176E32FD0008CA30 /* PointLight.h */,
 				7510BA57176E37510008CA30 /* SphereLight.cpp */,
 				7510BA58176E37510008CA30 /* SphereLight.h */,
+				75E2C1B61778D7D30063FC81 /* HitInfo.cpp */,
+				75E2C1B71778D7D30063FC81 /* HitInfo.h */,
 			);
 			path = Raytracer;
 			sourceTree = "<group>";
@@ -249,6 +259,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				75E2C1BB1778D81F0063FC81 /* Material.cpp in Sources */,
 				6D4C67EB15DE5E05002DE1AE /* main.m in Sources */,
 				7510BA56176E32FD0008CA30 /* PointLight.cpp in Sources */,
 				6D4C67F215DE5E05002DE1AE /* AppDelegate.mm in Sources */,
@@ -264,6 +275,7 @@
 				6DE7F2EA1758ECC2006FED74 /* Color.cpp in Sources */,
 				75E15528175A7D8100D7DA0A /* BaseLight.cpp in Sources */,
 				75122F66175B58FF00A06819 /* Plane.cpp in Sources */,
+				75E2C1B81778D7D30063FC81 /* HitInfo.cpp in Sources */,
 				6DB15D31175CE78B00D908B6 /* Cylinder.cpp in Sources */,
 				6DC8E92D17674635008430EF /* PatchRing.cpp in Sources */,
 			);

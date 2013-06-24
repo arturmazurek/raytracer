@@ -22,8 +22,6 @@ BaseObject::BaseObject(const std::string& name) : m_name{name} {
         
         m_name = ss.str();
     }
-        
-    emits = false;
 }
 
 void BaseObject::setName(const std::string& name) {
@@ -52,4 +50,15 @@ AABB BaseObject::getAABB() const {
 
 void BaseObject::prepareObject() {
     m_AABB = getAABB();
+}
+
+Material* BaseObject::material() {
+    if(!m_material) {
+        m_material = std::unique_ptr<Material>(new Material());
+    }
+    return m_material.get();
+}
+        
+void BaseObject::setMaterial(std::unique_ptr<Material> material) {
+    m_material = std::move(material);
 }
