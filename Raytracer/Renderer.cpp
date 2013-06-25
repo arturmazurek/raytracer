@@ -130,8 +130,8 @@ int Renderer::maxRayDepth() const {
     return m_maxRayDepth;
 }
 
-Color Renderer::tracePath(const Scene& s, const Ray& r) const {
-    if(r.depth > m_maxRayDepth) {
+Color Renderer::tracePath(const Scene& s, const Ray& r, int depthLeft) const {
+    if(depthLeft < 0) {
         return {};
     }
     
@@ -143,13 +143,13 @@ Color Renderer::tracePath(const Scene& s, const Ray& r) const {
     Vector biasedPos = hit.location + m_rayBias*hit.normal;
     Color reflected;
     
-    Ray newRay{biasedPos, hemisphereRand(hit.normal), r.depth + 1};
+    Ray newRay{biasedPos, hemisphereRand(hit.normal)};
     
     FloatType cosTheta = dot(newRay.direction, hit.normal);
     Color BDRF = hit.obj->material()->reflectance() * Color{cosTheta, cosTheta, cosTheta, 1};
     BDRF *= hit.obj->material()->color();
     
-    reflected = tracePath(s, newRay);
+    reflected = tracePath(s, newRay, --depthLeft);
     return hit.obj->material()->emmitance() + Color{BDRF * reflected};
 }
 
@@ -239,7 +239,7 @@ void Renderer::pathTracing(const Scene& s, Color* result, const Block& block, in
                 
                 Color& resultingColor = result[j*block.totalW + i];
                 resultingColor = resultingColor * (total + iter - 1) / (total + iter);
-                resultingColor += tracePath(s, r) / (total + iter);
+                resultingColor += tracePath(s, r, m_maxRayDepth) / (total + iter);
             }
         }
     }

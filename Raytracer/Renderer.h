@@ -98,7 +98,7 @@ private:
     
     void pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations);
     void pathTracing(const Scene& s, Color* result, const Block& block, int pixelIters, int total);
-    Color tracePath(const Scene& s, const Ray& r) const;
+    Color tracePath(const Scene& s, const Ray& r, int depthLeft) const;
     
     void processImage(Color* bitmap, const Block& block, std::function<void(Color&)> filter) const;
     void correctGamma(Color& c) const;
