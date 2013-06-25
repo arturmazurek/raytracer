@@ -33,6 +33,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6D1EB2F71779E20300811CEF /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
+		6D1EB2F81779E20300811CEF /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 		6D204B9C174BD4EC0016A570 /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
 		6D204B9D174BD4ED0016A570 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		6D4C67DA15DE5E05002DE1AE /* Raytracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Raytracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -137,6 +139,8 @@
 		6D4C67E415DE5E05002DE1AE /* Raytracer */ = {
 			isa = PBXGroup;
 			children = (
+				6D1EB2F71779E20300811CEF /* Matrix.h */,
+				6D1EB2F81779E20300811CEF /* Util.h */,
 				75E2C1B91778D81F0063FC81 /* Material.cpp */,
 				75E2C1BA1778D81F0063FC81 /* Material.h */,
 				6D68BBE217686D8500F5FB9F /* AABB.cpp */,

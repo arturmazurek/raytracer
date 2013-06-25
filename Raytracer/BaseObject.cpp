@@ -68,3 +68,11 @@ const Material* BaseObject::material() const {
 void BaseObject::setMaterial(std::unique_ptr<Material> material) {
     m_material = std::move(material);
 }
+
+void BaseObject::randomPoint(Vector& location, Vector& normal) const {
+    return getRandomPoint(location, normal);
+}
+
+void BaseObject::getRandomPoint(Vector& location, Vector& normal) const {
+    // just do nothing
+}

@@ -29,32 +29,12 @@
 #include "Ray.h"
 #include "Scene.h"
 #include "Sphere.h"
+#include "Util.h"
 #include "Vector.h"
 
 static const double DEFAULT_FOV = 0.4 * Math::PI;
 static const int DEFAULT_SUPERSAMPLING = 1;
 static const double DEFAULT_RAY_BIAS = 0.001;
-
-static inline FloatType uniRand() {
-    return (FloatType)(rand() % 1000000) / 1000000;
-}
-
-static inline Vector onSphereRand() {    
-    FloatType theta = 2 * Math::PI * uniRand();
-    FloatType phi = acos(2*uniRand() - 1);
-    
-    return {sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)};
-}
-
-static inline Vector hemisphereRand(const Vector& normal) {
-    Vector result = onSphereRand();
-    FloatType k = dot(result, normal);
-    if(k < 0) {
-        result -= 2 * k * normal;
-    }
-    
-    return result;
-}
 
 const int Renderer::BLOCK_DEFAULT_W{20};
 const int Renderer::BLOCK_DEFAULT_H{20};

@@ -14,7 +14,7 @@
 #include "Ray.h"
 #include "Util.h"
 
-Cylinder::Cylinder(const Vector& pos, FloatType radius, FloatType extends, AxisAlignment axis) : m_position{pos}, m_radius{radius}, m_extends{extends}, m_axis{axis} {
+Cylinder::Cylinder(const Vector& pos, FloatType radius, FloatType extends, AxisAlignment axis) : m_position{pos}, m_radius{radius}, m_extends{extends}, m_axis{axis}, m_orientation{Orientation::OUTSIDE} {
     setName("cylinder");
 }
 
@@ -75,9 +75,6 @@ bool Cylinder::checkIntersection(const Ray& r, HitInfo& hit) const {
             alteredRay.direction.z = 0;
             alteredPosition.z = 0;
             break;
-            
-        default:
-            assert(!"Shouldn't get here");
     }
     
     const FloatType A = alteredRay.origin.x - alteredPosition.x;
@@ -136,9 +133,6 @@ bool Cylinder::checkFactors(const Ray& r, FloatType t1, FloatType t2, HitInfo& h
                     t1Valid = false;
                 }
                 break;
-                
-            default:
-                assert(!"Shouldn't get here");
         }
     } else {
         t1Valid = false;
@@ -166,9 +160,6 @@ bool Cylinder::checkFactors(const Ray& r, FloatType t1, FloatType t2, HitInfo& h
                     t2Valid = false;
                 }
                 break;
-                
-            default:
-                assert(!"Shouldn't get here");
         }
     } else {
         t2Valid = false;
@@ -203,9 +194,6 @@ bool Cylinder::checkFactors(const Ray& r, FloatType t1, FloatType t2, HitInfo& h
             }
             normal.z = 0;
             break;
-            
-        default:
-            assert(!"Shouldn't get here");
     }
     normal.normalize();
 
@@ -226,4 +214,45 @@ AABB Cylinder::getAABB() const {
         default:
             assert(!"Shouldn't get here");
     }
+}
+
+void Cylinder::getRandomPoint(Vector& location, Vector& normal) const {
+    using namespace std;
+    
+    FloatType angle = 2 * Math::PI * uniRand();
+    FloatType width = 2 * m_extends * uniRand() - m_extends;
+    
+    switch (m_axis) {
+        case AxisAlignment::X_AXIS:
+            normal.x = 0;
+            normal.y = cos(angle);
+            normal.z = sin(angle);
+            
+            location.x = width;
+            location.y = m_radius * normal.y;
+            location.z = m_radius * normal.z;
+            break;
+            
+        case AxisAlignment::Y_AXIS:
+            normal.x = cos(angle);
+            normal.y = 0;
+            normal.z = sin(angle);
+            
+            location.x = m_radius * normal.x;
+            location.y = width;
+            location.z = m_radius * normal.z;
+            break;
+            
+        case AxisAlignment::Z_AXIS:
+            normal.x = cos(angle);
+            normal.y = sin(angle);
+            normal.z = 0;
+            
+            location.x = m_radius * normal.x;
+            location.y = m_radius * normal.y;
+            location.z = width;
+            break;
+    }
+    
+    location += m_position;
 }

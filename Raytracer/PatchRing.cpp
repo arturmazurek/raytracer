@@ -9,7 +9,9 @@
 #include "PatchRing.h"
 
 #include "HitInfo.h"
+#include "Math.h"
 #include "Ray.h"
+#include "Util.h"
 
 PatchRing::PatchRing(const Vector& position, const Vector& normal, FloatType radiusA, FloatType radiusB) : m_position{position}, m_normal{normal}, m_radiusA{radiusA}, m_radiusB{radiusB} {
     m_normal.normalize();

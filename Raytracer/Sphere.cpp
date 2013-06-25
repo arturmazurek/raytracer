@@ -13,6 +13,7 @@
 
 #include "HitInfo.h"
 #include "Ray.h"
+#include "Util.h"
 
 Sphere::Sphere(const Vector& center, FloatType radius) : m_center{center}, m_radius{radius} {
 
@@ -73,4 +74,10 @@ bool Sphere::checkIntersection(const Ray& r, HitInfo& hit) const {
 
 AABB Sphere::getAABB() const {
     return {m_center, {m_radius, m_radius, m_radius}};
+}
+
+void Sphere::getRandomPoint(Vector& location, Vector& normal) const {
+    normal = onSphereRand();
+    location = normal * m_radius;
+    location += m_center;
 }
