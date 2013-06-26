@@ -52,7 +52,17 @@ bool Scene::findIntersection(const Ray& ray, HitInfo& hit) const {
 }
 
 void Scene::prepare() {
+    m_emitters.clear();
+    
     for(auto& obj : m_objects) {
         obj->prepareObject();
+        if(obj->material()->emmitance() != Color{}) {
+            m_emitters.push_back(obj.get());
+        }
     }
 }
+
+const std::vector<const BaseObject*>& Scene::allEmitters() const {
+    return m_emitters;
+}
+

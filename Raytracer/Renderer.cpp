@@ -130,7 +130,7 @@ int Renderer::maxRayDepth() const {
     return m_maxRayDepth;
 }
 
-Color Renderer::tracePath(const Scene& s, const Ray& r, int depthLeft) const {
+Color Renderer::tracePath(const Scene& s, const Ray& r, int depthLeft, std::vector<Vector>& resultingPath) const {
     if(depthLeft < 0) {
         return {};
     }
@@ -139,6 +139,8 @@ Color Renderer::tracePath(const Scene& s, const Ray& r, int depthLeft) const {
     if(!s.findIntersection(r, hit)) {
         return {};
     }
+    
+    resultingPath.push_back(hit.location);
     
     Vector biasedPos = hit.location + m_rayBias*hit.normal;
     Color reflected;
@@ -149,7 +151,7 @@ Color Renderer::tracePath(const Scene& s, const Ray& r, int depthLeft) const {
     Color BDRF = hit.obj->material()->reflectance() * Color{cosTheta, cosTheta, cosTheta, 1};
     BDRF *= hit.obj->material()->color();
     
-    reflected = tracePath(s, newRay, --depthLeft);
+    reflected = tracePath(s, newRay, --depthLeft, resultingPath);
     return hit.obj->material()->emmitance() + Color{BDRF * reflected};
 }
 
@@ -232,14 +234,55 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
 }
 
 void Renderer::pathTracing(const Scene& s, Color* result, const Block& block, int pixelIters, int total) {
+    std::vector<Vector> eyePath(m_maxRayDepth);
+    std::vector<Vector> lightPath(m_maxRayDepth);
+    
+    HitInfo hit;
+    
+    const auto& allEmitters = s.allEmitters();
+    size_t emmitersCount = allEmitters.size();
+    
+    Color black;
+    
     for(int iter = 1; iter <= pixelIters; ++iter) {
         for(int j = block.y; j < block.y + block.h; ++j) {
             for(int i = block.x; i < block.x + block.w; ++i) {
-                Ray r = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
+                eyePath.clear();
+                lightPath.clear();
+                
+                Ray eyeRay = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
+                Color color = tracePath(s, eyeRay, m_maxRayDepth, eyePath);
+                
+                if(color == black && eyePath.size()) {
+                    Ray lightRay;
+                    const auto& light = allEmitters[rand() % emmitersCount];
+                    light->randomPoint(lightRay.origin, lightRay.direction);
+                    lightRay.origin += lightRay.direction * m_rayBias;
+                    Color lightColor = tracePath(s, lightRay, m_maxRayDepth, lightPath) + light->material()->emmitance();
+                    
+                    if(lightPath.size()) {
+                        Vector location = eyePath[eyePath.size() - 1];
+                        Vector diff = lightPath[lightPath.size() - 1] - location;
+                        FloatType lenSqr = diff.lengthSqr();
+                        diff /= lenSqr;
+                        Ray lightRay{location, diff};
+                        
+                        if(!s.findIntersection(lightRay, hit)) {
+//                            FloatType cosTheta = dot(lightRay.direction, hit.normal);
+//                            Color BDRF = hit.obj->material()->reflectance() * Color{cosTheta, cosTheta, cosTheta, 1};
+//                            BDRF *= hit.obj->material()->color();
+//                            
+//                            reflected = tracePath(s, newRay, --depthLeft, resultingPath);
+//                            return hit.obj->material()->emmitance() + Color{BDRF * reflected};
+                            
+                            color += lightColor / lenSqr;
+                        }
+                    }
+                }
                 
                 Color& resultingColor = result[j*block.totalW + i];
                 resultingColor = resultingColor * (total + iter - 1) / (total + iter);
-                resultingColor += tracePath(s, r, m_maxRayDepth) / (total + iter);
+                resultingColor += color / (total + iter);
             }
         }
     }

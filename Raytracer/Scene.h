@@ -24,6 +24,7 @@ public:
     ~Scene();
     
     void addObject(std::unique_ptr<BaseObject> obj);
+    const std::vector<const BaseObject*>& allEmitters() const;
     
     bool findIntersection(const Ray& ray, HitInfo& hit) const;
 
@@ -35,6 +36,7 @@ private:
     
 private:
     std::vector<std::unique_ptr<BaseObject>> m_objects;
+    std::vector<const BaseObject*> m_emitters;
 };
 
 #endif /* defined(__ImageTest__Scene__) */
