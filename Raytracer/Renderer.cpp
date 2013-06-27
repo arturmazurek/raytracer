@@ -254,19 +254,19 @@ void Renderer::pathTracing(const Scene& s, Color* result, const Block& block, in
                 Ray eyeRay = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
                 createPath(s, eyeRay, m_maxRayDepth, eyePath);
                 
-//                const auto& randomEmitter = allEmitters[rand() % emmitersCount];
-//                if(eyePath.size() && randomEmitter != eyePath[eyePath.size()].obj) {
-//                    HitInfo lightHit;
-//                    lightHit.obj = randomEmitter;
-//                    randomEmitter->randomPoint(lightHit.location, lightHit.normal);
-//                    lightPath.push_back(lightHit);
-//                    createPath(s, {lightHit.location + m_rayBias*lightHit.normal, hemisphereRand(lightHit.normal)}, m_maxRayDepth, lightPath);
-//                    
-//                    color = shadePixel(s, eyePath, lightPath);
-//                } else {
+                const auto& randomEmitter = allEmitters[rand() % emmitersCount];
+                if(eyePath.size() && randomEmitter != eyePath[eyePath.size()].obj) {
+                    HitInfo lightHit;
+                    lightHit.obj = randomEmitter;
+                    randomEmitter->randomPoint(lightHit.location, lightHit.normal);
+                    lightPath.push_back(lightHit);
+                    createPath(s, {lightHit.location + m_rayBias*lightHit.normal, hemisphereRand(lightHit.normal)}, m_maxRayDepth, lightPath);
+                    
+                    color = shadePixel(s, eyePath, lightPath);
+                } else {
                     color = shadePixel(s, eyePath);
-//                }
-                
+                }
+            
                 Color& resultingColor = result[j*block.totalW + i];
                 resultingColor = resultingColor * (total + iter - 1) / (total + iter);
                 resultingColor += color / (total + iter);
