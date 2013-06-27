@@ -81,3 +81,7 @@ void Sphere::getRandomPoint(Vector& location, Vector& normal) const {
     location = normal * m_radius;
     location += m_center;
 }
+
+FloatType Sphere::getSurfaceArea() const {
+    return 4 * Math::PI * m_radius * m_radius;
+}

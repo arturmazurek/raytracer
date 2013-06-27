@@ -18,6 +18,7 @@
 
 #include "Camera.h"
 #include "Color.h"
+#include "HitInfo.h"
 
 class Bitmap;
 class PointLight;
@@ -99,6 +100,10 @@ private:
     void pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations);
     void pathTracing(const Scene& s, Color* result, const Block& block, int pixelIters, int total);
     Color tracePath(const Scene& s, const Ray& r, int depthLeft, std::vector<Vector>& resultingPath) const;
+    
+    void createPath(const Scene& s, const Ray& eyeRay, int depthLeft, std::vector<HitInfo>& result) const;
+    Color shadePixel(const Scene& s, const std::vector<HitInfo>& path) const;
+    Color shadePixel(const Scene& s, std::vector<HitInfo> eyePath, const std::vector<HitInfo>& lightPath) const;
     
     void processImage(Color* bitmap, const Block& block, std::function<void(Color&)> filter) const;
     void correctGamma(Color& c) const;

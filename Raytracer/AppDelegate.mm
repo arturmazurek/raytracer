@@ -70,7 +70,7 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
 
 - (void)setupSpheres:(Scene&)s {
     auto sphere = std::unique_ptr<BaseObject>{new Sphere{{-1.5, -1, 10}, 1}};
-    sphere->material()->setColor({1, 0, 0, 1});
+    sphere->material()->setReflectance({1, 0, 0, 1});
     s.addObject(std::move(sphere));
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 10}, 2}});
     s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 10}, 1}});

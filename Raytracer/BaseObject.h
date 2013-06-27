@@ -32,6 +32,7 @@ public:
     
     bool intersects(const Ray& r, HitInfo& hit) const;
     void randomPoint(Vector& location, Vector& normal) const;
+    FloatType surfaceArea() const;
     
     Material* material();
     const Material* material() const;
@@ -41,6 +42,7 @@ private:
     virtual bool checkIntersection(const Ray& r, HitInfo& hit) const;
     virtual AABB getAABB() const;
     virtual void getRandomPoint(Vector& location, Vector& normal) const;
+    virtual FloatType getSurfaceArea() const;
     
 private:
     static int s_instanceCounter;

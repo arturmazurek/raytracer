@@ -30,6 +30,7 @@ private:
     virtual bool checkIntersection(const Ray& r, HitInfo& hit) const override;
     virtual AABB getAABB() const override;
     virtual void getRandomPoint(Vector& location, Vector& normal) const override;
+    virtual FloatType getSurfaceArea() const override;
     
 private:
     Vector m_center;

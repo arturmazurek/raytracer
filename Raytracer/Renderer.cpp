@@ -234,8 +234,8 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
 }
 
 void Renderer::pathTracing(const Scene& s, Color* result, const Block& block, int pixelIters, int total) {
-    std::vector<Vector> eyePath(m_maxRayDepth);
-    std::vector<Vector> lightPath(m_maxRayDepth);
+    std::vector<HitInfo> eyePath(m_maxRayDepth);
+    std::vector<HitInfo> lightPath(m_maxRayDepth + 1);
     
     HitInfo hit;
     
@@ -243,6 +243,7 @@ void Renderer::pathTracing(const Scene& s, Color* result, const Block& block, in
     size_t emmitersCount = allEmitters.size();
     
     Color black;
+    Color color;
     
     for(int iter = 1; iter <= pixelIters; ++iter) {
         for(int j = block.y; j < block.y + block.h; ++j) {
@@ -251,34 +252,20 @@ void Renderer::pathTracing(const Scene& s, Color* result, const Block& block, in
                 lightPath.clear();
                 
                 Ray eyeRay = m_camera.viewPointToRay((double)i/m_superSampling - 0.5*m_width, (double)j/m_superSampling - 0.5*m_height);
-                Color color = tracePath(s, eyeRay, m_maxRayDepth, eyePath);
+                createPath(s, eyeRay, m_maxRayDepth, eyePath);
                 
-                if(color == black && eyePath.size()) {
-                    Ray lightRay;
-                    const auto& light = allEmitters[rand() % emmitersCount];
-                    light->randomPoint(lightRay.origin, lightRay.direction);
-                    lightRay.origin += lightRay.direction * m_rayBias;
-                    Color lightColor = tracePath(s, lightRay, m_maxRayDepth, lightPath) + light->material()->emmitance();
-                    
-                    if(lightPath.size()) {
-                        Vector location = eyePath[eyePath.size() - 1];
-                        Vector diff = lightPath[lightPath.size() - 1] - location;
-                        FloatType lenSqr = diff.lengthSqr();
-                        diff /= lenSqr;
-                        Ray lightRay{location, diff};
-                        
-                        if(!s.findIntersection(lightRay, hit)) {
-//                            FloatType cosTheta = dot(lightRay.direction, hit.normal);
-//                            Color BDRF = hit.obj->material()->reflectance() * Color{cosTheta, cosTheta, cosTheta, 1};
-//                            BDRF *= hit.obj->material()->color();
-//                            
-//                            reflected = tracePath(s, newRay, --depthLeft, resultingPath);
-//                            return hit.obj->material()->emmitance() + Color{BDRF * reflected};
-                            
-                            color += lightColor / lenSqr;
-                        }
-                    }
-                }
+//                const auto& randomEmitter = allEmitters[rand() % emmitersCount];
+//                if(eyePath.size() && randomEmitter != eyePath[eyePath.size()].obj) {
+//                    HitInfo lightHit;
+//                    lightHit.obj = randomEmitter;
+//                    randomEmitter->randomPoint(lightHit.location, lightHit.normal);
+//                    lightPath.push_back(lightHit);
+//                    createPath(s, {lightHit.location + m_rayBias*lightHit.normal, hemisphereRand(lightHit.normal)}, m_maxRayDepth, lightPath);
+//                    
+//                    color = shadePixel(s, eyePath, lightPath);
+//                } else {
+                    color = shadePixel(s, eyePath);
+//                }
                 
                 Color& resultingColor = result[j*block.totalW + i];
                 resultingColor = resultingColor * (total + iter - 1) / (total + iter);
@@ -378,3 +365,58 @@ void Renderer::correctExposure(Color& c) const {
     c.b = 1.0 - exp(-c.b * m_exposure);
 }
 
+void Renderer::createPath(const Scene& s, const Ray& eyeRay, int depthLeft, std::vector<HitInfo>& result) const {
+    if(depthLeft < 0) {
+        return;
+    }
+    
+    HitInfo hit;
+    if(!s.findIntersection(eyeRay, hit)) {
+        return;
+    }
+    
+    result.push_back(hit);
+    Ray newRay{hit.location + m_rayBias * hit.normal, hemisphereRand(hit.normal)};
+    createPath(s, newRay, depthLeft-1, result);
+}
+
+Color Renderer::shadePixel(const Scene& s, std::vector<HitInfo> eyePath, const std::vector<HitInfo>& lightPath) const {
+    Vector connection = lightPath.back().location - eyePath.back().location;
+    FloatType connectionLengthSqr = connection.lengthSqr();
+    connection /= connectionLengthSqr;
+    
+    Ray connectingRay{lightPath.back().location + m_rayBias*lightPath.back().normal, connection};
+    HitInfo connectionHit;
+    if(!s.findIntersection(connectingRay, connectionHit)) {
+        return shadePixel(s, eyePath); // only eye path contributes - this may happen due to numeric stuff, but should be very rare
+    }
+    
+    if(connectionHit.obj != eyePath.back().obj) {
+        return shadePixel(s, eyePath); // light obstructed
+    }
+    
+    for(int i = static_cast<int>(lightPath.size()) - 1; i >= 0; --i) {
+        eyePath.push_back(lightPath[i]);
+    }
+    
+    return shadePixel(s, eyePath) * connectionHit.obj->surfaceArea() / connectionLengthSqr;
+}
+
+Color Renderer::shadePixel(const Scene& s, const std::vector<HitInfo>& path) const {
+    Color result;
+    
+    for(int i = static_cast<int>(path.size() - 1); i >= 0; --i) {
+        const auto& thisHit = path[i];
+        
+        Color BDRF;
+        if(i != path.size() - 1) {
+            const auto& nextHit = path[i + 1];
+            Vector dir = (nextHit.location - thisHit.location).normalize();
+            BDRF = thisHit.obj->material()->reflectance() * dot(thisHit.normal, dir);
+        }
+        
+        result = thisHit.obj->material()->emmitance() + BDRF * result;
+    }
+    
+    return result;
+}

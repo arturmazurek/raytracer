@@ -76,3 +76,11 @@ void BaseObject::randomPoint(Vector& location, Vector& normal) const {
 void BaseObject::getRandomPoint(Vector& location, Vector& normal) const {
     // just do nothing
 }
+
+FloatType BaseObject::surfaceArea() const {
+    return getSurfaceArea();
+}
+
+FloatType BaseObject::getSurfaceArea() const {
+    return 0;
+}
