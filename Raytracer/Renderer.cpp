@@ -130,31 +130,6 @@ int Renderer::maxRayDepth() const {
     return m_maxRayDepth;
 }
 
-Color Renderer::tracePath(const Scene& s, const Ray& r, int depthLeft, std::vector<Vector>& resultingPath) const {
-    if(depthLeft < 0) {
-        return {};
-    }
-    
-    HitInfo hit;
-    if(!s.findIntersection(r, hit)) {
-        return {};
-    }
-    
-    resultingPath.push_back(hit.location);
-    
-    Vector biasedPos = hit.location + m_rayBias*hit.normal;
-    Color reflected;
-    
-    Ray newRay{biasedPos, hemisphereRand(hit.normal)};
-    
-    FloatType cosTheta = dot(newRay.direction, hit.normal);
-    Color BDRF = hit.obj->material()->reflectance() * Color{cosTheta, cosTheta, cosTheta, 1};
-    BDRF *= hit.obj->material()->color();
-    
-    reflected = tracePath(s, newRay, --depthLeft, resultingPath);
-    return hit.obj->material()->emmitance() + Color{BDRF * reflected};
-}
-
 void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
     prepareRender(s);
     pathTraceScene(s, callback, 500000);
@@ -227,6 +202,7 @@ void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> 
         doneBlocks.clear();
         
         processParallel(pathWorker);
+//        pathWorker();
         if(notifyThread.joinable()) {
             notifyThread.join();
         }
@@ -383,16 +359,16 @@ void Renderer::createPath(const Scene& s, const Ray& eyeRay, int depthLeft, std:
 
 Color Renderer::shadePixel(const Scene& s, std::vector<HitInfo> eyePath, const std::vector<HitInfo>& lightPath) const {
     Vector connection = lightPath.back().location - eyePath.back().location;
-    FloatType connectionLengthSqr = connection.lengthSqr();
-    connection /= connectionLengthSqr;
     
-    Ray connectingRay{lightPath.back().location + m_rayBias*lightPath.back().normal, connection};
+    Ray connectingRay{eyePath.back().location + m_rayBias*eyePath.back().normal, connection};
+    connectingRay.direction.normalize();
+    FloatType cosTheta = dot(connectingRay.direction, eyePath.back().normal);
     HitInfo connectionHit;
     if(!s.findIntersection(connectingRay, connectionHit)) {
         return shadePixel(s, eyePath); // only eye path contributes - this may happen due to numeric stuff, but should be very rare
     }
     
-    if(connectionHit.obj != eyePath.back().obj) {
+    if(connectionHit.obj != lightPath.back().obj) {
         return shadePixel(s, eyePath); // light obstructed
     }
     
@@ -400,7 +376,7 @@ Color Renderer::shadePixel(const Scene& s, std::vector<HitInfo> eyePath, const s
         eyePath.push_back(lightPath[i]);
     }
     
-    return shadePixel(s, eyePath) * eyePath.front().obj->surfaceArea() / connectionLengthSqr;
+    return shadePixel(s, eyePath) * lightPath.front().obj->surfaceArea() / connection.lengthSqr() * abs(cosTheta);
 }
 
 Color Renderer::shadePixel(const Scene& s, const std::vector<HitInfo>& path) const {

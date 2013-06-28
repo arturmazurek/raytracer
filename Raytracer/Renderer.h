@@ -99,7 +99,6 @@ private:
     
     void pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations);
     void pathTracing(const Scene& s, Color* result, const Block& block, int pixelIters, int total);
-    Color tracePath(const Scene& s, const Ray& r, int depthLeft, std::vector<Vector>& resultingPath) const;
     
     void createPath(const Scene& s, const Ray& eyeRay, int depthLeft, std::vector<HitInfo>& result) const;
     Color shadePixel(const Scene& s, const std::vector<HitInfo>& path) const;

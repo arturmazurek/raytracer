@@ -196,6 +196,10 @@ bool Cylinder::checkFactors(const Ray& r, FloatType t1, FloatType t2, HitInfo& h
             break;
     }
     normal.normalize();
+    
+    if(m_orientation == Orientation::INSIDE) {
+        normal *= -1;
+    }
 
     return true;
 }
