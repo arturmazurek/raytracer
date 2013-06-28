@@ -157,7 +157,7 @@ Color Renderer::tracePath(const Scene& s, const Ray& r, int depthLeft, std::vect
 
 void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
     prepareRender(s);
-    pathTraceScene(s, callback, 100000);
+    pathTraceScene(s, callback, 500000);
 }
 
 void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations) {
@@ -260,6 +260,7 @@ void Renderer::pathTracing(const Scene& s, Color* result, const Block& block, in
                     lightHit.obj = randomEmitter;
                     randomEmitter->randomPoint(lightHit.location, lightHit.normal);
                     lightPath.push_back(lightHit);
+                                  
                     createPath(s, {lightHit.location + m_rayBias*lightHit.normal, hemisphereRand(lightHit.normal)}, m_maxRayDepth, lightPath);
                     
                     color = shadePixel(s, eyePath, lightPath);
@@ -399,7 +400,7 @@ Color Renderer::shadePixel(const Scene& s, std::vector<HitInfo> eyePath, const s
         eyePath.push_back(lightPath[i]);
     }
     
-    return shadePixel(s, eyePath) * connectionHit.obj->surfaceArea() / connectionLengthSqr;
+    return shadePixel(s, eyePath) * eyePath.front().obj->surfaceArea() / connectionLengthSqr;
 }
 
 Color Renderer::shadePixel(const Scene& s, const std::vector<HitInfo>& path) const {

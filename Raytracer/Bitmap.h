@@ -28,10 +28,12 @@ public:
         PixelInfo() : r{0}, g{0}, b{0}, a{0} {}
         PixelInfo(byte r, byte g, byte b, byte a) : r{r}, g{g}, b{b}, a{a} {}
         PixelInfo(const Color& c) {
-            r = std::min(1.0, c.r) * 255;
-            g = std::min(1.0, c.g) * 255;
-            b = std::min(1.0, c.b) * 255;
-            a = std::min(1.0, c.a) * 255;
+            using namespace std;
+            
+            r = min(1.0, c.r) * 255;
+            g = min(1.0, c.g) * 255;
+            b = min(1.0, c.b) * 255;
+            a = min(1.0, c.a) * 255;
         }
     };
     

@@ -70,30 +70,52 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
 
 - (void)setupSpheres:(Scene&)s {
     auto sphere = std::unique_ptr<BaseObject>{new Sphere{{-1.5, -1, 10}, 1}};
-    sphere->material()->setReflectance({1, 0, 0, 1});
+    sphere->material()->setReflectance({1, 0.2, 0.2, 1});
+//    sphere->material()->setEmmitance({1, 0, 0, 1});
     s.addObject(std::move(sphere));
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 10}, 2}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 10}, 1}});
     
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-1.5, -1, 100}, 1}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{1, 3, 100}, 1}});
-    s.addObject(std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 100}, 1}});
+    sphere = std::unique_ptr<BaseObject>{new Sphere{{1, 3, 10}, 2}};
+    sphere->material()->setReflectance({0.2, 1, 0.2, 1});
+//    sphere->material()->setEmmitance({0, 1, 0, 1});
+    s.addObject(std::move(sphere));
+    
+    sphere = std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 10}, 1}};
+    sphere->material()->setReflectance({0.2, 0.2, 1, 1});
+//    sphere->material()->setEmmitance({0, 0, 1, 1});
+    s.addObject(std::move(sphere));
+    
+    sphere = std::unique_ptr<BaseObject>{new Sphere{{-1.5, -1, 100}, 1}};
+    sphere->material()->setReflectance({1, 0.2, 0.2, 1});
+    //    sphere->material()->setEmmitance({1, 0, 0, 1});
+    s.addObject(std::move(sphere));
+    
+    sphere = std::unique_ptr<BaseObject>{new Sphere{{1, 3, 100}, 2}};
+    sphere->material()->setReflectance({0.2, 1, 0.2, 1});
+    //    sphere->material()->setEmmitance({0, 1, 0, 1});
+    s.addObject(std::move(sphere));
+    
+    sphere = std::unique_ptr<BaseObject>{new Sphere{{-2, 4, 100}, 1}};
+    sphere->material()->setReflectance({0.2, 0.2, 1, 1});
+    //    sphere->material()->setEmmitance({0, 0, 1, 1});
+    s.addObject(std::move(sphere));
 }
 
 - (void)setupRingworld:(Scene&)s {
     s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{0, RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS, RINGWORLD_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
     
-    s.addObject(std::unique_ptr<BaseObject>{new PatchRing{{RINGWORLD_EXTENDS, RINGWORLD_RADIUS - 2, 0}, {-1, 0, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RINGWORLD_RADIUS}});
-    s.addObject(std::unique_ptr<BaseObject>{new PatchRing{{-RINGWORLD_EXTENDS, RINGWORLD_RADIUS - 2, 0}, {1, 0, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RINGWORLD_RADIUS}});
-    
-    s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{RINGWORLD_EXTENDS + RIM_WALL_EXTENDS, RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RIM_WALL_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
-    s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{-(RINGWORLD_EXTENDS + RIM_WALL_EXTENDS), RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RIM_WALL_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
+//    s.addObject(std::unique_ptr<BaseObject>{new PatchRing{{RINGWORLD_EXTENDS, RINGWORLD_RADIUS - 2, 0}, {-1, 0, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RINGWORLD_RADIUS}});
+//    s.addObject(std::unique_ptr<BaseObject>{new PatchRing{{-RINGWORLD_EXTENDS, RINGWORLD_RADIUS - 2, 0}, {1, 0, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RINGWORLD_RADIUS}});
+//    
+//    s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{RINGWORLD_EXTENDS + RIM_WALL_EXTENDS, RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RIM_WALL_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
+//    s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{-(RINGWORLD_EXTENDS + RIM_WALL_EXTENDS), RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RIM_WALL_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
     
     auto light = std::unique_ptr<BaseObject>{new Sphere{{0, 15 * SUN_RADIUS, 0}, SUN_RADIUS}};
+//        auto light = std::unique_ptr<BaseObject>{new Sphere{{0, RINGWORLD_RADIUS, 0}, SUN_RADIUS}};
+    
 //    auto light = std::unique_ptr<BaseObject>{new Sphere{{0, 4 * SUN_RADIUS, 0}, SUN_RADIUS}};
 //    auto light = std::unique_ptr<BaseObject>{new Sphere{{-1.5, 2, 10}, 0.5}};
 //        auto light = std::unique_ptr<BaseObject>{new Sphere{{-1.5, 20000, 10}, 5000}};
-    light->material()->setEmmitance({200, 200, 200, 1});
+    light->material()->setEmmitance({400, 400, 400, 1});
 //    light->emits = true;
     s.addObject(std::move(light));
 }

@@ -9,8 +9,10 @@
 #ifndef __ImageTest__Color__
 #define __ImageTest__Color__
 
+#include "Types.h"
+
 struct Color {
-    typedef double ValueType;
+    typedef FloatType ValueType;
     ValueType r, g, b, a;
     
     Color();
