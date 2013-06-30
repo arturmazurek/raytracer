@@ -132,7 +132,7 @@ int Renderer::maxRayDepth() const {
 
 void Renderer::renderScene(Scene& s, std::function<void(const Bitmap&, int)> callback) {
     prepareRender(s);
-    pathTraceScene(s, callback, 500000);
+    pathTraceScene(s, callback, 10000);
 }
 
 void Renderer::pathTraceScene(Scene& s, std::function<void(const Bitmap&, int)> callback, int iterations) {
@@ -376,7 +376,7 @@ Color Renderer::shadePixel(const Scene& s, std::vector<HitInfo> eyePath, const s
         eyePath.push_back(lightPath[i]);
     }
     
-    return shadePixel(s, eyePath) * lightPath.front().obj->surfaceArea() / connection.lengthSqr() * abs(cosTheta);
+    return shadePixel(s, eyePath) * lightPath.front().obj->surfaceArea() / connection.lengthSqr() * std::abs(cosTheta);
 }
 
 Color Renderer::shadePixel(const Scene& s, const std::vector<HitInfo>& path) const {

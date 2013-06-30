@@ -110,12 +110,12 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
 //    s.addObject(std::unique_ptr<BaseObject>{new Cylinder{{-(RINGWORLD_EXTENDS + RIM_WALL_EXTENDS), RINGWORLD_RADIUS - 2, 0}, RINGWORLD_RADIUS - RIM_WALL_HEIGHT, RIM_WALL_EXTENDS, Cylinder::AxisAlignment::X_AXIS}});
     
 //    auto light = std::unique_ptr<BaseObject>{new Sphere{{0, 15 * SUN_RADIUS, 0}, SUN_RADIUS}};
-        auto light = std::unique_ptr<BaseObject>{new Sphere{{0, RINGWORLD_RADIUS, 0}, SUN_RADIUS}};
+//        auto light = std::unique_ptr<BaseObject>{new Sphere{{0, RINGWORLD_RADIUS, 0}, SUN_RADIUS}};
     
 //    auto light = std::unique_ptr<BaseObject>{new Sphere{{0, 4 * SUN_RADIUS, 0}, SUN_RADIUS}};
 //    auto light = std::unique_ptr<BaseObject>{new Sphere{{-1.5, 2, 10}, 0.5}};
-//        auto light = std::unique_ptr<BaseObject>{new Sphere{{-1.5, 20000, 10}, 5000}};
-    light->material()->setEmmitance({10000, 10000, 10000, 1});
+        auto light = std::unique_ptr<BaseObject>{new Sphere{{-1.5, 20000, 10}, 5000}};
+    light->material()->setEmmitance({50, 50, 50, 1});
 //    light->emits = true;
     s.addObject(std::move(light));
 }
@@ -149,7 +149,7 @@ static const FloatType SUN_RADIUS = 6.96342e5 * 1000;
     
     Renderer r;
     r.setDimensions(self.imageView.frame.size.width, self.imageView.frame.size.height);
-    r.setSuperSampling(1);
+    r.setSuperSampling(2);
     r.setFlipY(true);
     r.setExposure(1.5);
     r.setGamma(1);
